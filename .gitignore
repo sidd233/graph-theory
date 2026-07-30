@@ -1,4 +1,5 @@
 .vscode/
+build
 
 *.aux
 *.log
@@ -9,3 +10,4 @@
 *.fls
 
 .DS_Store
+GUIDE.md
