@@ -1,0 +1,82 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\begin{document}
+\pagestyle{empty}
+
+\begin{lemma}[Cycle decomposition of a closed walk]
+\label{lem:decomp}
+Let $D$ be a digraph and let $W = w_0, w_1, \dots, w_L$ (with $w_0 = w_L$) be a closed
+directed walk of length $L$ (i.e.\ $w_{t-1} \to w_t$ is an arc of $D$ for each
+$t = 1, \dots, L$). Then there exist directed cycles $C_1, \dots, C_m$ of $D$ (not
+necessarily distinct, possibly $m=0$) whose lengths satisfy
+$|C_1| + \cdots + |C_m| = L$.
+\end{lemma}
+
+\begin{proof}
+Strong induction on $L$. If $L = 0$, take $m=0$; the empty sum is $0 = L$.
+
+If $L \ge 1$: either $w_0, w_1, \dots, w_{L-1}$ are all distinct, in which case $W$
+itself is already a simple directed cycle of length $L$ (take $m=1$, $C_1 = W$); or
+some vertex repeats among them, i.e.\ there exist $0 \le a < b \le L-1$ with
+$w_a = w_b$. In the latter case, split $W$ into two shorter closed walks:
+\[
+W_1 = w_a, w_{a+1}, \dots, w_b \quad (\text{length } b-a \ge 1, \text{ closed since } w_a = w_b),
+\]
+\[
+W_2 = w_0, \dots, w_a, w_{b+1}, \dots, w_L \quad (\text{length } L - (b-a), \text{ closed since } w_0 = w_L).
+\]
+Both $W_1$ and $W_2$ are closed directed walks of length strictly less than $L$
+(since $b - a \ge 1$), so the inductive hypothesis applies to each, giving cycles
+decomposing $W_1$ and $W_2$ separately. Their union decomposes $W$, with total length
+$(b-a) + (L-(b-a)) = L$.
+\end{proof}
+
+\begin{theorem}[B]
+If $D$ is strongly connected, every directed cycle of $D$ has even length, and
+$\delta^+(D) \ge 2$, then $D$ has two disjoint 2-kernels.
+\end{theorem}
+
+\begin{proof}
+Fix any vertex $r$. \emph{Claim: every directed path from $r$ to a given vertex $v$
+has the same length parity, regardless of which path is taken.} Suppose $P$ and $Q$
+are two $r \to v$ paths with $|P| \not\equiv |Q| \pmod 2$. Since $D$ is strongly
+connected, fix a directed path $R$ from $v$ back to $r$. Then $P$ followed by $R$,
+and $Q$ followed by $R$, are each closed directed walks based at $r$, of lengths
+$|P|+|R|$ and $|Q|+|R|$ respectively. By Lemma~\ref{lem:decomp}, each decomposes into
+directed cycles of $D$; since every directed cycle of $D$ has even length by
+hypothesis, each decomposition's total length is a sum of even numbers, hence even.
+So $|P|+|R|$ and $|Q|+|R|$ are both even, forcing
+\[
+|P| \equiv -|R| \equiv |Q| \pmod 2,
+\]
+contradicting $|P| \not\equiv |Q|$. So the claim holds: every vertex $v$ has a
+well-defined parity $\mathrm{par}(v) \in \{0,1\}$, the length mod 2 of any directed
+path from $r$ to $v$ (taking $\mathrm{par}(r) = 0$ via the length-0 path).
+
+Let $V_0 = \{v : \mathrm{par}(v) = 0\}$, $V_1 = \{v : \mathrm{par}(v) = 1\}$; these
+partition $V$ since $D$ is strongly connected (every vertex is reachable from $r$).
+\emph{Every arc flips parity}: if $u \to v$ is an arc, take any $r \to u$ path $P$ and
+extend it by this arc to an $r \to v$ path of length $|P|+1$; by the claim, \emph{every}
+$r \to v$ path — including this one — has parity $|P|+1 \bmod 2$, so
+$\mathrm{par}(v) = 1 - \mathrm{par}(u)$.
+
+Two consequences follow. First, no arc can join two vertices of equal parity (that
+would contradict the flip just shown), so $V_0$ and $V_1$ are each independent.
+Second, for $v \in V_i$, every out-neighbour of $v$ lies in $V_{1-i}$. So setting
+$S = V_{1-i}$: every vertex outside $S$ (i.e.\ every vertex of $V_i$) has \emph{all}
+of $N^+(v)$ contained in $S$, and $|N^+(v)| = d^+(v) \ge \delta^+(D) \ge 2$. Hence
+$|N^+(v) \cap S| \ge 2$ for every such $v$, so $S = V_{1-i}$ is a 2-kernel — for each
+$i \in \{0,1\}$. This gives two 2-kernels, $V_0$ and $V_1$, disjoint since they
+partition $V$.
+
+(Both are non-empty: $r \in V_0$ via the length-0 path, and $r$ has out-degree
+$\ge 2$, so at least one out-neighbour of $r$ lies in $V_1$.)
+\end{proof}
+
+\end{document}

@@ -1,0 +1,1033 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\title{2-Kernels in Graphs and Digraphs: A Complete Walkthrough of FINDINGS.md}
+\author{Companion explainer, written for a reader with no prior background\\ in kernel theory or in this project's tooling}
+\date{August 21, 2026}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\section{What this document is, and what it isn't}
+
+FINDINGS.md is a lab notebook: dense, written for someone who already knows the
+vocabulary, and organized around SQL queries and test counts rather than explanation.
+This document is the opposite. Every symbol is defined before it is used, every
+theorem gets a full proof written out in steps, and every experiment is explained in
+plain language before its numbers are shown. Read this first; FINDINGS.md is the
+underlying record and every number quoted here traces back to it.
+
+Two phases of work sit behind this. Before any code existed, three facts about
+\emph{digraphs} (Theorems~\ref{thm:A}, \ref{thm:B} and Example~\ref{ex:C} below) were
+worked out by hand, on paper, from a counting argument and a parity argument. Then a
+Python tool was built (Claude Code did the implementation) to test conjectures at
+scale, and that tool both confirmed those hand-proofs on hundreds of thousands of
+examples and produced four more theorems on its own (chordal graphs, simplicial
+graphs, DAGs, and chordal-underlying digraphs), plus one refuted conjecture
+(degenerate graphs) and one refuted conjecture that looked true up to 7 vertices and
+broke at 8 (bipartite graphs). Section~\ref{sec:literature} also corrects a citation:
+the general problem's hardness traces to a 1994 paper, not the 2015 paper this project
+had been using.
+
+The motivating context is a research direction toward improving list-coloring bounds;
+that connection is being worked out separately and is not part of what's explained
+here — this document only covers what has actually been proved or tested about
+2-kernels themselves.
+
+\section{The basic vocabulary}
+
+\subsection{Graphs, digraphs, edges and arcs}
+
+A \textbf{graph} $G = (V, E)$ is a finite set of \textbf{vertices} $V$ together with a
+set $E$ of \textbf{edges}, each an unordered pair of distinct vertices. Draw a vertex
+as a dot and an edge as a line with no arrowhead: if $\{u,v\} \in E$ then $u$ and $v$
+are \textbf{adjacent}, or \textbf{neighbours}. The number of vertices is the graph's
+\textbf{order}, usually written $n$; the number of edges is its \textbf{size}, usually
+written $m$. The \textbf{neighbourhood} of a vertex $v$, written $N(v)$, is the set of
+vertices adjacent to it; its \textbf{degree} is $|N(v)|$.
+
+A \textbf{digraph} (directed graph) $D = (V, A)$ replaces edges with \textbf{arcs}: an
+arc is an \emph{ordered} pair $(u,v)$, drawn as a line with an arrowhead from $u$ to
+$v$. Now $u \to v$ and $v \to u$ are different things, and a digraph may contain
+neither, either, or both. The \textbf{out-neighbourhood} of $v$, $N^+(v)$, is the set
+of vertices $v$ has an arc \emph{to}; the \textbf{in-neighbourhood} $N^-(v)$ is the set
+$v$ has an arc \emph{from}. The \textbf{out-degree} $d^+(v) = |N^+(v)|$ and
+\textbf{in-degree} $d^-(v) = |N^-(v)|$ are generally different numbers.
+$\delta^+(D)$ denotes the \emph{smallest} out-degree over all vertices of $D$; the
+condition ``$\delta^+ \ge 2$'' means every single vertex has at least 2 out-arcs.
+
+A digraph has an \textbf{underlying graph}: forget the arrows and merge $u\to v$ or
+$v \to u$ (or both) into a single undirected edge $\{u,v\}$. The underlying
+neighbourhood of $v$, still written $N(v)$ when there's no ambiguity, is
+$N^+(v) \cup N^-(v)$ — every vertex $v$ has an arc to or from, in either direction.
+Note the containment $N^+(v) \subseteq N(v)$: this small fact does real work in
+Section~\ref{sec:e8}.
+
+\begin{definition}[Symmetric digraph and oriented graph]
+Two special ways of turning arcs into edges, or edges into arcs, in opposite
+directions:
+\begin{itemize}[nosep]
+\item A digraph is \textbf{symmetric} if whenever $u \to v$ is an arc, so is
+$v \to u$. Every undirected graph $G$ can be turned into a symmetric digraph by
+replacing each edge $\{u,v\}$ with \emph{both} arcs $u\to v$ and $v \to u$; this is how
+this project treats every plain graph, so that one piece of code (built for digraphs)
+handles both cases.
+\item A pair of opposite arcs between the same two vertices, $u\to v$ together with
+$v \to u$, is called a \textbf{digon}.
+\item An \textbf{oriented graph} is a digraph with \emph{no} digons: for any two
+vertices, at most one of $u \to v$, $v \to u$ is present. Equivalently, an oriented
+graph is what you get by starting from an ordinary graph and choosing, for each edge,
+a single direction to point it — the opposite extreme from a symmetric digraph, which
+keeps both directions for every edge.
+\end{itemize}
+\end{definition}
+
+Symmetric digraphs and oriented graphs sit at two ends of a spectrum: a symmetric
+digraph has the most arcs possible for its underlying graph (both directions,
+everywhere), an oriented graph has the fewest (exactly one direction, everywhere).
+Section~\ref{sec:e3} is entirely about how much harder the oriented case is.
+
+\subsection{Independent sets, domination, and the 2-kernel}
+
+\begin{definition}
+A set $S \subseteq V$ is \textbf{independent} if no arc (in either direction) joins two
+vertices of $S$. Equivalently, in the underlying graph, no edge has both endpoints in
+$S$.
+\end{definition}
+
+An ordinary \textbf{kernel} of a digraph is an independent set $S$ such that every
+vertex outside $S$ has \emph{at least one} arc into $S$ (\textbf{1-dominates}). This is
+the classical notion — Richardson's theorem says any digraph with no odd directed
+cycle has one — and it is mentioned here only for contrast.
+
+\begin{definition}[2-kernel — the object of this whole project]
+A set $S \subseteq V$ is a \textbf{2-kernel} of a digraph $D$ if:
+\begin{enumerate}[nosep]
+\item $S$ is independent, and
+\item every $v \notin S$ satisfies $|N^+(v) \cap S| \ge 2$ — it has arcs to at least
+two \emph{different} vertices of $S$ (\textbf{2-domination}).
+\end{enumerate}
+For an ordinary graph, treated as a symmetric digraph, this is exactly the
+\emph{(2-d)-kernel} of A.~Wloch, \emph{On 2-dominating kernels in graphs}, Australas.
+J. Combin.\ \textbf{53} (2012) 273--284 — the one piece of this problem that was
+already named in the literature before this project started.
+\end{definition}
+
+A 2-kernel is automatically a \textbf{maximal} independent set of the underlying
+graph: nothing outside $S$ can be safely added to it, because everything outside $S$
+is already adjacent to $S$ (it has at least 2 arcs into $S$, hence at least one edge
+to $S$ in the underlying graph). This single observation is what makes a
+brute-force reference solver possible at all (Section~\ref{sec:tool}).
+
+\begin{example}[The smallest illustrative case: cycles]
+\label{ex:cycle}
+Let $C_n$ be the cycle on vertices $0, 1, \dots, n-1$, with edges between each
+consecutive pair (and between $n-1$ and $0$) — every vertex has degree exactly 2.
+Being 2-dominated by $S$ therefore means \emph{both} of a vertex's neighbours are in
+$S$ (there's nothing else to draw a second arc from). So if $u \notin S$, both its
+neighbours are in $S$ --- in particular, neither of $u$'s neighbours can also be
+outside $S$, which means the vertices outside $S$ are themselves pairwise
+non-adjacent. So \emph{both} $S$ and its complement are independent: together they
+form a proper 2-colouring of the cycle. A cycle has a proper 2-colouring exactly when
+$n$ is even (an odd cycle is the standard example of a graph that isn't bipartite),
+and when it does, the colouring is unique up to swapping the two colours. So: $C_n$
+has \textbf{no} 2-kernel when $n$ is odd, and \textbf{exactly two} when $n$ is even ---
+the two alternating classes of size $n/2$, and no others. This recurs constantly
+below: the shortest odd cycle, $C_5$, turns out to be the single most common
+obstruction found anywhere in this project.
+\end{example}
+
+\subsection{Cliques, chordal graphs, and simplicial vertices}
+
+\begin{definition}
+A \textbf{clique} is a set of vertices that are pairwise adjacent — every two of them
+share an edge. An \textbf{induced subgraph} on a vertex subset $W$ keeps exactly the
+vertices of $W$ and exactly the edges of the original graph that join two vertices of
+$W$ — nothing added, nothing removed beyond what $W$ excludes.
+
+A vertex $x$ is \textbf{simplicial} if its neighbourhood $N(x)$ is a clique — every two
+neighbours of $x$ are themselves adjacent.
+
+A graph is \textbf{chordal} if it has no induced cycle of length 4 or more (every
+cycle of length $\ge 4$ has a ``chord'', an edge joining two non-consecutive vertices
+of the cycle). The property that makes chordal graphs tractable throughout this
+project is: \emph{every chordal graph with at least one vertex has a simplicial
+vertex, and every induced subgraph of a chordal graph is itself chordal.} Both facts
+are classical and are used, not re-derived, below.
+
+A graph is a \textbf{simplicial graph} if every vertex lies in the closed neighbourhood
+$N[x] = N(x) \cup \{x\}$ of some simplicial vertex $x$. This is a different, weaker
+condition than chordal — it says every vertex is either simplicial itself or a
+neighbour of one, without requiring the whole graph to be chordless-cycle-free.
+\end{definition}
+
+\subsection{Other graph classes that appear in the results}
+
+These all appear as columns in the census (Section~\ref{sec:db}) and rows in the E1
+and E2 tables (Section~\ref{sec:e1}). One sentence each:
+
+\begin{center}
+\begin{tabular}{@{}p{3.1cm}p{10.5cm}@{}}
+\toprule
+\textbf{Class} & \textbf{Plain-language definition} \\
+\midrule
+bipartite & vertices split into two groups with every edge crossing between them, never within a group \\
+tree / forest & a tree is connected with no cycles at all; a forest is a disjoint union of trees \\
+unicyclic & connected, with exactly one cycle \\
+cactus & connected, every edge lies on at most one cycle \\
+split & vertices split into a clique and an independent set (with edges allowed between them) \\
+interval & vertices correspond to intervals on a line, edges exactly where two intervals overlap \\
+cograph & no induced path on 4 vertices \\
+claw-free & no induced ``claw'' (one central vertex joined to three mutually non-adjacent others) \\
+planar & can be drawn in the plane with no edges crossing \\
+regular & every vertex has the same degree \\
+triangle-free & no three mutually adjacent vertices \\
+block graph & every maximal 2-connected piece is a clique \\
+DAG & \textbf{d}irected, \textbf{a}cyclic: a digraph with no directed cycle at all \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{DAGs, strong connectivity, and cycle parity}
+
+\begin{definition}
+A \textbf{directed cycle} is a sequence of arcs $v_1 \to v_2 \to \cdots \to v_k \to v_1$
+using $k$ distinct vertices; its \textbf{length} is $k$. A digraph is \textbf{acyclic}
+(a \textbf{DAG}) if it contains no directed cycle at all. Every DAG has a
+\textbf{topological order}: a way of lining up the vertices left to right so every arc
+points rightward. A \textbf{sink} is a vertex with no out-arcs — it sits at the far
+right of every topological order.
+
+A digraph is \textbf{strongly connected} (or just \textbf{strong}) if for every pair of
+vertices $u, v$ there is a directed path from $u$ to $v$ \emph{and} one from $v$ to
+$u$ — you can always get back to where you started. This is much stronger than being
+\textbf{weakly connected}, which only asks that the underlying (undirected) graph be
+connected.
+
+``\textbf{All cycles even}'' describes a digraph in which every directed cycle has an
+even number of arcs.
+\end{definition}
+
+\subsection{Degeneracy}
+
+\begin{definition}
+A graph is \textbf{$k$-degenerate} if every one of its subgraphs (not just induced
+ones) has some vertex of degree at most $k$. Equivalently, you can remove the
+vertices one at a time, always removing one of degree $\le k$ at the moment of its
+removal, until nothing is left. The \textbf{degeneracy} of a graph is the smallest $k$
+for which this works; it is computed by repeatedly peeling off a minimum-degree
+vertex (the Matula--Beck algorithm). Degeneracy 0 means no edges at all; degeneracy 1
+means the graph is a forest.
+\end{definition}
+
+\subsection{Isomorphism, canonical forms, and the graph6/digraph6 encoding}
+
+Two graphs are \textbf{isomorphic} if one can be obtained from the other by
+relabelling its vertices — they are ``the same shape'' even if drawn or listed
+differently. An \textbf{isomorphism class} is the set of all labellings of one shape.
+
+Telling two graphs apart up to isomorphism is itself a hard computational problem in
+general. The tool \texttt{pynauty} (a Python wrapper around the \texttt{nauty}
+library) computes a \textbf{canonical form} for any graph or digraph: a specific
+labelling, chosen by a fixed rule, such that two graphs are isomorphic exactly when
+their canonical forms are identical strings. This string is called a
+\textbf{certificate}. Certificates are what let the census store one row per
+\emph{shape}, not one row per \emph{labelling} — without them, the same graph drawn
+with vertices numbered two different ways would be counted twice.
+
+\textbf{graph6} and \textbf{digraph6} are short, fixed text encodings of a labelled
+graph or digraph (a handful of ASCII characters per graph, growing slowly with $n$).
+Combined with a canonical labelling, a graph6/digraph6 string becomes a compact,
+human-typeable, unique name for an isomorphism class — this is the primary key used
+in the database below.
+
+\section{The tool: what was actually built}
+\label{sec:tool}
+
+\subsection{The verifier and the reference solver}
+
+Every function in the codebase that produces a candidate set passes it through a
+single verifier, \texttt{is\_2kernel}, before returning it: check independence, then
+check that every outside vertex has at least 2 out-arcs into the set. This exists so
+that no faster method can silently return a wrong answer — anything it hands back has
+already been checked against the definition directly.
+
+Because a 2-kernel is always a maximal independent set of the underlying graph
+(Section~2.2), a \textbf{complete, obviously-correct} solver is: enumerate every
+maximal independent set (using the Bron--Kerbosch algorithm, a standard method for
+this), and keep the ones that pass \texttt{is\_2kernel}. This is exponential in the
+worst case, but it is the ground truth every faster method is checked against, and it
+is cheap enough for everything in this project's exhaustive ranges.
+
+\subsection{The forcing closure: five rules that sometimes decide the whole graph
+for free}
+\label{sec:forcing}
+
+Before resorting to full search, a much cheaper propagation is tried first. It works
+on a partial labelling of the vertices as \texttt{IN} (definitely in every 2-kernel),
+\texttt{OUT} (definitely in none), or \texttt{UNKNOWN} (not yet determined), applying
+the following rules repeatedly until nothing changes:
+
+\begin{description}[nosep,leftmargin=2.3cm,style=nextline]
+\item[R0 (forced-in)] If $N^+(v)$ contains no independent pair (any two of $v$'s
+out-neighbours are adjacent, or $v$ has fewer than 2 out-neighbours), then $v$ must be
+\texttt{IN}. \emph{Why:} if $v$ were outside a 2-kernel $S$, then $S$ would need two
+non-adjacent members of $N^+(v)$ — impossible if no such pair exists.
+\item[R1 (spread-out)] If $v$ is \texttt{IN}, every underlying neighbour of $v$ becomes
+\texttt{OUT}. \emph{Why:} independence.
+\item[R2 (conflict-check)] If $v$ is \texttt{OUT}, let $U(v)$ be the out-neighbours of
+$v$ not yet marked \texttt{OUT}. If $U(v)$ contains no independent pair, declare
+\texttt{CONFLICT} — no 2-kernel can exist. \emph{Why:} $v$ can never find two
+non-adjacent vertices to be 2-dominated by.
+\item[R3 (forced-in by scarcity)] If $v$ is \texttt{OUT} and $|U(v)| \le 2$, every
+member of $U(v)$ becomes \texttt{IN} (and if $|U(v)| < 2$, that is itself a
+\texttt{CONFLICT}). \emph{Why:} $v$ needs 2 of them, and there are at most 2 left to
+choose from.
+\item[R4 (forced-in by the same test, on the fly)] If $v$ is \texttt{UNKNOWN} and
+applying R2's test to $v$'s current non-\texttt{OUT} out-neighbours would give a
+conflict, then $v$ itself must be \texttt{IN}. \emph{Why:} the same reasoning as R0,
+recomputed as more vertices get decided.
+\end{description}
+
+Running these to a \textbf{fixed point} (repeat until no rule changes anything) gives
+one of three verdicts: \texttt{CONFLICT} (proved no 2-kernel exists), \texttt{SOLVED}
+(every vertex decided, and the \texttt{IN} set is verified as an actual 2-kernel), or
+\texttt{UNDECIDED} (some vertices are left unresolved — this cheap method simply
+didn't finish the job, and the full solver is needed).
+
+\begin{example}[Forcing gets stuck]
+\label{ex:stuck}
+On the graph \texttt{G?KsZ\_} (Section~\ref{sec:e2}, the counterexample to the
+bipartite conjecture): two pendant (degree-1) vertices, $0$ and $1$, fire R0
+immediately (a degree-1 vertex's single neighbour trivially has no independent pair
+among itself). That forces their neighbours $6$ and $7$ to \texttt{OUT} by R1. Now
+$N(6)\setminus\text{OUT} = \{0,4,5\}$ and $N(7)\setminus\text{OUT} = \{1,2,3\}$; each
+set has size 3 and contains a non-adjacent pair, so R2 doesn't fire (no conflict yet)
+and R3 doesn't fire either (size is 3, not $\le 2$). Nothing else changes. The closure
+stops with several vertices still \texttt{UNKNOWN} — an honest \texttt{UNDECIDED}, even
+though (checked by the full solver) this graph in fact has no 2-kernel at all.
+\end{example}
+
+Every disagreement of this kind found anywhere in the census (597 of them, across
+almost 317{,}000 rows checked) is of exactly this shape: \texttt{UNDECIDED} when the
+true answer is ``no 2-kernel''. Not one case was found where the closure's
+\texttt{CONFLICT} or \texttt{SOLVED} verdict was wrong — which makes sense, since both
+of those verdicts come with their own certificate (a specific violated inequality, or
+a verified set) baked into the rule that produced them.
+
+\subsection{Recognizers and generators}
+
+A separate module recognizes each of the classes in Section~2.4 (bipartite via
+2-colouring, chordal via maximum cardinality search, and so on), and a generator
+module produces the graphs and digraphs to test. Two kinds of generation are used:
+
+\begin{itemize}[nosep]
+\item \textbf{Exhaustive}: every graph up to a given size, with no gaps. Small cases
+($n \le 7$) come from networkx's built-in atlas. Beyond that, \textbf{canonical
+augmentation} is used: take every known graph on $n-1$ vertices, add one new vertex
+joined to every possible subset of the existing ones, and keep only one representative
+of each resulting isomorphism class (using pynauty's certificate to detect
+duplicates). This is exhaustive because every graph on $n$ vertices, with any one
+vertex deleted, becomes \emph{some} graph on $n-1$ vertices — so extending every
+$(n-1)$-vertex graph in every possible way is guaranteed not to miss anything on $n$
+vertices. This method was checked against known reference counts before being
+trusted: it reproduces 12{,}346 graphs on 8 vertices, 274{,}668 on 9, and the standard
+sequence of digraph counts (OEIS A000273) up to 1{,}540{,}944 digraphs on 6 vertices,
+exactly.
+\item \textbf{Random sampling}, with an explicit seed recorded for every run, used
+only where exhaustive generation is too large (cubic graphs beyond small $n$, DAGs on
+8 vertices).
+\end{itemize}
+
+\section{The database}
+\label{sec:db}
+
+\subsection{Why a plain file, not a server}
+
+The results live in a single \textbf{sqlite} file. sqlite is not a server — there is no
+process to start, no port, nothing a campus firewall could block — the ``database'' is
+one file on disk, read and written directly by the Python standard library. This
+matters in practice on a network that blocks locally-run servers (Postgres, MySQL):
+sqlite simply has none to block.
+
+\subsection{Schema}
+
+Two tables. The first, \texttt{graphs}, has one row per distinct isomorphism class,
+keyed by its canonical graph6/digraph6 string, with every computed property as a
+column:
+
+\begin{center}
+\begin{tabular}{@{}p{3.6cm}p{10cm}@{}}
+\toprule
+\textbf{Column} & \textbf{What it holds} \\
+\midrule
+\texttt{key} (primary key) & the canonical graph6/digraph6 string \\
+\texttt{n}, \texttt{m} & order and size \\
+\texttt{degeneracy} & as defined in Section~2.6 (added and backfilled during E7) \\
+\texttt{bipartite}, \texttt{chordal}, \texttt{split}, \texttt{interval}, \texttt{cograph}, \texttt{claw\_free}, \texttt{planar}, \texttt{regular}, \texttt{triangle\_free}, \texttt{block\_graph}, \texttt{simplicial\_graph}, \texttt{tree}, \texttt{forest}, \texttt{unicyclic}, \texttt{cactus}, \texttt{connected}, \texttt{strong}, \texttt{dag}, \texttt{symmetric}, \texttt{underlying\_bipartite}, \texttt{all\_cycles\_even} & one 0/1 flag column per class in Section~2.4, queried directly by name \\
+\texttt{has\_2kernel} & 0/1, from the reference solver \\
+\texttt{count\_2kernels} & how many distinct 2-kernels it has \\
+\texttt{min\_size}, \texttt{max\_size} & smallest and largest 2-kernel, where any exist \\
+\texttt{forcing\_verdict} & \texttt{CONFLICT} / \texttt{SOLVED} / \texttt{UNDECIDED} \\
+\texttt{forcing\_agrees} & 0/1, whether that verdict matches \texttt{has\_2kernel} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The second table, \texttt{membership}, is just pairs \texttt{(key, family)} — which
+generation run (\texttt{atlas7}, \texttt{oriented6}, \texttt{cubic}, and so on,
+Section~\ref{sec:e3}--\ref{sec:e7}) each graph came from. A graph can belong to more
+than one family without its expensive properties (the 2-kernel count, in particular)
+ever being computed twice; every query in this document is a \texttt{JOIN} between the
+two tables. Keying by canonical string also makes every run \textbf{idempotent} —
+re-running a family after a bug fix updates the same row rather than creating a
+duplicate.
+
+\subsection{Reproducing everything}
+
+\begin{verbatim}
+python3.14 -m venv env && ./env/bin/pip install networkx pytest pynauty
+./env/bin/python -m pytest -q
+./env/bin/python -m twokernel.census run --family atlas7 --family graphs8 \
+    --family graphs9 --family named --family oriented6 --family digraphs5 \
+    --family digraphs6 --family dags7 --family dags8sample --family cubic \
+    --family cubic_trianglefree --family cubic_girth5
+./env/bin/python -m twokernel.census backfill degeneracy
+\end{verbatim}
+Every canned query in the sections below is printed in full, exactly as run, right
+before its result.
+
+\section{Testing philosophy}
+
+Every claim below is one of exactly three things, and it is always labelled which:
+\textbf{proved} (a full proof is given), \textbf{verified exhaustively} over a stated
+finite range (every single instance in that range was checked by the reference
+solver, not sampled), or an explicit \textbf{conjecture} with the checked range
+stated. Known facts from the literature (Wloch's theorems, hand properties of the
+Petersen graph) were encoded as regression tests; the rule throughout was that a
+failing test is a bug to fix, never a value to edit.
+
+\section{Result 1: how common are 2-kernels? (FINDINGS.md \S2, ``E1'')}
+\label{sec:e1}
+
+Across \textbf{all 288{,}267 graphs on at most 9 vertices} (an exhaustive count, not a
+sample), \textbf{125{,}439 (43.5\%)} have a 2-kernel. The rate barely moves with $n$
+(42.9\% at $n\le 7$ versus 43.5\% at $n \le 9$) but swings enormously by class:
+
+\begin{center}
+\begin{tabular}{@{}lrrl@{}}
+\toprule
+class & members & with a 2-kernel & smallest members without one \\
+\midrule
+bipartite & 1{,}572 & 1{,}094 (70\%) & $K_2$ \\
+chordal & 17{,}175 & 3{,}632 (21\%) & $K_2$ \\
+split & 3{,}038 & 1{,}292 (43\%) & $K_2$ \\
+interval & 12{,}657 & 2{,}511 (20\%) & $K_2$ \\
+block graph & 1{,}575 & 211 (13\%) & $K_2$ \\
+tree & 95 & 42 (44\%) & $K_2$, $P_4$ \\
+planar & 87{,}835 & 30{,}343 (35\%) & $K_2$ \\
+DAG & 10 & 10 (100\%) & none --- every DAG on $\le 9$ vertices in this range has one \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+$K_2$ (two vertices, one edge) is the universal smallest obstruction: it belongs to
+every class that allows an edge at all, and a 2-kernel needs at least 2 members, which
+$K_2$'s independence number of 1 can't supply. The only class in this table with
+\emph{no} obstruction at all is DAGs — every one tested has a 2-kernel, which
+Section~\ref{sec:e6} explains and proves.
+
+\section{Result 2: is the cheap method complete? (FINDINGS.md \S3, ``E2'')}
+\label{sec:e2}
+
+This is the central question: on which classes does the forcing closure of
+Section~\ref{sec:forcing} decide every instance, with zero \texttt{UNDECIDED}
+verdicts? Checked over all 288{,}267 graphs on at most 9 vertices, the classes that are
+\textbf{always fully decided} are exactly: chordal, simplicial graphs, interval,
+split, block graphs, forests, trees, and DAGs. Everything else — bipartite,
+triangle-free, planar, cographs, cacti, and more — has at least one graph where
+forcing stalls. The smallest failing example, in almost every class, is the same
+graph: the 5-cycle $C_5$.
+
+\subsection{Theorem: chordal graphs}
+
+\begin{theorem}[E2.1]
+\label{thm:e21}
+On a chordal graph, the forcing closure always reaches \texttt{SOLVED} or
+\texttt{CONFLICT} — never \texttt{UNDECIDED}. Consequently, a chordal graph has
+\emph{at most one} 2-kernel, and deciding 2-kernel existence on chordal graphs is
+solvable in polynomial time (the general problem, Theorem~\ref{thm:telle} below, is
+NP-complete).
+\end{theorem}
+
+\begin{proof}
+Run the closure to a fixed point, and suppose for contradiction some vertex is still
+\texttt{UNKNOWN}. No \texttt{UNKNOWN} vertex can have an \texttt{IN} neighbour — R1
+would already have marked it \texttt{OUT}. So for any \texttt{UNKNOWN} vertex $v$, the
+set of its neighbours not yet marked \texttt{OUT} is exactly its neighbours that are
+still \texttt{UNKNOWN} (since \texttt{IN} is impossible for a neighbour and everything
+else is \texttt{OUT} or \texttt{UNKNOWN}). Let $W$ be the set of all \texttt{UNKNOWN}
+vertices; it is non-empty by assumption. The subgraph induced on $W$ is an induced
+subgraph of a chordal graph, hence itself chordal (Section~2.3), and every non-empty
+chordal graph has a simplicial vertex — say $x \in W$ is one. Then $N(x) \cap W$ is a
+clique (that is what simplicial means, restricted to $W$), so it contains no
+independent pair, so R4's test fires on $x$: $x$ must be \texttt{IN}. But $x$ was
+assumed \texttt{UNKNOWN} at the fixed point, where no rule can fire — contradiction.
+So $W$ is empty: the closure decides everything.
+
+With nothing \texttt{UNKNOWN}, the \texttt{IN} set at the end is the \emph{only}
+candidate 2-kernel the closure could possibly produce, so there is at most one.
+\end{proof}
+
+\subsection{Theorem: simplicial graphs}
+
+\begin{theorem}[E2.2]
+On a simplicial graph (Section~2.3), rules R0 and R1 alone decide the whole graph, and
+again there is at most one 2-kernel.
+\end{theorem}
+
+\begin{proof}
+Every simplicial vertex has a clique neighbourhood, so R0 marks all of them
+\texttt{IN} immediately. Every other vertex, by the definition of a simplicial graph,
+lies in $N[x]$ for some simplicial $x$ — i.e., it is adjacent to an \texttt{IN} vertex
+— so R1 marks it \texttt{OUT}. Nothing is left \texttt{UNKNOWN}.
+\end{proof}
+
+Theorem~\ref{thm:e21} accounts for chordal, split, interval, block graphs, forests,
+and trees (all chordal); Theorem 3.2 covers simplicial graphs, which are \emph{not}
+all chordal (attach one extra pendant vertex to every vertex of a 4-cycle: the result
+is simplicial but not chordal, since the 4-cycle itself has no chord). These are
+different theorems about different, overlapping classes. Both predict more than
+completeness: they predict \emph{uniqueness}, and the census confirms it — the
+maximum number of 2-kernels found on either class is exactly 1, while cographs and
+bipartite graphs reach as many as 4.
+
+\subsection{Where this sits in the literature}
+\label{sec:literature}
+
+A 2-kernel fits a general framework of Telle (1994): a $(\sigma,\rho)$-\emph{dominating
+set} is an independent-flavoured set $S$ where members of $S$ have a number of
+neighbours in $S$ from the set $\sigma$, and non-members have a number of neighbours
+in $S$ from the set $\rho$. A 2-kernel is exactly $\sigma = \{0\}$ (independence),
+$\rho = \{2,3,4,\dots\}$ (2-domination).
+
+\begin{theorem}[Telle, 1994]
+\label{thm:telle}
+Deciding whether a general graph has a $(\{0\}, \{q, q{+}1, q{+}2, \dots\})$-dominating
+set is NP-complete, for every $q \ge 2$. Taking $q = 2$ shows 2-KERNEL is NP-complete
+on general graphs.
+\end{theorem}
+
+This is a citation, not a new proof — but it corrects one: this project had been
+citing Bednarz, Hern\'andez-Cruz and Wloch, \emph{Ars Combin.}\ \textbf{121} (2015)
+341--351 for this fact, which turns out to have been proved 21 years earlier, in J.~A.
+Telle, \emph{Complexity of domination-type problems in graphs}, Nordic J. Comput.\
+\textbf{1} (1994) 157--171, and the two lines of work do not appear to reference each
+other.
+
+A companion pair of papers by Golovach and Kratochv\'il proves a full dichotomy
+(polynomial vs.\ NP-complete) of this same style of problem, restricted to chordal
+graphs and separately to $k$-degenerate graphs. Their criterion has the same shape as
+Theorem~\ref{thm:e21}: polynomial exactly when the graph class in question can never
+have more than one such set. Whether their chordal dichotomy already covers the
+2-kernel's specific $\rho = \{2,3,\dots\}$ (an infinite, ``cofinite'' set, rather than
+the finite $\rho$ their published abstract explicitly covers) could not be confirmed
+--- both papers are paywalled and only their abstracts could be checked. Theorem~\ref{thm:e21}
+is therefore presented here as independently found and proved, not claimed as a
+corollary of a paper whose exact scope could not be verified.
+
+\subsection{The bipartite conjecture, and why it is false}
+
+At $n \le 7$, every one of 150 bipartite graphs was fully decided by forcing — as
+clean a pattern as the chordal one. Extending the search to $n = 8$ broke it. The
+counterexample, named \texttt{G?KsZ\_} in its canonical encoding, has 8 vertices, parts
+$\{0,4,5,7\}$ and $\{1,2,3,6\}$, and two pendant vertices, $0$ and $1$, whose unique
+neighbours ($6$ and $7$ respectively) lie in \emph{different} bipartition classes. It
+has no 2-kernel, and Example~\ref{ex:stuck} above traced exactly why forcing cannot
+determine this on its own.
+
+This is not a contradiction of Wloch's own even-distance theorem for bipartite graphs
+(which needs every pair of pendant vertices to sit at even distance from each other) —
+it is precisely the situation that theorem's hypothesis excludes, and it is exactly
+the situation forcing cannot reconstruct locally. The lesson: two conjectures that
+were indistinguishable on evidence up to 7 vertices turned out to be one theorem and
+one false statement, and only extending the exhaustive range — not more theorizing —
+told them apart.
+
+\section{Result 3: digraphs (FINDINGS.md \S4, ``E3'')}
+\label{sec:e3}
+
+\subsection{The easy case: bipartite digraphs}
+
+\begin{theorem}[A]
+\label{thm:A}
+If the underlying graph of a digraph $D$ is bipartite with parts $P$ and $Q$, and
+every vertex of $Q$ has $d^+ \ge 2$, then $P$ is a 2-kernel.
+\end{theorem}
+
+\begin{proof}
+Bipartiteness means every arc runs between $P$ and $Q$, never within a part, so $P$ is
+automatically independent. Every $v \in Q$ (everything outside $P$) has all of its
+out-arcs landing somewhere, and since no arc can go to another vertex of $Q$, all of
+$v$'s out-arcs land in $P$ — and there are at least 2 of them.
+\end{proof}
+
+This is nearly free (no digon restriction is even needed), and it sets up the harder,
+non-bipartite generalization.
+
+\subsection{Theorem B: strongly connected digraphs where every cycle is even}
+
+\begin{theorem}[B]
+\label{thm:B}
+If $D$ is strongly connected, every directed cycle of $D$ has even length, and
+$\delta^+(D) \ge 2$, then $D$ has two disjoint 2-kernels.
+\end{theorem}
+
+\begin{proof}
+Fix any vertex $r$. \emph{Claim: every directed path from $r$ to a given vertex $v$
+has the same length parity (odd or even), regardless of which path is taken.} Suppose
+$P$ and $Q$ are two $r \to v$ paths of different parity. Because $D$ is strongly
+connected, there is some directed path $R$ from $v$ back to $r$. Both $P$ followed by
+$R$, and $Q$ followed by $R$, are closed directed walks (they start and end at $r$).
+Any closed directed walk in a digraph can be broken down into directed cycles whose
+lengths add up to the walk's total length — this is a standard fact, obtained by
+repeatedly cutting out a cycle wherever the walk revisits a vertex. Since every
+directed cycle of $D$ has even length by hypothesis, both $|P| + |R|$ and $|Q| + |R|$
+must be even (sums of even numbers). That forces $|P|$ and $|Q|$ to have the \emph{same}
+parity (both equal to $-|R|$ modulo 2) — contradicting the assumption they differed.
+So the claim holds: every vertex $v$ has a well-defined parity, $\mathrm{par}(v) \in
+\{0,1\}$, equal to the length (mod 2) of any directed path from $r$ to it.
+
+Let $V_0 = \{v : \mathrm{par}(v) = 0\}$ and $V_1 = \{v : \mathrm{par}(v) = 1\}$; these
+partition $V$ since $D$ is strongly connected (every vertex is reachable from $r$).
+\emph{Every arc flips parity}: if $u \to v$ is an arc, take any $r \to u$ path $P$ and
+extend it by this arc to get an $r \to v$ path of length $|P| + 1$; by the claim,
+\emph{every} $r \to v$ path (including this one) has the parity of $|P|+1$, so
+$\mathrm{par}(v) = 1 - \mathrm{par}(u)$.
+
+Two consequences. First, no arc can join two vertices of the same parity class (that
+would contradict the flip just shown), so both $V_0$ and $V_1$ are independent.
+Second, for $v \in V_i$, every out-neighbour of $v$ lies in $V_{1-i}$ (by the flip
+rule) — so setting $S = V_{1-i}$, every vertex \emph{outside} $S$ (that is, every
+vertex of $V_i$) has \emph{all} of its out-neighbours inside $S$, and there are at
+least $\delta^+(D) \ge 2$ of them. So $V_{1-i}$ is a 2-kernel, for each $i \in
+\{0,1\}$ — giving two 2-kernels, $V_0$ and $V_1$, which are disjoint since they
+partition $V$.
+\end{proof}
+
+\subsection{Theorem C: strong connectivity cannot be dropped}
+\label{sec:C}
+
+\begin{example}[Theorem C's counterexample]
+\label{ex:C}
+Take vertices $\{1,2,3,4,a,b\}$. Put a symmetric 4-cycle on $1,2,3,4$ (arcs both ways
+between each consecutive pair: $1\leftrightarrow2$, $2\leftrightarrow3$,
+$3\leftrightarrow4$, $4\leftrightarrow1$), then add arcs $a\to1$, $a\to2$, $a\to b$,
+$b\to2$, $b\to3$. Every directed cycle here is even: the digons ($1\leftrightarrow2$
+etc.) are 2-cycles, and the outer 4-cycle $1\to2\to3\to4\to1$ has length 4; nothing
+points \emph{into} $a$ or $b$, so neither can be part of any cycle. Every vertex has
+out-degree at least 2 (check: each of $1,2,3,4$ has out-degree exactly 2 to its two
+cycle-neighbours; $a$ has out-degree 3; $b$ has out-degree 2). But this digraph is
+\textbf{not} strongly connected — nothing reaches $a$ or $b$ — and it has \textbf{no
+2-kernel at all}.
+
+To see why: within $\{1,2,3,4\}$ alone (an even cycle, by Example~\ref{ex:cycle}) the
+only two candidate 2-kernels are $\{1,3\}$ and $\{2,4\}$.
+Try $S \supseteq \{1,3\}$: vertex $a$ is then forced \texttt{OUT} (it has an arc to
+$1 \in S$, and independence forbids $a$ joining $S$ alongside a vertex it points at),
+so $a$ needs 2 out-neighbours in $S$ among $\{1,2,b\}$; it already has $1$, so it needs
+$2$ or $b$ — but $2 \notin S$ in this branch, so $b$ must join $S$. But $b \to 3$ is an
+arc and $3 \in S$, so $b$ joining $S$ violates independence. Contradiction. The
+symmetric case, $S \supseteq \{2,4\}$, fails the same way ($a$ again forced
+\texttt{OUT}, needing $b \in S$, but $b \to 2$ and $2 \in S$ blocks it). Both
+possibilities fail, so no 2-kernel exists.
+\end{example}
+
+Checked against the exhaustive digraph census: among all 126 digraphs on at most 6
+vertices with $\delta^+ \ge 2$ that are ``all cycles even'' but \textbf{not} strongly
+connected, exactly 84 (66.7\%) still have a 2-kernel — so Example~\ref{ex:C} is a
+typical failure mode when strong connectivity is dropped, not a contrived exception.
+Restricting to the 81 digraphs in the same census that \emph{are} strongly connected
+and all-cycles-even, \textbf{all 81} have a 2-kernel, exactly as Theorem~\ref{thm:B}
+guarantees.
+
+\subsection{Theorem: the tight bound for oriented graphs}
+
+Digons made Theorems~\ref{thm:A} and \ref{thm:B} easy — a kernel vertex could always
+find its 2 required out-arcs, since nothing stopped it from pointing back at whoever
+pointed at it. Forbidding digons (oriented graphs, Section~2.2) removes that freedom
+entirely.
+
+\begin{theorem}
+No oriented graph on fewer than 8 vertices with $\delta^+ \ge 2$ has a 2-kernel, and
+$n = 8$ is attained.
+\end{theorem}
+
+\begin{proof}
+Let $D$ be an oriented graph with $\delta^+ \ge 2$, and suppose it has a 2-kernel $J$
+with $|J| = j$; let $B = V \setminus J$, $|B| = t = n - j > 0$. Every vertex of $B$
+sends at least 2 arcs into $J$ (2-domination), so summing over $J$: writing $d_x$ for
+the number of $B$-vertices with an arc into $x \in J$,
+\[
+\sum_{x \in J} d_x \;\ge\; 2t.
+\]
+Now fix $x \in J$. Since $J$ is independent, every out-arc of $x$ goes to $B$. Since
+$D$ is oriented (no digons), $x$ cannot have an out-arc to any vertex of $B$ that
+\emph{already} points at $x$ — so $x$'s out-arcs are confined to the $t - d_x$
+vertices of $B$ that do \emph{not} point at $x$. As $d^+(x) \ge 2$, this requires
+$t - d_x \ge 2$, i.e.\ $d_x \le t - 2$ for every $x \in J$. Combining,
+\[
+2t \;\le\; \sum_{x\in J} d_x \;\le\; j (t-2).
+\]
+This forces $t \ge 3$ (else $t - 2 \le 0$ makes the bound impossible for a positive
+$j$) and $j \ge \frac{2t}{t-2}$. Minimising $n = j + t$ over integers $t \ge 3$:
+
+\begin{center}
+\begin{tabular}{@{}rrrl@{}}
+\toprule
+$t$ & smallest $j$ satisfying $j \ge 2t/(t{-}2)$ & $n = j+t$ & \\
+\midrule
+3 & 6 & 9 & \\
+\textbf{4} & \textbf{4} & \textbf{8} & minimum \\
+5 & 4 & 9 & \\
+6 & 3 & 9 & \\
+7 & 3 & 10 & (and rising past this) \\
+\bottomrule
+\end{tabular}
+\end{center}
+So $n \ge 8$ always, with equality only possible at $t = j = 4$.
+\end{proof}
+
+\begin{example}[The bound is attained]
+With $J = \{0,1,2,3\}$ and $B = \{4,5,6,7\}$, and arcs
+\[
+(0,5)(0,6)(1,6)(1,7)(2,4)(2,7)(3,4)(3,5) \quad\text{and}\quad
+(4,0)(4,1)(5,1)(5,2)(6,2)(6,3)(7,0)(7,3),
+\]
+every vertex has out-degree exactly 2, no digon is present, and the 2-kernels are
+exactly $\{0,1,2,3\}$ and $\{4,5,6,7\}$.
+\end{example}
+
+\subsection{Exactly how many extremal examples are there? Two, not one}
+
+The proof above pins $j = t = 4$ and forces \emph{equality} throughout: every kernel
+vertex is pointed at by exactly $d_x = 2$ outside vertices, and (dually) every outside
+vertex sends exactly 2 arcs into the kernel. That leaves one free choice per
+outside-vertex — which 2 of the 4 kernel vertices it targets — subject to every kernel
+vertex ending up targeted exactly twice overall; everything else is then forced (each
+kernel vertex's own 2 out-arcs go to precisely the 2 outside vertices that do
+\emph{not} target it). An exhaustive search over all $6^4 = 1296$ labelled choices
+keeps exactly 90 that balance correctly, and canonical labelling splits those 90 into
+exactly \textbf{2} isomorphism classes (of sizes 72 and 18). In both, the underlying
+graph turns out to be the complete bipartite graph $K_{4,4}$ on $J \cup B$ — every
+kernel vertex is adjacent (in the underlying sense) to \emph{all four} outside
+vertices, not merely the two it directly exchanges arcs with — so both classes are
+balanced orientations of $K_{4,4}$, differing only in \emph{which} orientation. They
+are told apart by the pattern of target-pairs: the 72-example class (matching the
+worked example above) uses the four ``consecutive'' pairs $\{0,1\},\{1,2\},\{2,3\},
+\{3,0\}$ around a cyclic order of $J$; the 18-example class instead has the four
+outside vertices split into two pairs that repeat a target-pair, e.g.\
+$\{0,1\},\{0,1\},\{2,3\},\{2,3\}$.
+
+\section{Result 4: cubic (3-regular) graphs and girth (FINDINGS.md \S5, ``E4'')}
+
+A graph is \textbf{cubic} if every vertex has degree exactly 3. \textbf{Girth} is the
+length of the shortest cycle in the graph; ``girth $\ge 5$'' rules out both triangles
+and 4-cycles.
+
+The question tested: does forbidding short cycles make a 2-kernel more likely to
+exist, among cubic graphs? Over seeded random samples at $n = 10, 12, \dots, 20$:
+
+\begin{center}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+family & isomorphism classes & with a 2-kernel & fraction \\
+\midrule
+cubic, unrestricted & 293 & 160 & 0.546 \\
+cubic, triangle-free & 240 & 131 & 0.546 \\
+cubic, girth $\ge 5$ & 158 & 79 & 0.500 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Answer: no.} The fraction sits near one half regardless of girth, and does not
+rise as the forbidden-cycle length grows. There is no support, at least among cubic
+(degree-3) graphs, for the idea that avoiding short cycles helps guarantee a 2-kernel.
+This does not rule out the possibility for graphs of \emph{higher} regular degree — no
+degree above 3 was tested here — but the degree-3 case gives that broader idea no
+encouragement.
+
+\section{Result 5: subdivisions (FINDINGS.md \S6, ``E5'')}
+
+\begin{definition}
+The \textbf{subdivision} $S(G)$ of a graph $G$ replaces every edge $\{u,v\}$ with a new
+``subdivision'' vertex $w$ and two edges $\{u,w\}, \{w,v\}$ — every original edge
+becomes a path of length 2 through a fresh vertex.
+\end{definition}
+
+\begin{theorem}
+For every graph $G$, the original vertex set $V(G)$ is a 2-kernel of its subdivision
+$S(G)$.
+\end{theorem}
+
+\begin{proof}
+In $S(G)$, no two original vertices are adjacent — every original edge has been
+replaced by a path through a subdivision vertex — so $V(G)$ is independent. Every
+other vertex of $S(G)$ is a subdivision vertex, and its neighbourhood is exactly the
+two endpoints of the edge it replaced, both of which are in $V(G)$: exactly 2
+neighbours in $V(G)$, satisfying 2-domination. (If $G$ has no edges at all, then
+$S(G) = G$ and $V(G)$ is the whole vertex set, a 2-kernel vacuously.)
+\end{proof}
+
+This gives a free, infinite family of graphs guaranteed to have a 2-kernel — checked
+directly on all 1253 graphs in the small-graph atlas (largest subdivision checked: 28
+vertices) — and shows the property is never far away structurally: every graph is one
+subdivision operation from having one.
+
+\section{Result 6: DAGs (FINDINGS.md \S7, ``E6'')}
+\label{sec:e6}
+
+\begin{theorem}
+A DAG has at most one 2-kernel. Moreover, there is a linear-time procedure that either
+outputs that unique 2-kernel, or correctly certifies that none exists.
+\end{theorem}
+
+\begin{proof}
+Fix a topological order $v_1, \dots, v_n$ of $D$ (every arc runs from a lower index to
+a higher one), and process the vertices in reverse: $v_n, v_{n-1}, \dots, v_1$. When
+$v_i$'s turn comes, every vertex of $N^+(v_i)$ has strictly higher index, so it has
+already been permanently assigned a status, \texttt{IN} or \texttt{OUT} — nothing is
+ever left ambiguous, which is the whole reason DAGs are tractable here.
+
+Let $k = |N^+(v_i) \cap \{u : u \text{ already marked } \texttt{IN}\}|$ at the moment
+$v_i$ is considered. Exactly one of three things happens, and it is forced with no
+choice available:
+\begin{itemize}[nosep]
+\item \textbf{$k = 0$.} Being \texttt{OUT} needs $k \ge 2$, so $v_i$ cannot be
+\texttt{OUT}. Being \texttt{IN} needs none of $v_i$'s out-neighbours to be
+\texttt{IN}, which holds since $k=0$. Consistent: set $v_i := \texttt{IN}$.
+\item \textbf{$k = 1$}, with the one \texttt{IN} out-neighbour called $u$. Being
+\texttt{IN} is now impossible: the arc $v_i \to u$ together with $u$ already
+\texttt{IN}, if $v_i$ joined it too, would put two adjacent vertices in the set,
+violating independence. Being \texttt{OUT} is also impossible: that needs $k \ge 2$,
+and $k=1$. \textbf{Neither status is available.} Since every 2-kernel must give
+$v_i$ one of the two statuses, and by the inductive hypothesis every 2-kernel must
+already agree with the statuses fixed on $N^+(v_i)$ so far, this means \emph{no
+2-kernel of $D$ exists at all}. Halt and report non-existence.
+\item \textbf{$k \ge 2$.} Being \texttt{IN} is impossible: $v_i$ already has an
+\texttt{IN} out-neighbour, so independence fails immediately. So $v_i$ must be
+\texttt{OUT}, and that is consistent, since \texttt{OUT} needs exactly $k \ge 2$.
+Set $v_i := \texttt{OUT}$.
+\end{itemize}
+
+The base case $v_n$ is automatically a sink (nothing can follow it in the order), so
+$N^+(v_n) = \emptyset$ and $k=0$ trivially, giving $v_n := \texttt{IN}$ with no
+contradiction; any other sink hits this same $k=0$ case whenever it is reached.
+
+By strong induction from $i=n$ down to $i=1$, either the sweep completes with every
+vertex assigned, or it halts at some $k=1$ vertex with a genuine proof of
+non-existence, not a guess.
+
+If it completes, let $S = \{v : v \text{ marked } \texttt{IN}\}$. Independence of $S$
+now holds \emph{by construction}: if an arc $v_i \to v_j$ had both endpoints in $S$,
+then when $v_i$ was set \texttt{IN} it must have been via the $k=0$ case, meaning
+\emph{no} out-neighbour of $v_i$ — including $v_j$ — was \texttt{IN} at that time, so
+$v_j$ was \texttt{OUT}, contradicting $v_j \in S$. And 2-domination of every
+\texttt{OUT} vertex holds directly from the $k \ge 2$ condition that put it there,
+which cannot change afterward since all of its out-neighbours were already
+permanently decided. So $S$ is a genuine 2-kernel, and since every step above was
+forced with no branching, it is the only one.
+\end{proof}
+
+\begin{remark}
+An earlier version of this proof merged the $k=0$ and $k=1$ cases into one (``fewer
+than 2 \texttt{IN}, so set \texttt{IN}''), which is wrong exactly at $k=1$: setting
+$v_i$ to \texttt{IN} there directly violates independence against its one already-\texttt{IN}
+out-neighbour. The $k=1$ case is not a minor exception — it is precisely the
+event whose growing probability, as $n$ increases, explains the falling fraction of
+DAGs with a 2-kernel reported below. There is no separate ``independence check''
+tacked on at the end of the sweep; independence is guaranteed automatically whenever
+the sweep completes, and failure is a specific, structural, locally-detected event
+(some vertex landing at $k=1$), not a global property checked only after the fact.
+\end{remark}
+
+
+\begin{corollary}
+Deciding whether a DAG has a 2-kernel is not just polynomial, it is linear time —
+answering, negatively, whether 2-KERNEL might be NP-complete on DAGs the way finding
+an ordinary kernel is (trivially) easy there too.
+\end{corollary}
+
+Confirmed on all 20{,}237 exhaustively-generated DAGs up to 7 vertices:
+\texttt{MAX(count\_2kernels) = 1} throughout, and the forcing closure of
+Section~\ref{sec:forcing} — which is not explicitly told about topological order at
+all — independently decides every single one (0 \texttt{UNDECIDED}). One further
+pattern in the data: the fraction of DAGs with a 2-kernel falls steadily as $n$ grows
+(100\%, 75\%, 50\%, 29.5\%, 16.9\% at $n = 1,4,5,6,7$) — by the corrected argument
+above, this is the growing chance that \emph{some} vertex lands at $k=1$ (exactly one
+already-\texttt{IN} out-neighbour) somewhere in the backward sweep, and nothing about
+being acyclic protects against that as the graph grows.
+
+\section{Result 7: $k$-degenerate graphs --- a refuted conjecture (FINDINGS.md \S8, ``E7'')}
+\label{sec:e7}
+
+The natural next question, given Theorem~\ref{thm:e21}'s chordal proof: does the same
+argument survive \emph{weakening} chordal to low degeneracy (Section 2.6)? Every
+chordal graph is, in particular, 1-degenerate at the low end, but degeneracy is a much
+broader, weaker condition.
+
+Over all 288{,}267 graphs on at most 9 vertices, grouped by exact degeneracy:
+
+\begin{center}
+\begin{tabular}{@{}rrrrr@{}}
+\toprule
+degeneracy & graphs & with a 2-kernel & forcing disagreements & max \# 2-kernels\\
+\midrule
+0 (edgeless) & 10 & 10 & 0 & 1 \\
+1 (forests) & 299 & 109 & \textbf{0} & 1 \\
+2 & 35{,}739 & 13{,}370 & \textbf{3{,}388 (9.5\%)} & 4 \\
+3 & 173{,}728 & 74{,}357 & 34{,}839 & 4 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{The conjecture is false, at the very next step past forests.} Forcing is
+complete only at degeneracy $\le 1$ — and that case isn't new, since 1-degenerate
+graphs are exactly the forests, which are already chordal and already covered by
+Theorem~\ref{thm:e21}. As soon as degeneracy 2 is included, 9.5\% of graphs disagree,
+and uniqueness fails too (up to 4 distinct 2-kernels appear).
+
+The smallest failing example is, once again, $C_5$ (the 5-cycle): every vertex has
+degree exactly 2, so its degeneracy is 2 — but \emph{no} vertex of $C_5$ is simplicial,
+since $C_5$ has no triangles at all, and a simplicial vertex needs its neighbourhood to
+be a clique. This pinpoints exactly where the chordal proof's machinery breaks: it
+relies on the existence of a \emph{simplicial} vertex (whose neighbourhood is a
+clique) in every induced subgraph, which chordality guarantees but mere low degree
+does not. A degree-2 vertex whose two neighbours are \emph{not} adjacent to each other
+(as in $C_5$) is exactly the situation where R4 (Section~\ref{sec:forcing}) has
+nothing to fire on. This is reported as a refuted conjecture, not an open one — an
+explicit counterexample was found, not merely not-yet-found.
+
+\section{Result 8: does the chordal theorem lift to digraphs? (FINDINGS.md \S9, ``E8'')}
+\label{sec:e8}
+
+Theorem~\ref{thm:e21} is about ordinary graphs. Does the same proof work for digraphs
+whose \emph{underlying} graph is chordal?
+
+\begin{theorem}
+If the underlying graph of a digraph $D$ is chordal, then the forcing closure decides
+$D$ completely, so $D$ has at most one 2-kernel, and 2-KERNEL is solvable in
+polynomial time on such digraphs — with \emph{no} restriction on out-degree at all.
+\end{theorem}
+
+\begin{proof}
+The one place the chordal proof (Theorem~\ref{thm:e21}) could plausibly break for
+digraphs is R0/R4's test, which for a digraph looks at $N^+(v)$ (out-neighbours only),
+whereas simpliciality is a property of the \emph{full} underlying neighbourhood
+$N(v)$. But recall $N^+(v) \subseteq N(v)$ (Section~2.1): the out-neighbourhood is
+always a \emph{subset} of the full neighbourhood. Since any subset of a clique is
+itself a clique, if $N(v)$ is a clique (i.e.\ $v$ is simplicial) then $N^+(v)$ is
+automatically a clique too — so every simplicial vertex fires R0/R4 regardless of
+which arcs happen to point outward. (This shows simpliciality is, if anything, a
+\emph{stronger} guarantee than the digraph rule needs, not a weaker one — the opposite
+of what one might guess going in.)
+
+With that step secured, Theorem~\ref{thm:e21}'s proof carries over unchanged: at a
+fixed point with some vertex still \texttt{UNKNOWN}, the set $W$ of \texttt{UNKNOWN}
+vertices induces a chordal subgraph (of the underlying graph), hence has a simplicial
+vertex $x$ within $W$; $N(x) \cap W$ is a clique, so $N^+(x) \cap W \subseteq N(x)
+\cap W$ is too, firing R4 on $x$ — contradicting the fixed point.
+\end{proof}
+
+Confirmed exhaustively over every digraph on at most 6 vertices with $\delta^+ \ge 2$
+whose underlying graph is chordal: \textbf{251{,}991 digraphs, zero disagreements},
+plus a broad random check (20{,}000 further digraphs, with no out-degree restriction at
+all) finding the same zero disagreements — supporting the stronger, unrestricted
+statement above.
+
+\section{What this adds up to}
+
+Four things stand out across all eight results.
+
+First, the entire difficulty of this problem is concentrated in one structural
+feature: the presence or absence of a simplicial vertex in every induced subgraph.
+Forcing is not a heuristic that ``usually works'' — it is \emph{exactly} complete on
+chordal graphs, simplicial graphs, and everything built from them, and it fails for
+the first time on $C_5$, where no rule can fire on any vertex at all.
+
+Second, plausible-looking patterns can be indistinguishable from theorems right up
+until they aren't: the bipartite conjecture matched the chordal one perfectly at
+$n \le 7$ and broke at exactly $n = 8$.
+
+Third, forbidding digons (oriented graphs) is a far heavier restriction than it looks:
+it turns $\delta^+ \ge 2$ from something that helps build a 2-kernel (as in Theorems A
+and B) into something that actively fights against it, forcing $n \ge 8$ before one can
+even exist.
+
+Fourth, the two attempted generalizations of the chordal theorem went in opposite
+directions: weakening the hypothesis from chordal to merely low-degeneracy broke the
+proof immediately (Result 7), while strengthening the object from a graph to a
+digraph left the proof completely intact (Result 8) — and the reason in each case only
+became clear by writing the actual proof argument out, not by guessing from the shape
+of the analogy.
+
+\section{Honest limitations}
+
+\begin{itemize}[nosep]
+\item Exhaustive ranges, stated plainly: all graphs to $n=9$; all digraphs with
+$\delta^+\ge2$ to $n=6$; all oriented graphs with $\delta^+\ge2$ to $n=6$; all DAGs (of
+the sink-or-$d^+\ge2$ kind) to $n=7$; all connected split graphs to $n=9$. Beyond
+these, every number quoted is from seeded random sampling and is marked as such.
+\item The cubic-graph results (Section 6) are samples, not an exhaustive count, though
+each row does report distinct isomorphism classes rather than raw samples.
+\item Counting the exact number of 2-kernels (\texttt{count\_2kernels}) uses the
+reference brute-force solver, so it is only reported where that solver is cheap
+enough to run — the census's exhaustive ranges, not arbitrary large graphs.
+\item Theorems in Sections~\ref{sec:e2}, \ref{sec:e6} and \ref{sec:e8} are fully
+proved; the only conjecture in this whole document that could still have been
+overturned by a wider search was the degeneracy one (Section 7), and it already was.
+\item The citation check against Golovach and Kratochv\'il's dichotomy papers
+(Section~\ref{sec:literature}) was done at the level of their published abstracts
+only, since both papers are paywalled; the exact scope of their result (finite versus
+cofinite $\rho$) could not be confirmed from primary text.
+\end{itemize}
+
+\section*{Quick notation reference}
+\addcontentsline{toc}{section}{Quick notation reference}
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+symbol & meaning \\
+\midrule
+$n$, $m$ & order (vertex count), size (edge/arc count) \\
+$N(v)$ & neighbourhood of $v$ (underlying, undirected sense) \\
+$N^+(v)$, $N^-(v)$ & out-neighbourhood, in-neighbourhood of $v$ in a digraph \\
+$d^+(v)$, $d^-(v)$ & out-degree, in-degree of $v$ \\
+$\delta^+(D)$ & the smallest out-degree over all vertices of $D$ \\
+$S$ & a candidate or actual 2-kernel \\
+$K_n$ & the complete graph on $n$ vertices \\
+$C_n$, $P_n$ & the cycle, the path, on $n$ vertices \\
+\texttt{IN} / \texttt{OUT} / \texttt{UNKNOWN} & a vertex's status during forcing closure \\
+\texttt{CONFLICT} / \texttt{SOLVED} / \texttt{UNDECIDED} & the closure's final verdict \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{document}

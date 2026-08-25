@@ -1,0 +1,138 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{enumitem}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\begin{document}
+\pagestyle{empty}
+
+\begin{theorem}[Tight bound for oriented graphs]
+\label{thm:bound}
+Let $D$ be an \emph{oriented} graph (no digons: for any two vertices, at most one of
+$u\to v$, $v\to u$ is present) with $\delta^+(D) \ge 2$. If $D$ has a 2-kernel, then
+$D$ has at least 8 vertices, and 8 is attained.
+\end{theorem}
+
+\begin{proof}
+Let $J$ be a 2-kernel of $D$, $j = |J|$, and $B = V \setminus J$, $t = |B| = n - j > 0$.
+Every vertex of $B$ sends at least 2 arcs into $J$ (2-domination), so writing $d_x$
+for the number of $B$-vertices with an arc into $x \in J$,
+\[
+\sum_{x \in J} d_x \;\ge\; 2t.
+\]
+Fix $x \in J$. Since $J$ is independent, every out-arc of $x$ goes to $B$. Since $D$
+has no digons, $x$ cannot have an out-arc to any vertex of $B$ that already points at
+$x$ — so $x$'s out-arcs are confined to the $t - d_x$ vertices of $B$ that do
+\emph{not} point at $x$. Since $d^+(x) \ge \delta^+(D) \ge 2$, this requires
+$t - d_x \ge 2$, i.e.
+\[
+d_x \;\le\; t-2 \qquad \text{for every } x \in J.
+\]
+Combining the two displays,
+\[
+2t \;\le\; \sum_{x\in J} d_x \;\le\; j(t-2).
+\]
+This forces $t \ge 3$ (otherwise $t-2 \le 0$ and no positive $j$ can satisfy it) and
+$j \ge \dfrac{2t}{t-2}$. Minimising $n = j+t$ over integers $t \ge 3$:
+
+\begin{center}
+\begin{tabular}{@{}rrrl@{}}
+\toprule
+$t$ & smallest $j$ with $j \ge 2t/(t-2)$ & $n=j+t$ & \\
+\midrule
+3 & 6 & 9 & \\
+\textbf{4} & \textbf{4} & \textbf{8} & minimum \\
+5 & 4 & 9 & \\
+6 & 3 & 9 & \\
+7 & 3 & 10 & rising from here on \\
+\bottomrule
+\end{tabular}
+\end{center}
+(For $t \ge 6$, $n \ge t+3$, which only grows with $t$, so no larger $t$ can beat
+$n=8$.) Hence $n \ge 8$ always, with equality possible only at $t=j=4$.
+\end{proof}
+
+\begin{example}[The bound is attained]
+\label{ex:tight}
+With $J = \{0,1,2,3\}$, $B = \{4,5,6,7\}$, and arcs
+\[
+(0,5)(0,6)(1,6)(1,7)(2,4)(2,7)(3,4)(3,5), \qquad
+(4,0)(4,1)(5,1)(5,2)(6,2)(6,3)(7,0)(7,3),
+\]
+every vertex has out-degree exactly 2, no digon is present, and $J = \{0,1,2,3\}$
+and $B = \{4,5,6,7\}$ are both 2-kernels.
+\end{example}
+
+\begin{proposition}[Extremal count — hypothesis-qualified]
+\label{prop:count}
+Among oriented graphs on exactly 8 vertices in which \emph{every} vertex — not just
+the ones forced to by Theorem~\ref{thm:bound}'s argument — has out-degree
+\emph{exactly} 2, and which have a 2-kernel of size 4, there are exactly 2
+isomorphism classes, of sizes 72 and 18 (out of 90 labelled instances), both of them
+balanced orientations of the complete bipartite graph $K_{4,4}$.
+\end{proposition}
+
+\begin{proof}[Justification]
+At $t=j=4$, both inequalities in the proof of Theorem~\ref{thm:bound} must be
+equalities: $2t \le \sum d_x \le j(t-2)$ collapses to $8 \le \sum d_x \le 8$, forcing
+$\sum_{x\in J} d_x = 8$ exactly. Since each of the 4 terms satisfies $d_x \le t-2=2$
+and they sum to exactly $4\times 2$, every $d_x = 2$ exactly — and since
+$d_x \le t - d^+(x)$, this forces $d^+(x) = 2$ exactly for every $x \in J$
+(\emph{this much needs no extra hypothesis}: it is forced by minimality alone).
+Likewise, $\sum_{x\in J} d_x = \sum_{b \in B}(\text{arcs from $b$ into $J$}) = 8$,
+with each of the 4 $B$-vertices contributing $\ge 2$, forces every $b \in B$ to send
+\emph{exactly} 2 arcs into $J$ — also forced, no extra hypothesis needed.
+
+What is \emph{not} forced by Theorem~\ref{thm:bound}'s hypotheses alone is that a
+vertex of $B$ has \emph{no further out-arcs beyond} those 2 — $\delta^+(D)\ge2$ is a
+lower bound only, so a $B$-vertex is free to have additional out-arcs to other
+$B$-vertices without violating anything used in the proof of Theorem~\ref{thm:bound}
+(see the Remark below). Under the added hypothesis that every vertex's out-degree is
+\emph{exactly} 2, a $B$-vertex has no budget left for such arcs once its 2 arcs to
+$J$ are placed, so $B$ has no internal arcs, and the whole graph is determined by one
+choice per $B$-vertex: which 2 of the 4 $J$-vertices it targets, subject to each
+$J$-vertex being targeted exactly twice overall (the $J\to B$ arcs are then forced:
+each $x$ points at exactly the 2 $B$-vertices that do not target it).
+
+This was verified directly by exhaustive computer search (independently reproduced
+here): of the $6^4 = 1296$ labelled ways to assign target-pairs, exactly 90 satisfy
+the balance condition; each was checked directly against the definition of a
+2-kernel (all 90 pass); and grouping the 90 by graph isomorphism yields exactly 2
+classes, of sizes 72 and 18. In both classes every vertex has out-degree 2 and
+in-degree 2, and the underlying graph is $K_{4,4}$ on $J \cup B$ (every kernel vertex
+turns out adjacent, in the underlying sense, to all four outside vertices — not only
+the two it exchanges arcs with). The two classes differ in the pattern of
+target-pairs: the size-72 class uses the four ``consecutive'' pairs
+$\{0,1\},\{1,2\},\{2,3\},\{3,0\}$ around a cyclic order of $J$ (this is
+Example~\ref{ex:tight}); the size-18 class instead has the four $B$-vertices split
+into two pairs that repeat a target-pair, e.g.\ $\{0,1\},\{0,1\},\{2,3\},\{2,3\}$.
+\end{proof}
+
+\begin{remark}[The added hypothesis is not optional]
+Without requiring out-degree exactly 2 everywhere, Proposition~\ref{prop:count}'s
+count of 2 is no longer a count of \emph{all} 8-vertex extremal examples — it is a
+count only within the exactly-out-degree-2 sub-family. Concretely: take the
+Example~\ref{ex:tight} graph and add a single further arc entirely within $B$, say
+$4 \to 5$ (not previously present, and adding it creates no digon since $5\to4$ was
+never an arc). This is still an oriented graph on 8 vertices with $\delta^+ \ge 2$
+(vertex 4's out-degree rises from 2 to 3, everything else unchanged), and $J$ remains
+a valid 2-kernel — $J$'s independence and 2-domination depend only on arcs
+touching $J$, which are untouched. This graph has 17 arcs, so it cannot be
+isomorphic to any of the 90 sixteen-arc graphs above, yet it satisfies every
+hypothesis of Theorem~\ref{thm:bound} at the extremal size $n=8$. So the true count
+of non-isomorphic 8-vertex oriented graphs with $\delta^+\ge2$ and a size-4 2-kernel,
+with no restriction beyond Theorem~\ref{thm:bound}'s own hypotheses, is strictly
+larger than 2 — Proposition~\ref{prop:count} is correct exactly as qualified, and no
+further.
+\end{remark}
+
+\end{document}

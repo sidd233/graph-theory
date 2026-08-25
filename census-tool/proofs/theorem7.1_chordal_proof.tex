@@ -1,0 +1,99 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\begin{document}
+\pagestyle{empty}
+
+\begin{definition}[The two rules used here]
+\label{def:rules}
+Every vertex of a graph $G$ carries a status in $\{\texttt{IN}, \texttt{OUT},
+\texttt{UNKNOWN}\}$, initially \texttt{UNKNOWN}. Two rules are applied, repeatedly
+and in any order, each firing at most once per vertex, until neither can fire:
+\begin{itemize}[nosep]
+\item \textbf{(Spread)} If $v$ is \texttt{IN}, mark every neighbour of $v$
+\texttt{OUT} (immediately — not deferred to a later pass).
+\item \textbf{(Force)} If $v$ is \texttt{UNKNOWN} and $v$'s neighbours not
+currently marked \texttt{OUT} contain no independent pair (equivalently, that set
+is a clique, possibly of size $\le 1$), mark $v$ \texttt{IN}.
+\end{itemize}
+A vertex left \texttt{UNKNOWN} at a fixed point is one neither rule ever applied to.
+\end{definition}
+
+\begin{lemma}[Soundness]
+\label{lem:sound}
+Whenever this process fixes a vertex $v$ as \texttt{IN} or \texttt{OUT}, that status
+holds for \emph{every} 2-kernel of $G$ — not merely for whatever candidate the
+process itself is building.
+\end{lemma}
+
+\begin{proof}
+Strong induction on the order in which vertices get fixed. Suppose the claim holds
+for every vertex fixed strictly before $v$, and consider how $v$ was fixed.
+
+\emph{Case: $v$ fixed \texttt{OUT}.} This happens via Spread, triggered by some
+neighbour $u$ already \texttt{IN}, with $u$ fixed strictly before $v$. By the
+inductive hypothesis $u \in S$ for every 2-kernel $S$; since $S$ is independent and
+$u$ is a neighbour of $v$, $v \notin S$ for every such $S$.
+
+\emph{Case: $v$ fixed \texttt{IN}.} This happens via Force: at that moment, $v$'s
+neighbours not marked \texttt{OUT} contain no independent pair. Every neighbour of
+$v$ already marked \texttt{OUT} was fixed strictly before $v$, so by the inductive
+hypothesis it is excluded from every 2-kernel $S$. Take any 2-kernel $S$ of $G$ and
+suppose toward a contradiction $v \notin S$. Then $S \cap N(v)$ avoids every
+neighbour already known \texttt{OUT}, so $S \cap N(v)$ sits entirely inside $v$'s
+current non-\texttt{OUT} neighbours. Since $v \notin S$, 2-domination requires
+$|S \cap N(v)| \ge 2$ — but $S$ is independent, so those $\ge 2$ vertices are
+pairwise non-adjacent, i.e.\ an independent pair inside $v$'s non-\texttt{OUT}
+neighbourhood. This contradicts the very condition that made Force fire. So
+$v \in S$ for every 2-kernel $S$.
+\end{proof}
+
+\begin{theorem}[E2.1]
+On a chordal graph $G$, running (Spread) and (Force) to a fixed point never leaves a
+vertex \texttt{UNKNOWN}. Consequently $G$ has at most one 2-kernel, and 2-KERNEL is
+solvable in polynomial time on chordal graphs (the general problem is NP-complete).
+\end{theorem}
+
+\begin{proof}
+Run the process to a fixed point and suppose toward a contradiction that some vertex
+remains \texttt{UNKNOWN}; let $W \ne \emptyset$ be the set of all such vertices.
+
+No vertex of $W$ has an \texttt{IN} neighbour: if $v \in W$ had one, Spread would
+already have fired on it the moment that neighbour became \texttt{IN}, marking $v$
+\texttt{OUT} — contradicting $v \in W$. So for every $v \in W$, the neighbours of $v$
+not marked \texttt{OUT} are exactly $N(v) \cap W$.
+
+$G[W]$, the subgraph induced on $W$, is an induced subgraph of the chordal graph $G$,
+hence itself chordal (a classical, standard fact about chordal graphs). Since
+$W \ne \emptyset$, $G[W]$ has a simplicial vertex $x$ — by definition, $x$'s
+neighbourhood \emph{within $G[W]$}, namely $N(x) \cap W$, is a clique, i.e.\ contains
+no independent pair (existence of a simplicial vertex in every non-empty chordal
+graph is likewise classical). By the previous paragraph, $N(x) \cap W$ is exactly
+$x$'s current non-\texttt{OUT} neighbourhood — so Force applies to $x$, contradicting
+the assumption that we are at a fixed point where no rule can fire.
+
+Hence $W = \emptyset$: every vertex ends up \texttt{IN} or \texttt{OUT}. By
+Lemma~\ref{lem:sound}, this final assignment records, for every vertex, its status in
+\emph{every} 2-kernel of $G$. So if $G$ has a 2-kernel at all, it is exactly
+$S = \{v : v \text{ fixed } \texttt{IN}\}$, and no other set can be one — $G$ has at
+most one 2-kernel.
+
+For the complexity claim: chordal graphs are recognized, and a simplicial-vertex
+elimination ordering produced, in polynomial time (via lexicographic breadth-first
+search); each application of Force or Spread is a polynomial-time clique/neighbour
+check; and the process above fixes one previously-\texttt{UNKNOWN} vertex per
+firing, so it terminates after at most $n$ firings. Checking the resulting $S$
+against the definition of a 2-kernel is also polynomial. So the whole procedure —
+decide existence, and produce the unique 2-kernel if one exists — runs in
+polynomial time.
+\end{proof}
+
+\end{document}

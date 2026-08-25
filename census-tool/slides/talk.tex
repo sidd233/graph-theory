@@ -1,0 +1,984 @@
+% !TeX program = xelatex
+\documentclass[11pt]{beamer}
+
+\usetheme{metropolis}
+\metroset{block=fill}
+\setbeamercovered{invisible}
+
+% Fira Mono ships no true italic; metropolis leaves ItalicFont unmapped,
+% so \texttt inside italic context falls back with a warning. Point it
+% at the real Oblique face instead.
+\setmonofont[
+  Path=/usr/share/texlive/texmf-dist/fonts/opentype/public/fira/,
+  Extension=.otf,
+  UprightFont=*-Regular,
+  BoldFont=*-Bold,
+  ItalicFont=*-Oblique,
+  BoldItalicFont=*-BoldOblique,
+]{FiraMono}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\setlist[itemize]{label=\textbullet}
+
+\newtheorem{proposition}[theorem]{Proposition}
+\setbeamertemplate{theorem begin}[numbered]
+
+\title{(2-d)-kernels in Graphs and Digraphs}
+\subtitle{From one counting argument to a 755{,}516-graph census}
+\author{Siddharth Narayan Mishra}
+\date{August 25, 2026}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\section{Setup}
+
+\begin{frame}{Richardson's Theorem}
+  A \textbf{kernel} of a digraph $D$ is a set $S \subseteq V$ that is
+  \begin{itemize}
+    \item \textbf{independent/stable:} no arc, in either direction, joins two vertices of $S$;
+    \item \textbf{dominating/absorbent:} every $v \notin S$ has an arc to \emph{some} vertex of $S$.
+  \end{itemize}
+
+  \bigskip
+  \begin{theorem}[Richardson, 1953]
+    Every digraph with no odd directed cycle has a kernel.
+  \end{theorem}
+
+\end{frame}
+
+\begin{frame}{The natural harder question}
+  Richardson's domination condition is \emph{one} arc into $S$.
+
+  \bigskip
+  What if every vertex outside $S$ needs \textbf{two} distinct neighbours in $S$,
+  not just one?
+
+  \bigskip
+  That one change is the entire subject of this talk.
+\end{frame}
+
+\begin{frame}{Definition: the (2-d)-kernel}
+  \begin{block}{(2-d)-kernel}
+    A set $S \subseteq V$ is a \textbf{(2-d)-kernel} of a digraph $D = (V,A)$ if
+    \begin{enumerate}
+      \item[(i)] $S$ is independent, and
+      \item[(ii)] every $v \notin S$ has $|N^+(v) \cap S| \ge 2$ (\textbf{2-absorbent}).
+    \end{enumerate}
+  \end{block}
+
+  \bigskip
+  An undirected graph is treated as a \textbf{symmetric digraph}.
+\end{frame}
+
+\begin{frame}{Wloch 2012}
+  \begin{center}
+    A.\ Wloch, \emph{On 2-dominating kernels in graphs}, Australas.\ J.\ Combin.\ \textbf{53} (2012) 273--284.
+  \end{center}
+  \begin{itemize}
+    \item \textbf{Theorem 2.4} a bipartite graph with all pendant vertices
+          at pairwise even distance has a (2-d)-kernel built from one bipartition class.
+    \item \textbf{Theorem 2.11} a characterization of when \emph{simplicial
+            graphs} have a (2-d)-kernel.
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{The Follow-Ups}
+  \begin{itemize}
+    \item Bednarz, Hern\'andez-Cruz, Wloch, \emph{On the existence and the
+            number of (2-d)-kernels in graphs}, Ars Combin.\ \textbf{121} (2015)
+          341-351 : attempts NP-completeness for general graphs.
+    \item Bednarz, Wloch, \emph{An algorithm determining (2-d)-kernels in
+            trees}, Util.\ Math.\ (2017) : a linear algorithm, restricted to trees.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{The Gap}
+  Every published result above is about \textbf{undirected graphs}.
+
+  \bigskip
+  Before this project, no digraph version of 2-domination existed in the
+  literature at all.
+\end{frame}
+
+\section{First Principles}
+
+\begin{frame}{Theorem 2: Bipartite Digraphs}
+  \begin{theorem}
+    If the underlying graph of a digraph $D$ is bipartite with parts $P, Q$, and
+    every vertex of $Q$ has $d^+ \ge 2$, then $P$ is a (2-d)-kernel.
+  \end{theorem}
+
+  \begin{proof}
+    Bipartiteness means every arc runs between $P$ and $Q$, so $P$ is
+    automatically independent (no arc stays inside $P$). Every $v \in Q$ has all
+    its out-arcs landing somewhere, and none of them can land back inside $Q$, so
+    all of $v$'s out-arcs land in $P$ --- at least 2 of them. \qedhere
+  \end{proof}
+\end{frame}
+
+\begin{frame}{Theorem 3}
+  \begin{theorem}
+    Every strongly connected digraph with no odd directed cycles and
+    $\delta^+(D)\ge 2$ has two disjoint $(2,d)$-kernels.
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{Cycle Decomposition}
+  The proof needs one lemma first: every closed directed walk decomposes into
+  directed cycles.
+  \begin{lemma}
+    Let $W = w_0, w_1, \dots, w_L$ ($w_0 = w_L$) be a closed directed walk of
+    length $L$. Then there exist directed cycles $C_1, \dots, C_m$ of $D$ with
+    $|C_1| + \cdots + |C_m| = L$.
+  \end{lemma}
+\end{frame}
+
+\begin{frame}{Cycle Decomposition Proof}
+  \begin{proof}
+    \textbf{Strong induction on $L$.}
+
+    \medskip
+    \textbf{Base case:} $L=0$.
+
+    \[
+      m=0.
+    \]
+
+    \medskip
+    \textbf{Inductive step:} Let $L\geq1$.
+
+    There are two cases:
+
+  \end{proof}
+\end{frame}
+
+\begin{frame}{Cycle Decomposition Proof}
+  \begin{proof}
+    \textbf{Case 1:} $w_0,\ldots,w_{L-1}$ are all distinct.
+
+    \[
+      \boxed{
+        W=w_0,w_1,\ldots,w_{L-1},w_0
+        \quad\text{is a simple cycle of length }L.
+      }
+    \]
+  \end{proof}
+\end{frame}
+
+\begin{frame}{Cycle Decomposition Proof}
+  \begin{proof}
+    \textbf{Case 2:} Some vertex is repeated.
+
+    Choose
+    \[
+      0\leq a<b\leq L-1,
+      \qquad w_a=w_b.
+    \]
+
+    Then $W$ splits into two shorter closed walks:
+    \[
+      W_1=w_a,\ldots,w_b,
+      \qquad
+      |W_1|=b-a,
+    \]
+    \[
+      W_2=w_0,\ldots,w_a,w_{b+1},\ldots,w_L,
+      \qquad
+      |W_2|=L-(b-a).
+    \]
+  \end{proof}
+\end{frame}
+
+\begin{frame}{Cycle Decomposition Proof}
+  \begin{proof}
+    Since
+    \[
+      |W_1|,|W_2|<L,
+    \]
+    the induction hypothesis gives cycle decompositions of both.
+
+    \medskip
+    Combining them gives a decomposition of $W$, with
+    \[
+      |W_1|+|W_2|
+      =(b-a)+L-(b-a)=L.
+    \]
+
+    \qedhere
+  \end{proof}
+\end{frame}
+
+\begin{frame}{The Parity Claim}
+  \textbf{Claim.}
+  Every directed path from $r$ to a vertex $v$
+  has the same length parity.
+
+  \medskip
+  Thus we may define
+  \[
+    \boxed{
+      \operatorname{par}(v)
+      := |P| \pmod 2
+    }
+  \]
+  for any directed path $P:r\to v$.
+
+  \medskip
+  It remains to show that this is well-defined.
+
+\end{frame}
+
+\begin{frame}{The Parity Claim}
+  \begin{proof}
+    Suppose $P,Q:r\to v$ have different parity:
+    \[
+      |P|\not\equiv |Q|\pmod 2.
+    \]
+    By strong connectivity, choose a directed path
+    \[
+      R:v\to r.
+    \]
+    Then $P+R$ and $Q+R$ are closed walks, with
+    \[
+      |P+R|=|P|+|R|,
+      \qquad
+      |Q+R|=|Q|+|R|.
+    \]
+  \end{proof}
+\end{frame}
+
+\begin{frame}{The Parity Claim}
+  \begin{proof}
+    By Lemma 4, both closed walks are sums of even cycles.
+    Hence both lengths are even:
+    \[
+      |P|+|R|\equiv |Q|+|R|\equiv0\pmod2.
+    \]
+
+    Therefore
+    \[
+      |P|\equiv|Q|\pmod2,
+    \]
+    a contradiction.
+
+    \[
+      \boxed{\operatorname{par}(v)\text{ is well-defined.}}
+    \]
+  \end{proof}
+\end{frame}
+
+\begin{frame}{Building the Two Kernels}
+  Let $V_0, V_1$ be the two parity classes.
+
+  \bigskip
+  \textbf{Every arc $u \to v$ flips parity} (parity of r-u path and r-v path will be different)
+
+  \bigskip
+  So $V_0, V_1$ are independent, and every
+  out-neighbour of a $V_i$-vertex lies in $V_{1-i}$.
+
+  \bigskip
+  $\delta^+(D) \ge 2$
+
+  \bigskip
+  Both $V_0$ and $V_1$ are disjoint (2-d)-kernels. $\blacksquare$
+\end{frame}
+
+\section{Send in the Machines}
+\begin{frame}{Built Systematic Tooling}
+  Instead of trusting further hand-picked examples, built a tool that can
+
+  \begin{itemize}
+    \item generate \emph{every} graph or digraph up to a given size, exhaustively,
+    \item verify (2-d)-kernels against the definition directly, with no shortcuts,
+    \item and try a cheap propagation method first, so that when it fails, the
+          failure itself is data.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Tool Architecture}
+  Every function that returns a candidate set passes it through a single
+  verifier, \texttt{is\_2kernel}, before returning it: check independence,
+  then check every outside vertex has $\ge 2$ out-arcs into the set.
+
+  \smallskip
+  A (2-d)-kernel is always a \textbf{maximal independent set} of the underlying
+  graph (anything outside it is already adjacent to it). So a
+  \textbf{complete, obviously-correct} reference solver exists: enumerate every
+  maximal independent set (Bron--Kerbosch), keep the ones \texttt{is\_2kernel}
+  accepts.
+
+  \smallskip
+  Exponential in the worst case, but it is the ground truth every faster
+  method is checked against, and it is cheap enough for the exhaustive ranges
+  used here.
+\end{frame}
+
+\begin{frame}{The Forcing Closure}
+  Before full search, a cheap propagation is tried first. Each vertex is
+  \texttt{IN}, \texttt{OUT}, or \texttt{UNKNOWN}; rules apply repeatedly until
+  nothing changes.
+
+  \smallskip
+  $U(v) := N^+(v) \setminus \texttt{OUT}$
+
+  \medskip
+  \begin{description}[leftmargin=1.6cm,style=nextline]
+    \item[R0] $N^+(v)$ has no independent pair $\Rightarrow$ $v$ is \texttt{IN}.
+    \item[R1] $v$ \texttt{IN} $\Rightarrow$ every underlying neighbour of $v$ is
+          \texttt{OUT}.
+    \item[R2] $v$ \texttt{OUT}, and $U(v)$ has no independent pair $\Rightarrow$ \texttt{CONFLICT}.
+    \item[R3] $v$ \texttt{OUT} and $|U(v)| = 2$ $\Rightarrow$ every member of
+          $U(v)$ is \texttt{IN} and $|U(v)| < 2$ is a \texttt{CONFLICT}.
+    \item[R4] $v$ \texttt{UNKNOWN}, and R2's test on $v$'s current
+          non-\texttt{OUT} out-neighbours would conflict $\Rightarrow$ $v$ is
+          \texttt{IN}.
+  \end{description}
+\end{frame}
+
+\begin{frame}{Why any of this is a proof, not a guess}
+  Each rule only ever labels $v$ from information already established. The
+  question this must answer: if the closure says \texttt{CONFLICT}, how do we
+  \emph{know} no (2-d)-kernel exists, rather than just having failed to find
+  one?
+
+  \smallskip
+  \begin{block}{Soundness}
+    For every (2-d)-kernel $S$ that might exist, every label the closure ever
+    assigns agrees with $S$ --- so a labelling that becomes self-contradictory
+    proves $S$ cannot exist.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Lemma: Soundness of the Rules}
+  \begin{lemma}[Soundness]
+    Suppose $D$ has a (2-d)-kernel $S$. At every stage of the closure,
+    \[
+      v\in\texttt{IN}\Rightarrow v\in S,
+      \qquad
+      v\in\texttt{OUT}\Rightarrow v\notin S.
+    \]
+    Consequently, if the closure ever reaches \texttt{CONFLICT}, $D$ has
+    \textbf{no} (2-d)-kernel at all.
+  \end{lemma}
+\end{frame}
+
+\begin{frame}{Soundness Proof: R0 and R1}
+  \begin{proof}
+    Induction on the number of rule firings; assume the claim for every label
+    set so far.
+
+    \smallskip
+    \textbf{R0:} if $N^+(v)$ has no independent pair and $v\notin S$,
+    domination needs two independent members of $N^+(v)$ in $S$. This is
+    impossible. So $v\in S$.
+
+    \smallskip
+    \textbf{R1:} if $v\in\texttt{IN}$, the hypothesis gives $v\in S$; any
+    underlying neighbour $u$ of $v$ cannot also lie in $S$ (independence), so
+    $u\notin S$, matching \texttt{OUT}.
+  \end{proof}
+\end{frame}
+
+\begin{frame}{Soundness Proof: R2 and R3}
+  \begin{proof}
+    Both rules test $U(v):=N^+(v)\setminus\texttt{OUT}$. By hypothesis every
+    vertex already \texttt{OUT} is not in $S$, so $N^+(v)\cap S\subseteq
+      U(v)$. If $v$ is \texttt{OUT} (so $v\notin S$, by hypothesis), domination
+    needs $|N^+(v)\cap S|\ge2$ --- two \emph{independent} members of $U(v)$
+    inside $S$.
+
+    \smallskip
+    \textbf{R2:} $U(v)$ has no independent pair at all, so no
+    such $S$ exists: \texttt{CONFLICT} is correct.
+
+    \smallskip
+    \textbf{R3:} if $|U(v)|=2$, both must lie in $S$ (only 2 candidates,
+    need 2); if $|U(v)|<2$, impossible, \texttt{CONFLICT}.
+  \end{proof}
+\end{frame}
+
+\begin{frame}{Soundness Proof: R4, and closing the induction}
+  \begin{proof}
+    \textbf{R4:} $v$ is \texttt{UNKNOWN}. Suppose $v\notin S$: exactly as in
+    R2, domination would need an independent pair inside $U(v)$; the rule
+    only fires when that test already conflicts, i.e.\ no such pair exists.
+    So $v\notin S$ is impossible, forcing $v\in S$ to match the new
+    \texttt{IN} label.
+
+    \smallskip
+    Every rule preserves the invariant whenever it fires, so it holds at
+    every stage, including the fixed point. \qedhere
+  \end{proof}
+\end{frame}
+
+\begin{frame}{The Three Verdicts, Now Justified}
+  Running the rules to a fixed point gives one of three verdicts, each now
+  backed by Lemma 5:
+
+  \begin{itemize}
+    \item \texttt{CONFLICT} Lemma 5 shows ``$D$ has a (2-d)-kernel'' is
+          self-contradictory: \textbf{no (2-d)-kernel exists};
+    \item \texttt{SOLVED} every vertex decided, and the \texttt{IN} set is
+          verified as an actual (2-d)-kernel; Lemma 5 shows any other kernel
+          would have to agree with every forced label, so it is the
+          \textbf{only} one;
+    \item \texttt{UNDECIDED} some vertices left unresolved; the closure
+          simply didn't finish the job.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{The Database}
+  One \texttt{sqlite} file, keyed by a \textbf{canonical} graph6/digraph6
+  string from \texttt{pynauty}; so isomorphic duplicates can never split
+  into two rows, and every count reported later is a count of isomorphism
+  classes, not labelled instances.
+
+  \smallskip
+  Exhaustive generation past small $n$ uses \textbf{canonical augmentation}:
+  extend every graph on $n{-}1$ vertices by one new vertex in every possible
+  way, dedup by certificate.
+\end{frame}
+
+\section{Chordal Graphs}
+
+\begin{frame}{One Insight}
+  Chordal graphs need \textbf{two} rules to fully decide:
+
+  \begin{itemize}
+    \item \textbf{Spread:} (R1) if $v$ is \texttt{IN}, mark every neighbour
+          \texttt{OUT}.
+    \item \textbf{Force:} (R0 and R4) if $v$ is
+          \texttt{UNKNOWN} and its non-\texttt{OUT} neighbours contain no
+          independent pair, mark $v$ \texttt{IN}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{The Shortcut Never Fails}
+  Across every chordal graph on at most 9 vertices (\textbf{17{,}175 graphs,
+    exhaustive}) Spread and Force together decide the graph
+  completely.
+
+  \bigskip
+  Zero \texttt{UNDECIDED} verdicts. Maximum (2-d)-kernel count: 1.
+
+  \bigskip
+  Why?
+\end{frame}
+
+\begin{frame}{Simplicial Vertices?}
+  \begin{block}{Definitions}
+    A vertex $x$ is \textbf{simplicial} if $N(x)$ is a clique. A graph is
+    \textbf{chordal} if it has no induced cycle of length $\ge 4$.
+  \end{block}
+
+  \bigskip
+  Two facts:
+  \begin{itemize}
+    \item every non-empty chordal graph has a simplicial vertex;
+    \item every induced subgraph of a chordal graph is itself chordal.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Theorem 6}
+  \begin{theorem}
+    On a chordal graph, Spread and Force run to a fixed point never leave a
+    vertex \texttt{UNKNOWN}. Consequently a chordal graph has at most one
+    (2-d)-kernel, and (2-d)-kernel is solvable in polynomial time on chordal graphs.
+  \end{theorem}
+
+  \bigskip
+  The general problem is NP-complete.
+\end{frame}
+
+\begin{frame}{Theorem 6 Proof}
+  \begin{proof}
+    Suppose some vertex is \texttt{UNKNOWN} at the fixed point.
+    Let
+    \[
+      W=\{v\in V(G):v\text{ is \texttt{UNKNOWN}}\}\neq\emptyset.
+    \]
+
+    \smallskip
+    For every $v\in W$,
+    \[
+      N(v)\cap\texttt{IN}=\emptyset,
+    \]
+    since otherwise \texttt{Spread} would have fired.
+
+    Hence the current non-\texttt{OUT} neighbourhood of $v$ is
+    \[
+      N(v)\cap W.
+    \]
+  \end{proof}
+\end{frame}
+
+\begin{frame}{Theorem 6 Proof}
+  \begin{proof}
+    Since $G$ is chordal, its induced subgraph $G[W]$ is also chordal.
+
+    \smallskip
+    As $W\neq\emptyset$, $G[W]$ has a simplicial vertex $x$.
+    Thus
+    \[
+      N_{G[W]}(x)=N(x)\cap W
+    \]
+    is a clique.
+
+    \smallskip
+    But $N(x)\cap W$ is exactly the current non-\texttt{OUT}
+    neighbourhood of $x$. Therefore \texttt{Force} fires on $x$.
+
+    \smallskip
+    This contradicts the assumption that we are at a fixed point.
+
+  \end{proof}
+\end{frame}
+
+\begin{frame}{Uniqueness}
+  Suppose $S$ is \emph{any} (2-d)-kernel of $G$\\
+  Lemma 5 gives, simultaneously,
+  \[
+    \texttt{IN}\subseteq S
+    \qquad\text{and}\qquad
+    S \subseteq V\setminus\texttt{OUT}.
+  \]
+
+  \smallskip
+  Since $W=\emptyset$, every vertex is \texttt{IN} or \texttt{OUT}, so
+  $V\setminus\texttt{OUT}=\texttt{IN}$. The two inclusions sandwich $S$:
+  \[
+    \boxed{\texttt{IN}\ \subseteq\ S\ \subseteq\ \texttt{IN}
+      \quad\Longrightarrow\quad S=\texttt{IN}}
+  \]
+  This holds for \emph{whatever} $S$ was. So every (2-d)-kernel of $G$,
+  if one exists, must literally equal \texttt{IN}.
+\end{frame}
+
+\begin{frame}{Existence}
+  Just check if the \texttt{IN} set is actually a (2-d)-kernel. If it is, it is the only one; if it is not, no (2-d)-kernel exists.
+
+  \smallskip
+  For the complexity claim: chordal recognition and a simplicial elimination
+  ordering are polynomial; each rule firing is a
+  polynomial-time clique/neighbour check; the process fixes one previously-\texttt{UNKNOWN}
+  vertex per firing, so it terminates in at most $n$ firings; the final check
+  of \texttt{IN} is a single linear pass.
+\end{frame}
+
+\begin{frame}{Conclusion}
+  \textbf{For every chordal graph G, there exists a polynomial-time algorithm that decides whether G has a (2,d)-kernel.
+    Moreover, if such a kernel exists, it is unique.}
+\end{frame}
+
+\section{Generalize Down}
+
+\begin{frame}{Try Degeneracy}
+  \begin{block}{Definition}
+    A graph is \textbf{$k$-degenerate} if it can be reduced to nothing by
+    repeatedly removing a vertex of degree $\le k$. The \textbf{degeneracy} is
+    the smallest such $k$ (Matula-Beck peeling).
+  \end{block}
+  Every chordal graph admits a perfect elimination ordering,
+  which gives a vertex of minimum degree at each step.
+
+  So the natural next question is:
+  does the chordal argument survive when we replace
+  \textbf{chordality} by the weaker condition of
+  \textbf{bounded degeneracy}?
+
+  \smallskip
+  Degeneracy 0 $\rightarrow$ edgeless \\
+  Degeneracy 1 $\rightarrow$ forests
+\end{frame}
+
+\begin{frame}{Works at Degeneracy 1}
+  \begin{center}
+    \begin{tabular}{@{}rrrr@{}}
+      \toprule
+      degeneracy   & graphs & forcing disagreements & max \#(2-d)-kernels \\
+      \midrule
+      0 (edgeless) & 10     & 0                     & 1                   \\
+      1 (forests)  & 299    & \textbf{0}            & 1                   \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+
+  Forcing is complete at degeneracy $\le 1$.
+  But 1-degenerate graphs are
+  exactly the forests (2017 Paper)
+\end{frame}
+
+\begin{frame}{Breaks at Degeneracy 2}
+  \begin{center}
+    \begin{tabular}{@{}rrrr@{}}
+      \toprule
+      degeneracy & graphs   & forcing disagreements    & max \#(2-d)-kernels \\
+      \midrule
+      2          & 35{,}739 & \textbf{3{,}388 (9.5\%)} & 4                   \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}{The Counterexample: $C_5$}
+  \begin{center}
+    \begin{tikzpicture}[>=Latex, every node/.style={circle,draw,minimum size=7mm,inner sep=0pt}]
+      \foreach \i in {0,...,4} {
+          \node (v\i) at (90+72*\i:1.6) {\i};
+        }
+      \foreach \i/\j in {0/1,1/2,2/3,3/4,4/0} {
+          \draw (v\i) -- (v\j);
+        }
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Why Low Degree Is Not Simplicial}
+  The chordal proof uses the following fact: at a fixed point, the
+  undecided region is chordal, and hence contains a \emph{simplicial}
+  vertex.
+
+  \smallskip
+
+  Degeneracy $2$ guarantees a vertex of degree at most $2$ at every
+  stage of peeling, but does not guarantee that its neighbourhood is
+  a clique.
+
+  \smallskip
+
+  Thus, low degree does not imply simpliciality.
+\end{frame}
+
+\section{Generalize Sideways}
+
+\begin{frame}{Strengthen the object instead}
+  Weakening the graph class (chordal $\to$ degenerate) just broke. Try the
+  other direction: keep the graph class, \textbf{strengthen the object} from a
+  graph to a digraph.
+
+  \smallskip
+  \textbf{Question:} if the \emph{underlying graph} of a digraph $D$ is
+  chordal, does the Theorem 6 argument still decide $D$?
+
+  \smallskip
+  \begin{block}{Key Point}
+    Simpliciality concerns the full neighbourhood $N(v)$, not merely
+    the forward neighbourhood $N^+(v)$. $N^+(v)\subseteq N(v)$ so Force still works.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Spread and Force, on $D$, stated with this notation}
+  At every stage every $v\in V$ has a status in
+  $\{\texttt{IN},\texttt{OUT},\texttt{UNKNOWN}\}$; write \texttt{IN},
+  \texttt{OUT}, \texttt{UNKNOWN} also for the three sets of vertices.
+  \begin{description}[leftmargin=1.8cm,style=nextline]
+    \item[Spread] $v\in\texttt{IN} \Rightarrow N(v)\subseteq\texttt{OUT}$.
+          Uses $N$ (the underlying graph): an arc \emph{either way} between
+          two vertices of $S$ breaks independence, so both directions must
+          be swept.
+    \item[Force] $v\in\texttt{UNKNOWN}$ and $N^+(v)\setminus\texttt{OUT}$
+          has no independent pair $\Rightarrow v$ moves to \texttt{IN}.
+          Uses $N^+$ (the digraph): 2-absorbency, $|N^+(v)\cap S|\ge2$,
+          only ever counts out-arcs.
+  \end{description}
+  These are exactly rules R1 and R0/R4 from the general closure, specialised
+  to their relevant graph.
+\end{frame}
+
+\begin{frame}{Theorem 7}
+  \begin{theorem}
+    If the underlying graph $G$ of a digraph $D$ is chordal, then Spread and
+    Force run to a fixed point never leave a vertex \texttt{UNKNOWN} on $D$.
+    Consequently $D$ has at most one (2-d)-kernel, and (2-d)-kernel is
+    solvable in polynomial time whenever $G$ is chordal
+    with \textbf{no restriction on $\delta^+(D)$ at all}.
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{Theorem 7 Proof: what a fixed point knows}
+  \begin{proof}
+    Suppose that some vertex is \texttt{UNKNOWN}. Let
+    \[
+      W := \{v\in V : v \in \texttt{UNKNOWN}\} \neq \emptyset.
+    \]
+    Fix $v\in W$. If some $u\in N(v)$ had $u\in\texttt{IN}$, Spread applied to $u$ would
+    place $v\in\texttt{OUT}$. This contradicts $v\in\texttt{UNKNOWN}$. Hence
+    \[
+      N(v)\cap\texttt{IN}=\emptyset
+      \qquad\text{for every } v\in W.
+    \]
+  \end{proof}
+\end{frame}
+
+\begin{frame}{Theorem 7 Proof: passing from $N$ to $N^+$}
+  \begin{proof}
+    $V$ splits into \texttt{IN}, \texttt{OUT}, $W$. For $v\in W$, the
+    previous frame gives $N(v)\cap\texttt{IN}=\emptyset$, so
+    \[
+      N(v)\setminus\texttt{OUT} = N(v)\cap W.
+    \]
+    Now use $N^+(v)\subseteq N(v)$: intersecting both sides above with
+    $N^+(v)$ gives $N^+(v)\cap\texttt{IN}=\emptyset$ as well, so the
+    \emph{same} splitting argument applied to $N^+(v)$ gives
+    \[
+      \boxed{N^+(v)\setminus\texttt{OUT} = N^+(v)\cap W
+        \qquad\text{for every } v\in W.}
+    \]
+  \end{proof}
+\end{frame}
+
+\begin{frame}{Theorem 7 Proof: a simplicial vertex in $W$}
+  \begin{proof}
+    All of the above is about $D$; chordality is a hypothesis about $G$
+    alone. $G$ is chordal, so its induced subgraph $G[W]$ is chordal too
+    (induced subgraphs of chordal graphs are chordal). As $W\neq\emptyset$,
+    $G[W]$ has a simplicial vertex $x\in W$: its neighbourhood inside
+    $G[W]$,
+    \[
+      N_{G[W]}(x) = N(x)\cap W,
+    \]
+    is a clique in $G$, i.e.,\ $N(x)\cap W$ contains no independent pair.
+  \end{proof}
+\end{frame}
+
+\begin{frame}{Theorem 7 Proof: Force fires on $x$}
+  \begin{proof}
+    Apply the identity from two frames ago at $v = x\in W$:
+    \[
+      N^+(x)\setminus\texttt{OUT} = N^+(x)\cap W.
+    \]
+    Since $N^+(x)\subseteq N(x)$, this set is a \emph{subset} of $N(x)\cap
+      W$, which the previous frame showed is a clique in $G$. A subset of a
+    clique contains no independent pair, so
+    \[
+      \boxed{N^+(x)\setminus\texttt{OUT}\text{ has no independent pair.}}
+    \]
+    As $x\in\texttt{UNKNOWN}$, this is exactly Force's hypothesis at $x$:
+    Force would move $x$ to \texttt{IN}. This is contradiction. Hence $W=\emptyset$. \qedhere
+  \end{proof}
+\end{frame}
+
+\begin{frame}{Uniqueness: the same sandwich, on $D$}
+  Let $S^\ast:=\texttt{IN}$. Suppose $S$ is \emph{any} (2-d)-kernel of $D$. \\
+  Lemma 5 gives $\texttt{IN}\subseteq S\subseteq V\setminus\texttt{OUT}$,
+  and $W=\emptyset$ makes $V\setminus\texttt{OUT}=\texttt{IN}$:
+  \[
+    \boxed{\texttt{IN}\ \subseteq\ S\ \subseteq\ \texttt{IN}
+      \quad\Longrightarrow\quad S=\texttt{IN}=S^\ast.}
+  \]
+\end{frame}
+
+\begin{frame}{Existence: one check settles it}
+  One direct check of $S^\ast$ against the definition.
+\end{frame}
+
+\begin{frame}{Conclusion}
+  \addtocounter{theorem}{-1}
+  \begin{theorem}
+    If the underlying graph of $D$ is chordal, the forcing closure decides $D$
+    completely: at most one (2-d)-kernel, polynomial time with \textbf{no
+      restriction on $\delta^+$ at all}.
+  \end{theorem}
+\end{frame}
+
+\section{Oriented Graphs}
+
+\begin{frame}{Oriented Graphs}
+  \begin{block}{Definition}
+    An \textbf{oriented graph} has no \textbf{digons}: for any two vertices, at
+    most one of $u \to v$, $v \to u$ is present.
+  \end{block}
+  \bigskip
+  \textbf{Question:} with $\delta^+ \ge 2$, how small can a
+  (2-d)-kernel-having oriented graph be?
+\end{frame}
+
+\begin{frame}{Setup}
+  Let $D$ be oriented, $\delta^+(D) \ge 2$, and suppose $D$ has a (2-d)-kernel $J$.
+
+  \bigskip
+  \begin{itemize}
+    \item $j = |J|$, $B = V \setminus J$, $t = |B| = n - j > 0$.
+    \item For $x \in J$, let $d_x$ = the number of $B$-vertices with an arc
+          \emph{into} $x$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{First inequality: 2-domination}
+  Every vertex of $B$ sends $\ge 2$ arcs into $J$ (that is what 2-domination
+  means for $J$). Summing over $J$, counting each such arc once by its
+  $J$-endpoint:
+  \[
+    \sum_{x \in J} d_x \;\ge\; 2t.
+  \]
+\end{frame}
+
+\begin{frame}{Second inequality: independence $+$ no digons}
+  Fix $x \in J$. Since $J$ is independent, every out-arc of $x$ goes to $B$.
+
+  \bigskip
+  Since $D$ has \textbf{no digons}, $x$ cannot send an out-arc to any vertex of
+  $B$ that \emph{already} points at $x$, so $x$'s out-arcs are confined to
+  the $t - d_x$ vertices of $B$ that do \emph{not} point at $x$.
+
+  \bigskip
+  Since $d^+(x) \ge \delta^+(D) \ge 2$:
+  \[
+    t - d_x \;\ge\; 2 \qquad\Longrightarrow\qquad d_x \;\le\; t - 2, \quad \text{for every } x \in J.
+  \]
+\end{frame}
+
+\begin{frame}{Combine}
+  \[
+    2t \;\le\; \sum_{x \in J} d_x \;\le\; j(t-2).
+  \]
+
+  \bigskip
+  This forces $t \ge 3$ (otherwise $t - 2 \le 0$ and no positive $j$ can
+  satisfy it), and
+  \[
+    j \;\ge\; \frac{2t}{t-2}.
+  \]
+\end{frame}
+
+\begin{frame}{Minimize $n = j + t$}
+  \begin{center}
+    \begin{tabular}{@{}rrrl@{}}
+      \toprule
+      $t$        & smallest $j \ge 2t/(t{-}2)$ & $n=j+t$    &                  \\
+      \midrule
+      3          & 6                           & 9          &                  \\
+      \textbf{4} & \textbf{4}                  & \textbf{8} & minimum          \\
+      5          & 4                           & 9          &                  \\
+      6          & 3                           & 9          &                  \\
+      7          & 3                           & 10         & rising from here \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+
+  \bigskip
+  For $t \ge 6$, $n \ge t + 3$, which only grows $\rightarrow$ no larger $t$ beats $n=8$.
+\end{frame}
+
+\begin{frame}{Conclusion}
+  \begin{theorem}
+    No oriented graph on fewer than 8 vertices with $\delta^+ \ge 2$ has a
+    (2-d)-kernel. $n = 8$ is attained, and only at $t = j = 4$.
+  \end{theorem}
+
+  \bigskip
+  So $\delta^+ \ge 2$, which \emph{helps} build a (2-d)-kernel with digons
+  available (Theorems 2 and 3), actively \textbf{fights against} one once digons
+  are forbidden.
+\end{frame}
+
+\section{DAGs}
+
+\begin{frame}{Theorem 9: DAGs}
+
+  \begin{theorem}
+    A DAG has at most one $(2,d)$-kernel, and its existence can be
+    decided in linear time.
+  \end{theorem}
+
+  \bigskip
+
+  Fix a topological ordering
+  \[
+    v_1,\ldots,v_n
+  \]
+  and process the vertices in reverse order.
+
+  \smallskip
+
+  When $v_i$ is processed, every out-neighbour of $v_i$ has already
+  received a permanent status. Let
+  \[
+    k=\left|\{u\in N^+(v_i):u\text{ is \texttt{IN}}\}\right|.
+  \]
+
+\end{frame}
+\begin{frame}{Theorem 9: Proof}
+
+  The three cases are:
+  \[
+    \begin{array}{ccl}
+      k=0   & \Rightarrow & v_i:=\texttt{IN},                \\
+      k=1   & \Rightarrow & \text{no $(2,d)$-kernel exists}, \\
+      k\ge2 & \Rightarrow & v_i:=\texttt{OUT}.
+    \end{array}
+  \]
+\end{frame}
+
+\begin{frame}{Theorem 9: Proof}
+
+  \begin{proof}
+    If $k=0$, assigning $v_i\in S$ is consistent with independence,
+    since no out-neighbour of $v_i$ is in $S$.
+
+    \smallskip
+
+    If $k=1$, let $u$ be the unique \texttt{IN} out-neighbour of $v_i$.
+    Then
+    \[
+      v_i\to u,\qquad u\in S.
+    \]
+    Hence $v_i\in S$ violates independence, while $v_i\notin S$
+    violates the requirement that every \texttt{OUT} vertex have at
+    least two out-neighbours in $S$. Thus no $(2,d)$-kernel exists.
+
+    \smallskip
+
+    If $k\ge2$, $v_i\notin S$ is forced, since putting $v_i$ in $S$
+    would violate independence with an \texttt{IN} out-neighbour.
+    Moreover, $v_i$ is already 2-dominated by its $k\ge2$ out-neighbours
+    in $S$.
+  \end{proof}
+\end{frame}
+
+\begin{frame}{Theorem 9: Completion}
+
+  If the sweep terminates without encountering $k=1$, define
+  \[
+    S=\{v_i:v_i\text{ was assigned }\texttt{IN}\}.
+  \]
+
+  \smallskip
+
+  Every \texttt{IN} vertex was assigned when $k=0$, so no directed edge
+  joins two vertices of $S$. Hence $S$ is independent.
+
+  \smallskip
+
+  Every \texttt{OUT} vertex was assigned when $k\ge2$, so it has at least
+  two out-neighbours in $S$. Hence $S$ 2-dominates $V(D)\setminus S$.
+
+\end{frame}
+
+\begin{frame}{Theorem 9: Completion}
+
+  Therefore $S$ is a $(2,d)$-kernel.
+
+  \bigskip
+
+  Every status is forced by the already processed out-neighbours.
+  Hence no branching is possible, and if a $(2,d)$-kernel exists, it is
+  unique.
+
+  \bigskip
+
+  The reverse topological sweep examines each vertex and its out-neighbours
+  once, giving an $O(|V|+|E|)$ algorithm.
+\end{frame}
+
+\end{document}
