@@ -18,12 +18,12 @@
 \begin{theorem}[Tight bound for oriented graphs]
 \label{thm:bound}
 Let $D$ be an \emph{oriented} graph (no digons: for any two vertices, at most one of
-$u\to v$, $v\to u$ is present) with $\delta^+(D) \ge 2$. If $D$ has a 2-kernel, then
+$u\to v$, $v\to u$ is present) with $\delta^+(D) \ge 2$. If $D$ has a 2-d kernel, then
 $D$ has at least 8 vertices, and 8 is attained.
 \end{theorem}
 
 \begin{proof}
-Let $J$ be a 2-kernel of $D$, $j = |J|$, and $B = V \setminus J$, $t = |B| = n - j > 0$.
+Let $J$ be a 2-d kernel of $D$, $j = |J|$, and $B = V \setminus J$, $t = |B| = n - j > 0$.
 Every vertex of $B$ sends at least 2 arcs into $J$ (2-domination), so writing $d_x$
 for the number of $B$-vertices with an arc into $x \in J$,
 \[
@@ -69,14 +69,14 @@ With $J = \{0,1,2,3\}$, $B = \{4,5,6,7\}$, and arcs
 (4,0)(4,1)(5,1)(5,2)(6,2)(6,3)(7,0)(7,3),
 \]
 every vertex has out-degree exactly 2, no digon is present, and $J = \{0,1,2,3\}$
-and $B = \{4,5,6,7\}$ are both 2-kernels.
+and $B = \{4,5,6,7\}$ are both 2-d kernels.
 \end{example}
 
 \begin{proposition}[Extremal count — hypothesis-qualified]
 \label{prop:count}
 Among oriented graphs on exactly 8 vertices in which \emph{every} vertex — not just
 the ones forced to by Theorem~\ref{thm:bound}'s argument — has out-degree
-\emph{exactly} 2, and which have a 2-kernel of size 4, there are exactly 2
+\emph{exactly} 2, and which have a 2-d kernel of size 4, there are exactly 2
 isomorphism classes, of sizes 72 and 18 (out of 90 labelled instances), both of them
 balanced orientations of the complete bipartite graph $K_{4,4}$.
 \end{proposition}
@@ -106,7 +106,7 @@ each $x$ points at exactly the 2 $B$-vertices that do not target it).
 This was verified directly by exhaustive computer search (independently reproduced
 here): of the $6^4 = 1296$ labelled ways to assign target-pairs, exactly 90 satisfy
 the balance condition; each was checked directly against the definition of a
-2-kernel (all 90 pass); and grouping the 90 by graph isomorphism yields exactly 2
+2-d kernel (all 90 pass); and grouping the 90 by graph isomorphism yields exactly 2
 classes, of sizes 72 and 18. In both classes every vertex has out-degree 2 and
 in-degree 2, and the underlying graph is $K_{4,4}$ on $J \cup B$ (every kernel vertex
 turns out adjacent, in the underlying sense, to all four outside vertices — not only
@@ -125,11 +125,11 @@ Example~\ref{ex:tight} graph and add a single further arc entirely within $B$, s
 $4 \to 5$ (not previously present, and adding it creates no digon since $5\to4$ was
 never an arc). This is still an oriented graph on 8 vertices with $\delta^+ \ge 2$
 (vertex 4's out-degree rises from 2 to 3, everything else unchanged), and $J$ remains
-a valid 2-kernel — $J$'s independence and 2-domination depend only on arcs
+a valid 2-d kernel — $J$'s independence and 2-domination depend only on arcs
 touching $J$, which are untouched. This graph has 17 arcs, so it cannot be
 isomorphic to any of the 90 sixteen-arc graphs above, yet it satisfies every
 hypothesis of Theorem~\ref{thm:bound} at the extremal size $n=8$. So the true count
-of non-isomorphic 8-vertex oriented graphs with $\delta^+\ge2$ and a size-4 2-kernel,
+of non-isomorphic 8-vertex oriented graphs with $\delta^+\ge2$ and a size-4 2-d kernel,
 with no restriction beyond Theorem~\ref{thm:bound}'s own hypotheses, is strictly
 larger than 2 — Proposition~\ref{prop:count} is correct exactly as qualified, and no
 further.

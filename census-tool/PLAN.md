@@ -1,17 +1,17 @@
-# PLAN — 2-kernel census tool
+# PLAN — 2-d kernel census tool
 
 ## Object
 
-`D = (V, A)` a loopless digraph, `S ⊆ V` is a **2-kernel** iff
+`D = (V, A)` a loopless digraph, `S ⊆ V` is a **2-d kernel** iff
 
 1. *independence*: no arc of `A` has both ends in `S` (either direction);
 2. *2-domination*: every `v ∉ S` has `|N⁺(v) ∩ S| ≥ 2`.
 
-An undirected graph is its symmetric digraph, so `N⁺(v) = N(v)` and a 2-kernel is the
+An undirected graph is its symmetric digraph, so `N⁺(v) = N(v)` and a 2-d kernel is the
 `(2-d)`-kernel of Włoch, *Australas. J. Combin.* **53** (2012) 273–284. One engine, one
 code path, both cases.
 
-Key structural fact used everywhere: **every 2-kernel is a maximal independent set of the
+Key structural fact used everywhere: **every 2-d kernel is a maximal independent set of the
 underlying graph** (a vertex outside `S` has out-arcs into `S`, hence is adjacent to `S`).
 So "enumerate maximal independent sets, filter by 2-domination" is complete and obviously
 correct; it is the ground truth for everything else. Existence is NP-complete (Bednarz,
@@ -96,6 +96,6 @@ Recorded here so they are auditable; each is also restated where it is used.
 
 All five stages are done and all 101 tests pass. Results, the exact queries behind them,
 and the three statements that turned out to be provable (the oriented-graph bound `n ≥ 8`,
-uniqueness of DAG 2-kernels, and the subdivision family) are in `FINDINGS.md`. No
+uniqueness of DAG 2-d kernels, and the subdivision family) are in `FINDINGS.md`. No
 published expected value disagreed with the implementation, so `FINDINGS.md` records no
 counterexample to any cited theorem.

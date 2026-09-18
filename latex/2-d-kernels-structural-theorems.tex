@@ -1,0 +1,1017 @@
+\documentclass[11pt]{article}
+
+% ---------- Page and fonts ----------
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+
+% ---------- Mathematics ----------
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\numberwithin{equation}{section}
+\allowdisplaybreaks
+
+% ---------- Lists, links, references ----------
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cleveref}
+
+% ---------- Theorem environments (shared counter, cleveref-aware) ----------
+\usepackage{aliascnt}
+\newcommand{\sibthm}[3]{% #1 env name, #2 display name, #3 amsthm style
+  \theoremstyle{#3}%
+  \newaliascnt{#1}{theorem}%
+  \newtheorem{#1}[#1]{#2}%
+  \aliascntresetthe{#1}%
+  \expandafter\newcommand\csname #1autorefname\endcsname{#2}%
+}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\sibthm{lemma}{Lemma}{plain}
+\sibthm{proposition}{Proposition}{plain}
+\sibthm{corollary}{Corollary}{plain}
+\sibthm{definition}{Definition}{definition}
+\sibthm{example}{Example}{definition}
+\sibthm{remark}{Remark}{remark}
+
+\crefname{theorem}{Theorem}{Theorems}
+\crefname{lemma}{Lemma}{Lemmas}
+\crefname{proposition}{Proposition}{Propositions}
+\crefname{corollary}{Corollary}{Corollaries}
+\crefname{definition}{Definition}{Definitions}
+\crefname{example}{Example}{Examples}
+\crefname{remark}{Remark}{Remarks}
+\Crefname{theorem}{Theorem}{Theorems}
+\Crefname{lemma}{Lemma}{Lemmas}
+\Crefname{proposition}{Proposition}{Propositions}
+\Crefname{corollary}{Corollary}{Corollaries}
+\Crefname{definition}{Definition}{Definitions}
+\Crefname{example}{Example}{Examples}
+\Crefname{remark}{Remark}{Remarks}
+
+% ---------- Numbered proof steps ----------
+\newlist{steps}{enumerate}{1}
+\setlist[steps]{label=\textup{\textbf{Step \arabic*.}}, leftmargin=*,
+                labelsep=0.6em, itemsep=0.5ex, topsep=0.5ex}
+
+% ---------- Notation macros ----------
+\newcommand{\V}{V}
+\newcommand{\A}{A}
+\newcommand{\Np}{N^{+}}
+\newcommand{\Nm}{N^{-}}
+\newcommand{\dip}{d^{+}}
+\newcommand{\dm}{d^{-}}
+\newcommand{\dmin}{\delta^{+}}
+\newcommand{\und}{U}                       % underlying graph operator
+\newcommand{\st}{\sigma}                   % a state of the marking process
+\DeclareMathOperator{\IN}{\mathsf{IN}}
+\DeclareMathOperator{\OUT}{\mathsf{OUT}}
+\DeclareMathOperator{\UNK}{\mathsf{UNKNOWN}}
+
+\title{\bfseries 2-d Kernels of Graphs and Digraphs:\\ Six Self-Contained Theorems}
+\author{Siddharth Narayan Mishra\\[2pt] Roll Number: 123CS0189}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A \emph{2-d kernel} of a digraph is a set of vertices that is independent and such that
+every vertex outside it has at least two out-neighbours inside it. This article gives
+complete proofs of six theorems about 2-d kernels: a sufficient condition for two disjoint
+2-d kernels in a strongly connected digraph, decidability and uniqueness on chordal graphs,
+the same on digraphs with a chordal underlying graph, a tight lower bound of eight
+vertices for oriented graphs of minimum out-degree at least two, uniqueness and
+linear-time decidability on acyclic digraphs, and the fact that the original vertex set
+of any graph is a 2-d kernel of its subdivision. Every supporting fact, including the
+existence of a simplicial vertex in a chordal graph, is proved from first principles;
+nothing outside this article is used.
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction}
+
+Let $D=(\V,\A)$ be a finite digraph. A set $S\subseteq \V$ is a \emph{2-d kernel} of $D$
+if no arc of $D$ has both ends in $S$, and every vertex outside $S$ has arcs to at least
+two distinct vertices of $S$. An undirected graph is identified with the digraph obtained
+by replacing each edge $\{u,v\}$ by the two arcs $(u,v)$ and $(v,u)$, so that the same
+definition applies to graphs.
+
+This article proves the following six statements. Each is stated precisely, and with all
+hypotheses, in the section indicated.
+
+\begin{enumerate}[label=\textup{(\roman*)},leftmargin=2.6em]
+\item If a digraph $D$ is strongly connected, every directed cycle of $D$ has even
+length, and every vertex has out-degree at least $2$, then $\V(D)$ splits into two
+non-empty sets, each a 2-d kernel of $D$ (\cref{thm:B}).
+\item On a chordal graph a certain propagation process always terminates with every
+vertex decided; consequently a chordal graph has at most one 2-d kernel, and 2-d kernel
+existence is decidable in polynomial time (\cref{thm:chordal}).
+\item The same conclusion holds for every digraph whose underlying graph is chordal,
+with no assumption on out-degrees (\cref{thm:chordaldigraph}).
+\item If an oriented graph has minimum out-degree at least $2$ and possesses a 2-d kernel,
+then it has at least $8$ vertices, and $8$ is attained (\cref{thm:oriented} and
+\cref{ex:oriented8}).
+\item An acyclic digraph has at most one 2-d kernel, and whether it has one can be decided,
+and the 2-d kernel produced, in linear time (\cref{thm:dag} and \cref{cor:daglinear}).
+\item For every graph $G$, the vertex set $\V(G)$ is a 2-d kernel of the subdivision
+$S(G)$ (\cref{thm:subdivision}).
+\end{enumerate}
+
+These statements were first observed during a computational study of 2-d kernels; the
+purpose of the present document is to give them proofs that stand on their own. Every
+lemma used is proved here, and no external theorem is quoted.
+
+\section{Preliminaries}
+
+All graphs and digraphs in this article are finite. Graphs are simple (no loops, no
+repeated edges). Digraphs are loopless and have no repeated arcs; between an ordered pair
+of distinct vertices $u,v$ the arc $(u,v)$ is either present or absent.
+
+\subsection{Graphs, digraphs, and the underlying graph}
+
+A \emph{graph} $G=(\V,E)$ has a vertex set $\V=\V(G)$ and an edge set $E=E(G)$ of
+$2$-element subsets of $\V$. Vertices $u,v$ are \emph{adjacent} if $\{u,v\}\in E$; we then
+also write $uv\in E$. The \emph{neighbourhood} of $v$ is $N_G(v)=\{u:uv\in E\}$ and the
+\emph{degree} of $v$ is $|N_G(v)|$.
+
+A \emph{digraph} $D=(\V,\A)$ has a vertex set $\V=\V(D)$ and an \emph{arc} set
+$\A=\A(D)$ of ordered pairs of distinct vertices. The \emph{out-neighbourhood} and
+\emph{in-neighbourhood} of $v$ are
+\[
+  \Np_D(v)=\{w:(v,w)\in\A\},\qquad \Nm_D(v)=\{w:(w,v)\in\A\},
+\]
+with \emph{out-degree} $\dip_D(v)=|\Np_D(v)|$ and \emph{in-degree}
+$\dm_D(v)=|\Nm_D(v)|$. The \emph{minimum out-degree} is
+$\dmin(D)=\min_{v\in\V(D)}\dip_D(v)$; whenever we write $\dmin(D)\ge 2$ we implicitly
+assume $\V(D)\neq\varnothing$.
+
+The \emph{underlying graph} of a digraph $D$ is the graph $\und(D)$ with vertex set
+$\V(D)$ in which $u$ and $v$ are adjacent exactly when $(u,v)\in\A(D)$ or
+$(v,u)\in\A(D)$. We write $N_D(v)=\Np_D(v)\cup\Nm_D(v)$ for the neighbourhood of $v$ in
+$\und(D)$, and call it the \emph{underlying neighbourhood} of $v$. Note the containment
+\begin{equation}\label{eq:contain}
+  \Np_D(v)\ \subseteq\ N_D(v).
+\end{equation}
+
+A digraph $D$ is an \emph{oriented graph} if there are no two vertices $u,v$ with both
+$(u,v)\in\A(D)$ and $(v,u)\in\A(D)$. A digraph $D$ is \emph{symmetric} if
+$(u,v)\in\A(D)$ implies $(v,u)\in\A(D)$. A graph $G$ is identified with the symmetric
+digraph on $\V(G)$ whose arcs are the pairs $(u,v)$ and $(v,u)$ for each edge $uv\in
+E(G)$; then $\und(D)=G$ and $\Np_D(v)=\Nm_D(v)=N_G(v)$ for every $v$.
+
+\subsection{Walks, paths, cycles, connectivity}
+
+A \emph{walk} of \emph{length} $\ell$ from $x$ to $y$ in a graph is a sequence
+$x=z_0,z_1,\dots,z_\ell=y$ with $z_{t-1}z_t\in E$ for $1\le t\le\ell$. A \emph{path} is a
+walk whose vertices are pairwise distinct. A graph is \emph{connected} if it has a path
+between every two vertices; a \emph{component} of a graph is a maximal set of vertices
+that induces a connected graph.
+
+A \emph{directed walk} of length $\ell$ from $x$ to $y$ in a digraph is a sequence
+$x=z_0,z_1,\dots,z_\ell=y$ with $(z_{t-1},z_t)\in\A$ for $1\le t\le\ell$; it is
+\emph{closed} if $z_0=z_\ell$. A \emph{directed cycle} of length $k$ is a closed directed
+walk $z_0,z_1,\dots,z_k=z_0$ with $k\ge1$ and $z_0,\dots,z_{k-1}$ pairwise distinct;
+since digraphs are loopless, every directed cycle has length at least $2$. A digraph is
+\emph{acyclic} (a \emph{DAG}) if it has no directed cycle. A digraph is \emph{strongly
+connected} if for every ordered pair $(u,v)$ of vertices there is a directed walk from
+$u$ to $v$.
+
+\begin{lemma}\label{lem:walkpath}
+If a graph contains a walk of length $\ell$ from $x$ to $y$, then it contains a path from
+$x$ to $y$ whose vertex set is a subset of the walk's vertex set and whose length is at
+most $\ell$.
+\end{lemma}
+
+\begin{proof}
+Induction on $\ell$. If the walk's vertices are pairwise distinct it is already a path.
+Otherwise a vertex $z$ occurs at two positions $p<q$; deleting the portion strictly
+between these two occurrences yields a walk from $x$ to $y$ of length
+$\ell-(q-p)<\ell$ whose vertex set is a subset of the original. Apply the inductive
+hypothesis.
+\end{proof}
+
+\subsection{Cliques, induced subgraphs, chordal graphs}
+
+A \emph{clique} of a graph $G$ is a set of pairwise adjacent vertices. A set of size at
+most $1$ is a clique (the condition is vacuous). For $W\subseteq\V(G)$, the
+\emph{induced subgraph} $G[W]$ has vertex set $W$ and edge set
+$\{uv\in E(G):u,v\in W\}$. If $D$ is a digraph we write $\und(D)[W]$ for the subgraph of
+$\und(D)$ induced by $W$.
+
+A \emph{chord} of a cycle $z_0,z_1,\dots,z_k=z_0$ is an edge $z_iz_j$ of the graph with
+$z_i,z_j$ non-consecutive on the cycle, that is $1\le|i-j|$ and $|i-j|\neq 1$ and
+$\{i,j\}\neq\{0,k-1\}$. A graph is \emph{chordal} if every one of its cycles of length at
+least $4$ has a chord.
+
+A vertex $x$ of a graph $G$ is \emph{simplicial} if $N_G(x)$ is a clique of $G$.
+
+\subsection{Independent sets, 2-domination, 2-d kernels}
+
+Let $D$ be a digraph. A set $S\subseteq\V(D)$ is \emph{independent} if no arc of $D$ has
+both ends in $S$; equivalently, no edge of $\und(D)$ has both ends in $S$. The set $S$ is
+\emph{2-dominating} if
+\[
+  |\Np_D(v)\cap S|\ \ge\ 2 \qquad\text{for every } v\in\V(D)\setminus S .
+\]
+A \emph{2-d kernel} of $D$ is a set that is both independent and 2-dominating.
+
+For a graph $G$, viewed as its symmetric digraph, this reads: $S\subseteq\V(G)$ is a
+2-d kernel of $G$ if no edge of $G$ has both ends in $S$ and $|N_G(v)\cap S|\ge 2$ for
+every $v\in\V(G)\setminus S$.
+
+\begin{lemma}[Local constraints on a 2-d kernel]\label{lem:forced}
+Let $S$ be a 2-d kernel of a digraph $D$, and let $v\in\V(D)$. Then:
+\begin{enumerate}[label=\textup{(\alph*)},leftmargin=2.4em]
+\item if $\Np_D(v)\cap S\neq\varnothing$, then $v\notin S$;
+\item if $v\notin S$, then $|\Np_D(v)\cap S|\ge 2$;
+\item $|\Np_D(v)\cap S|\neq 1$;
+\item $v\in S$ if and only if $\Np_D(v)\cap S=\varnothing$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\emph{(a)} If $v\in S$ and $w\in\Np_D(v)\cap S$, then $(v,w)$ is an arc with both ends in
+$S$, contradicting independence. Hence $v\notin S$.
+
+\emph{(b)} This is the definition of 2-domination applied to $v\notin S$.
+
+\emph{(c)} If $|\Np_D(v)\cap S|=1$, then $\Np_D(v)\cap S\neq\varnothing$, so $v\notin S$
+by (a), so $|\Np_D(v)\cap S|\ge 2$ by (b): a contradiction.
+
+\emph{(d)} If $v\in S$, then by the contrapositive of (a), $\Np_D(v)\cap S=\varnothing$.
+Conversely, if $\Np_D(v)\cap S=\varnothing$, then $|\Np_D(v)\cap S|=0<2$, so by the
+contrapositive of (b), $v\in S$.
+\end{proof}
+
+\begin{remark}\label{rem:mis}
+Every 2-d kernel $S$ of $D$ is a maximal independent set of $\und(D)$: a vertex
+$v\notin S$ has an out-neighbour in $S$ by \cref{lem:forced}(b), hence a neighbour in
+$S$ in $\und(D)$, so $S\cup\{v\}$ is not independent. This fact is not used below but
+explains why the sets constructed in the proofs are forced to be as large as they are.
+\end{remark}
+
+\section{Strongly connected digraphs in which every directed cycle is even}
+\label{sec:B}
+
+\begin{lemma}[Cycle decomposition of a closed walk]\label{lem:cycdecomp}
+Let $D$ be a digraph and let $W=w_0,w_1,\dots,w_L$ be a closed directed walk of length
+$L\ge 0$ (so $w_0=w_L$). Then there are directed cycles $C_1,\dots,C_r$ of $D$
+(with $r\ge 0$, repetitions allowed) such that $|C_1|+\dots+|C_r|=L$.
+\end{lemma}
+
+\begin{proof}
+Strong induction on $L$.
+
+If $L=0$, take $r=0$; the empty sum is $0$.
+
+Let $L\ge 1$. If $w_0,w_1,\dots,w_{L-1}$ are pairwise distinct, then $W$ itself is a
+directed cycle of length $L$: consecutive vertices are joined by arcs and $w_L=w_0$.
+Take $r=1$ and $C_1=W$.
+
+Otherwise there are indices $0\le a<b\le L-1$ with $w_a=w_b$. Since $w_a=w_b$ and
+$(w_b,w_{b+1})\in\A(D)$, also $(w_a,w_{b+1})\in\A(D)$, so
+\[
+  W' \;=\; w_0,w_1,\dots,w_a,w_{b+1},w_{b+2},\dots,w_L
+\]
+is a closed directed walk (it starts and ends at $w_0=w_L$) of length $a+(L-b)=L-(b-a)$,
+and
+\[
+  W'' \;=\; w_a,w_{a+1},\dots,w_b
+\]
+is a closed directed walk (it starts and ends at $w_a=w_b$) of length $b-a$. Because
+$1\le b-a\le L-1$, both $W'$ and $W''$ have length in $\{1,\dots,L-1\}$. Apply the
+inductive hypothesis to each and concatenate the two lists of cycles; the lengths sum to
+$\bigl(L-(b-a)\bigr)+(b-a)=L$.
+\end{proof}
+
+\begin{theorem}\label{thm:B}
+Let $D$ be a digraph such that
+\begin{enumerate}[label=\textup{(\roman*)},leftmargin=2.6em]
+\item $D$ is strongly connected,
+\item every directed cycle of $D$ has even length, and
+\item $\dmin(D)\ge 2$.
+\end{enumerate}
+Then $\V(D)$ can be partitioned into two non-empty sets $V_0,V_1$, each of which is a
+2-d kernel of $D$. In particular $D$ has two disjoint 2-d kernels.
+\end{theorem}
+
+\begin{proof}
+By (iii), $\V(D)\neq\varnothing$; fix a vertex $r\in\V(D)$.
+
+\begin{steps}
+\item\textbf{(Parity of walks from $r$ is well defined.)}
+We claim that any two directed walks from $r$ to the same vertex $v$ have lengths of
+equal parity. Let $P$ and $Q$ be directed walks from $r$ to $v$. By (i) there is a
+directed walk $R$ from $v$ to $r$. Then $P$ followed by $R$ is a closed directed walk
+based at $r$ of length $|P|+|R|$, and $Q$ followed by $R$ is one of length $|Q|+|R|$. By
+\cref{lem:cycdecomp} each of these lengths is a sum of lengths of directed cycles of
+$D$, and by (ii) each such length is even; hence $|P|+|R|$ and $|Q|+|R|$ are both even.
+Subtracting, $|P|-|Q|$ is even, that is $|P|\equiv|Q|\pmod 2$.
+
+\item\textbf{(The parity function.)}
+By (i), for every vertex $v$ there is a directed walk from $r$ to $v$. Define
+$\operatorname{par}(v)\in\{0,1\}$ to be the parity of the length of any such walk; this
+is well defined by Step~1. Note $\operatorname{par}(r)=0$, using the walk of length $0$.
+
+\item\textbf{(Every arc reverses parity.)}
+Let $(u,v)\in\A(D)$. Take any directed walk $P$ from $r$ to $u$ and append the arc
+$(u,v)$ to obtain a directed walk from $r$ to $v$ of length $|P|+1$. By Step~2,
+$\operatorname{par}(v)\equiv|P|+1\equiv\operatorname{par}(u)+1\pmod 2$, so
+$\operatorname{par}(v)=1-\operatorname{par}(u)$.
+
+\item\textbf{(The two classes.)}
+Put $V_0=\{v:\operatorname{par}(v)=0\}$ and $V_1=\{v:\operatorname{par}(v)=1\}$. These are
+disjoint, and their union is $\V(D)$ because every vertex has a parity (Step~2). Both are
+non-empty: $r\in V_0$, and by (iii) the vertex $r$ has an out-neighbour $w$, which lies
+in $V_1$ by Step~3.
+
+\item\textbf{(Each class is independent.)}
+Fix $i\in\{0,1\}$. If some arc had both ends in $V_i$, then by Step~3 its two ends would
+have different parities, contradicting that both lie in $V_i$. So $V_i$ is independent.
+
+\item\textbf{(Each class is 2-dominating.)}
+Fix $i\in\{0,1\}$ and set $S=V_i$. Let $v\notin S$, so $\operatorname{par}(v)=1-i$, that
+is $v\in V_{1-i}$. By Step~3 every out-neighbour of $v$ has parity $i$, so
+$\Np_D(v)\subseteq V_i=S$. Hence
+\[
+  |\Np_D(v)\cap S| \;=\; |\Np_D(v)| \;=\; \dip_D(v) \;\ge\; \dmin(D) \;\ge\; 2 .
+\]
+So $S$ is 2-dominating.
+
+\item\textbf{(Conclusion.)}
+By Steps~5 and~6, each of $V_0$ and $V_1$ is independent and 2-dominating, hence a
+2-d kernel of $D$. By Step~4 they are non-empty; they are disjoint and partition $\V(D)$.
+\end{steps}
+\end{proof}
+
+\section{The structure of chordal graphs}
+\label{sec:chordalstructure}
+
+This section proves, from the definition of chordality alone, that every non-empty
+chordal graph has a simplicial vertex. Three preparatory lemmas come first.
+
+\begin{lemma}[Heredity]\label{lem:heredity}
+If $G$ is a chordal graph and $W\subseteq\V(G)$, then $G[W]$ is chordal.
+\end{lemma}
+
+\begin{proof}
+Let $Z$ be a cycle of $G[W]$ of length at least $4$. Its edges are edges of $G[W]$,
+hence edges of $G$, so $Z$ is also a cycle of $G$. Since $G$ is chordal, $Z$ has a chord
+$xy$ in $G$: an edge of $G$ joining two vertices of $Z$ that are non-consecutive on $Z$.
+Both $x,y\in W$, so $xy\in E(G[W])$, and $xy$ is a chord of $Z$ in $G[W]$. Thus every
+cycle of $G[W]$ of length at least $4$ has a chord in $G[W]$, so $G[W]$ is chordal.
+\end{proof}
+
+\begin{lemma}[Shortest paths are induced]\label{lem:shortinduced}
+Let $P=x_0,x_1,\dots,x_k$ be a path in a graph $G$ such that no path from $x_0$ to $x_k$
+has fewer than $k$ edges. Then $x_ix_j\in E(G)$ implies $|i-j|=1$.
+\end{lemma}
+
+\begin{proof}
+Suppose $x_ix_j\in E(G)$ with $i<j$ and $j-i\ge 2$. Then
+\[
+  x_0,x_1,\dots,x_i,x_j,x_{j+1},\dots,x_k
+\]
+is a walk from $x_0$ to $x_k$ with $i+1+(k-j)=k-(j-i)+1\le k-1$ edges. By
+\cref{lem:walkpath} there is a path from $x_0$ to $x_k$ with at most $k-1$ edges,
+contradicting the hypothesis on $P$.
+\end{proof}
+
+\begin{lemma}[Minimal separators in a chordal graph are cliques]\label{lem:sepclique}
+Let $G$ be a chordal graph and let $a,b$ be distinct non-adjacent vertices of $G$.
+Consider the family of all sets $T\subseteq\V(G)\setminus\{a,b\}$ such that $a$ and $b$
+lie in different components of $G-T$. This family is non-empty; let $S$ be an
+inclusion-minimal member of it. Then $S$ is a clique of $G$.
+\end{lemma}
+
+\begin{proof}
+The family is non-empty: for $T=\V(G)\setminus\{a,b\}$, the graph $G-T$ has vertex set
+$\{a,b\}$ with no edge (as $a,b$ are non-adjacent), so $a$ and $b$ are in different
+components. The family is finite, hence has an inclusion-minimal member $S$.
+
+If $|S|\le 1$, then $S$ is a clique and we are done. So assume $|S|\ge 2$ and let $x,y$
+be two distinct vertices of $S$. Let $A$ be the vertex set of the component of $G-S$
+containing $a$, and $B$ that of the component containing $b$; by the choice of $S$ we
+have $A\neq B$. There is no edge of $G$ between $A$ and $B$: such an edge would join two
+vertices of $\V(G)\setminus S$, hence would be an edge of $G-S$ between two different
+components, which is impossible.
+
+\begin{steps}
+\item\textbf{(Every vertex of $S$ has a neighbour in $A$ and a neighbour in $B$.)}
+Let $s\in S$. By minimality of $S$, the set $S\setminus\{s\}$ is not in the family, so
+$G-(S\setminus\{s\})$ contains a path $P$ from $a$ to $b$. Since $G-S$ has no path from
+$a$ to $b$, the path $P$ contains $s$; as $P$ is a path, $s$ occurs on it exactly once.
+Let $s'$ be the vertex just before $s$ on $P$ and $s''$ the vertex just after. The
+portion of $P$ from $a$ to $s'$ avoids $S$ entirely, because $P$ avoids $S\setminus\{s\}$
+and does not reach $s$ before $s'$; hence $s'$ lies in the same component of $G-S$ as
+$a$, that is $s'\in A$, and $s's\in E(G)$. Symmetrically $s''\in B$ and $s''s\in E(G)$.
+
+\item\textbf{(A path from $x$ to $y$ through $A$, and one through $B$.)}
+By Step~1, $x$ has a neighbour $x_A\in A$ and $y$ has a neighbour $y_A\in A$. Since
+$G[A]$ is connected (it is the graph induced by a component of $G-S$), it contains a
+path from $x_A$ to $y_A$. Prefixing $x$ and suffixing $y$ gives a walk from $x$ to $y$
+whose internal vertices all lie in $A$; by \cref{lem:walkpath} it contains a path from
+$x$ to $y$ whose internal vertices all lie in $A$. Among all such paths, let $P_A$ be one
+of minimum length. Since $x$ and $y$ are non-adjacent, $P_A$ has length at least $2$.
+Symmetrically, let $P_B$ be a minimum-length path from $x$ to $y$ whose internal vertices
+all lie in $B$; it also has length at least $2$.
+
+\item\textbf{($P_A$ and $P_B$ are induced and meet only in $x,y$.)}
+The internal vertices of $P_A$ lie in $A$, those of $P_B$ lie in $B$, and $A\cap
+B=\varnothing$; also $x,y\in S$, so $x,y\notin A\cup B$. Hence $P_A$ and $P_B$ share
+exactly the vertices $x$ and $y$. Moreover $P_A$ is an induced path: if two of its
+vertices were adjacent but non-consecutive on $P_A$, then deleting the vertices strictly
+between them along $P_A$ (as in \cref{lem:shortinduced}) would give a shorter walk from
+$x$ to $y$, hence a shorter path from $x$ to $y$ with all internal vertices still in $A$,
+contradicting the choice of $P_A$. The same holds for $P_B$.
+
+\item\textbf{(A chordless cycle.)}
+Let $Z$ be the cycle that follows $P_A$ from $x$ to $y$ and then $P_B$ back from $y$ to
+$x$. By Step~3 its vertices are distinct, and its length is $|P_A|+|P_B|\ge 4$. We show
+$Z$ has no chord. Let $p,q$ be two vertices of $Z$ that are non-consecutive on $Z$.
+\begin{itemize}[leftmargin=1.4em,itemsep=0.2ex]
+\item If $p,q$ both lie on $P_A$: they are non-consecutive on $P_A$ as well, so
+$pq\notin E(G)$ because $P_A$ is induced (Step~3).
+\item If $p,q$ both lie on $P_B$: likewise $pq\notin E(G)$.
+\item If one of $p,q$ is an internal vertex of $P_A$ (hence in $A$) and the other is an
+internal vertex of $P_B$ (hence in $B$): $pq\notin E(G)$ because there is no edge of $G$
+between $A$ and $B$.
+\item If $\{p,q\}=\{x,y\}$: $pq\notin E(G)$ by hypothesis.
+\end{itemize}
+Every pair of non-consecutive vertices of $Z$ falls into one of these cases (each of
+$p,q$ lies on $P_A$ or on $P_B$, and the vertices $x,y$ lie on both). So $Z$ is a
+chordless cycle of length at least $4$ in $G$, contradicting that $G$ is chordal.
+\end{steps}
+
+The contradiction shows that the assumption ``$x,y$ non-adjacent'' is untenable. Hence
+every two vertices of $S$ are adjacent, that is $S$ is a clique.
+\end{proof}
+
+\begin{lemma}[Existence of a simplicial vertex]\label{lem:dirac}
+Every chordal graph with at least one vertex has a simplicial vertex. Moreover, every
+chordal graph that is not a complete graph has two non-adjacent simplicial vertices.
+\end{lemma}
+
+\begin{proof}
+Induction on $n=|\V(G)|$.
+
+\textbf{Base $n=1$.} The unique vertex has empty neighbourhood, a clique, so it is
+simplicial. A one-vertex graph is complete, so the second statement is vacuous.
+
+\textbf{Inductive step $n\ge 2$.} Assume both statements for all chordal graphs with
+fewer than $n$ vertices.
+
+\emph{Case 1: $G$ is complete.} Every vertex $v$ has $N_G(v)=\V(G)\setminus\{v\}$, a
+clique, so $v$ is simplicial. The first statement holds; the second is vacuous.
+
+\emph{Case 2: $G$ is not complete.} Fix distinct non-adjacent vertices $a,b$. By
+\cref{lem:sepclique} there is an inclusion-minimal $S\subseteq\V(G)\setminus\{a,b\}$
+separating $a$ from $b$, and $S$ is a clique. Let $A$ be the vertex set of the component
+of $G-S$ containing $a$, and $B$ that of the component containing $b$.
+
+\smallskip
+\emph{Claim: $G$ has a simplicial vertex lying in $A$.} Let $H=G[A\cup S]$. By
+\cref{lem:heredity}, $H$ is chordal. Since $b\notin A\cup S$ we have $|\V(H)|\le n-1$,
+and $A\ni a$ gives $|\V(H)|\ge 1$; so $1\le|\V(H)|<n$.
+\begin{itemize}[leftmargin=1.4em,itemsep=0.3ex]
+\item If $H$ is complete, then $A\cup S$ is a clique. Pick any $v\in A$. Every neighbour
+of $v$ in $G$ lies in $A\cup S$: a neighbour of $v$ is either in the same component of
+$G-S$ as $v$, namely in $A$, or in $S$. Hence $N_G(v)\subseteq(A\cup S)\setminus\{v\}$,
+a subset of the clique $A\cup S$, so $N_G(v)$ is a clique and $v$ is simplicial in $G$.
+\item If $H$ is not complete, then by the inductive hypothesis $H$ has two non-adjacent
+simplicial vertices $u_1,u_2$. Since $S$ is a clique and $u_1,u_2$ are non-adjacent, at
+most one of them lies in $S$; so at least one, say $u_1$, lies in $A$. As above,
+$N_G(u_1)\subseteq A\cup S=\V(H)$, and $H$ is an induced subgraph of $G$, so
+$N_G(u_1)=N_H(u_1)$, which is a clique because $u_1$ is simplicial in $H$. Hence $u_1$
+is simplicial in $G$ and lies in $A$.
+\end{itemize}
+This proves the claim; call the resulting vertex $s_A\in A$.
+
+By the same argument applied to $G[B\cup S]$, there is a simplicial vertex $s_B$ of $G$
+lying in $B$. Since $s_A\in A$ and $s_B\in B$ lie in different components of $G-S$, they
+are non-adjacent in $G$ (an edge $s_As_B$ would be an edge of $G$ between $A$ and $B$).
+This proves the second statement, and the first follows because $s_A$ is a simplicial
+vertex of $G$.
+\end{proof}
+
+\section{A marking process and its soundness}
+\label{sec:process}
+
+We now describe a propagation process on the vertices of a graph. \Cref{sec:chordal}
+proves it decides every chordal graph; \cref{sec:chordaldigraph} adapts it to digraphs.
+
+\begin{definition}[The marking process for a graph]\label{def:process}
+Let $G$ be a graph. A \emph{state} is a function
+$\st\colon\V(G)\to\{\IN,\OUT,\UNK\}$. The \emph{initial state} $\st_0$ assigns $\UNK$ to
+every vertex. Given a state $\st$, a single \emph{step} produces a new state by applying
+one of the following rules to a vertex meeting its precondition.
+\begin{itemize}[leftmargin=1.6em,itemsep=0.4ex]
+\item[\textbf{(Spread)}] Choose $v$ with $\st(v)=\IN$ and a vertex $u\in N_G(v)$ with
+$\st(u)=\UNK$. The new state equals $\st$ except that $u$ is reassigned to $\OUT$.
+\item[\textbf{(Force)}] Choose $v$ with $\st(v)=\UNK$ such that the set
+\[
+  C_\st(v)\ :=\ \{\,u\in N_G(v):\st(u)\neq\OUT\,\}
+\]
+is a clique of $G$ (recall a set of size at most $1$ is a clique). The new state equals
+$\st$ except that $v$ is reassigned to $\IN$.
+\end{itemize}
+A \emph{run} is a sequence $\st_0,\st_1,\st_2,\dots$ in which each $\st_{t+1}$ is obtained
+from $\st_t$ by one step. A state is \emph{terminal} if neither rule can be applied to
+it. A run is \emph{complete} if it is finite and its last state is terminal.
+\end{definition}
+
+\begin{lemma}[Termination]\label{lem:terminate}
+Every run has length at most $n=|\V(G)|$, and every run can be extended to a complete
+run.
+\end{lemma}
+
+\begin{proof}
+Each step strictly decreases the number of vertices in state $\UNK$: (Spread) changes
+one vertex from $\UNK$ to $\OUT$, and (Force) changes one vertex from $\UNK$ to $\IN$;
+no rule ever produces a $\UNK$. There are $n$ vertices, so at most $n$ steps occur. If a
+run has not reached a terminal state, some rule applies and the run can be extended by
+one step; since this cannot continue beyond $n$ steps, the run reaches a terminal state.
+\end{proof}
+
+\begin{lemma}[Soundness]\label{lem:sound}
+Let $\st_0,\st_1,\dots,\st_T$ be a run for a graph $G$, and let $S$ be any 2-d kernel of
+$G$. Then for every vertex $v$ and every $t$: if $\st_t(v)=\IN$ then $v\in S$, and if
+$\st_t(v)=\OUT$ then $v\notin S$.
+\end{lemma}
+
+\begin{proof}
+Once a vertex leaves state $\UNK$ its value never changes again, because no rule alters a
+vertex already $\IN$ or $\OUT$. So it suffices to show that at the step where a vertex
+$v$ is reassigned away from $\UNK$, its new value is correct for $S$. We induct on the
+step index and may assume the statement for every vertex reassigned at an earlier step.
+
+\emph{Reassignment by (Spread).} Here $v$ becomes $\OUT$ because some $u\in N_G(v)$ has
+$\st(u)=\IN$ at that moment. The vertex $u$ was reassigned to $\IN$ at an earlier step,
+so by the inductive hypothesis $u\in S$. Since $u\in N_G(v)$, the edge $uv$ has both ends
+in $\{u,v\}$; as $u\in S$ and $S$ is independent, $v\notin S$.
+
+\emph{Reassignment by (Force).} Here $v$ becomes $\IN$ because $C:=C_\st(v)$ is a clique
+of $G$. Suppose for contradiction that $v\notin S$. Let $w\in N_G(v)\cap S$. If
+$\st(w)=\OUT$ at this moment, then $w$ was reassigned to $\OUT$ earlier, so by the
+inductive hypothesis $w\notin S$, a contradiction; hence $\st(w)\neq\OUT$, so $w\in C$.
+Thus $N_G(v)\cap S\subseteq C$. Because $v\notin S$ and $S$ is a 2-d kernel of the graph
+$G$, we have $|N_G(v)\cap S|\ge 2$; pick distinct $w_1,w_2\in N_G(v)\cap S\subseteq C$.
+Since $w_1,w_2\in S$ and $S$ is independent, $w_1w_2\notin E(G)$; but $w_1,w_2\in C$ and
+$C$ is a clique, so $w_1w_2\in E(G)$. This contradiction shows $v\in S$.
+\end{proof}
+
+\section{2-d Kernels of chordal graphs}
+\label{sec:chordal}
+
+\begin{theorem}\label{thm:chordal}
+Let $G$ be a chordal graph and let $\st_0,\dots,\st_T$ be a complete run of the marking
+process for $G$ (\cref{def:process}). Then:
+\begin{enumerate}[label=\textup{(\arabic*)},leftmargin=2.6em]
+\item $\st_T$ assigns $\UNK$ to no vertex.
+\item For every 2-d kernel $S$ of $G$ and every vertex $v$: $v\in S$ if and only if
+$\st_T(v)=\IN$. Consequently $G$ has at most one 2-d kernel; writing
+$S^\ast=\{v:\st_T(v)=\IN\}$, the graph $G$ has a 2-d kernel if and only if $S^\ast$ is a
+2-d kernel, and then $S^\ast$ is the unique one.
+\item Whether $G$ has a 2-d kernel, and the 2-d kernel itself when it exists, can be
+determined in time polynomial in $n=|\V(G)|$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\textbf{(1)} Suppose $\st_T(w)=\UNK$ for some $w$, and let $W=\{v:\st_T(v)=\UNK\}$, so
+$w\in W$ and $W\neq\varnothing$.
+
+\begin{steps}
+\item No vertex of $W$ has a neighbour $u$ with $\st_T(u)=\IN$: otherwise (Spread) could
+be applied to the pair (that neighbour $u$, the vertex of $W$), contradicting that
+$\st_T$ is terminal.
+
+\item Fix $v\in W$. By Step~1 every neighbour of $v$ is $\OUT$ or $\UNK$, so
+\[
+  C_{\st_T}(v)=\{u\in N_G(v):\st_T(u)\neq\OUT\}=N_G(v)\cap W .
+\]
+
+\item By \cref{lem:heredity} the graph $G[W]$ is chordal, and $W\neq\varnothing$, so by
+\cref{lem:dirac} it has a simplicial vertex $x$. Then $N_{G[W]}(x)=N_G(x)\cap W$ is a
+clique of $G[W]$; since $G[W]$ is an induced subgraph of $G$, it is a clique of $G$.
+
+\item By Step~2 applied to $x$, we have $C_{\st_T}(x)=N_G(x)\cap W$, which is a clique of
+$G$ by Step~3. Hence (Force) applies to $x$ (which is in state $\UNK$), contradicting
+that $\st_T$ is terminal.
+\end{steps}
+The contradiction shows $W=\varnothing$, proving (1).
+
+\textbf{(2)} Let $S$ be a 2-d kernel of $G$. By (1), every vertex is $\IN$ or $\OUT$ in
+$\st_T$. By \cref{lem:sound}, $\st_T(v)=\IN$ implies $v\in S$ and $\st_T(v)=\OUT$
+implies $v\notin S$. Since every vertex is $\IN$ or $\OUT$, the converse implications
+also hold: if $v\in S$ then $\st_T(v)\neq\OUT$, so $\st_T(v)=\IN$; if $v\notin S$ then
+$\st_T(v)\neq\IN$, so $\st_T(v)=\OUT$. Hence $S=\{v:\st_T(v)=\IN\}=S^\ast$. So any
+2-d kernel equals $S^\ast$: there is at most one, and one exists precisely when $S^\ast$
+itself is a 2-d kernel.
+
+\textbf{(3)} By \cref{lem:terminate} a complete run has at most $n$ steps. Deciding
+which rule applies to which vertex, and testing whether a set $C_\st(v)$ is a clique,
+are computations polynomial in $n$; so a complete run is produced in polynomial time.
+Then test directly from the definition whether $S^\ast$ is independent and 2-dominating,
+again in polynomial time. By (2), $G$ has a 2-d kernel if and only if this test succeeds,
+and then $S^\ast$ is the unique 2-d kernel.
+\end{proof}
+
+\section{2-d Kernels of digraphs with a chordal underlying graph}
+\label{sec:chordaldigraph}
+
+We adapt \cref{def:process} to a digraph $D$. The only change is that (Force) inspects
+the \emph{out}-neighbourhood, while (Spread) still uses the full underlying
+neighbourhood, since independence forbids an arc between two chosen vertices in either
+direction.
+
+\begin{definition}[The marking process for a digraph]\label{def:processD}
+Let $D$ be a digraph with underlying graph $\und(D)$. States and the initial state are
+as in \cref{def:process}, on the vertex set $\V(D)$. A single step applies one of:
+\begin{itemize}[leftmargin=1.6em,itemsep=0.4ex]
+\item[\textbf{(Spread$'$)}] Choose $v$ with $\st(v)=\IN$ and $u\in N_D(v)$ with
+$\st(u)=\UNK$; reassign $u$ to $\OUT$.
+\item[\textbf{(Force$'$)}] Choose $v$ with $\st(v)=\UNK$ such that
+\[
+  C'_\st(v)\ :=\ \{\,u\in \Np_D(v):\st(u)\neq\OUT\,\}
+\]
+is a clique of $\und(D)$; reassign $v$ to $\IN$.
+\end{itemize}
+Runs, terminal states, and complete runs are defined as before.
+\end{definition}
+
+\begin{lemma}[Termination, digraph version]\label{lem:terminateD}
+Every run of the process of \cref{def:processD} has length at most $|\V(D)|$, and every
+run extends to a complete run.
+\end{lemma}
+
+\begin{proof}
+Identical to \cref{lem:terminate}: each step turns one vertex from $\UNK$ into $\OUT$ or
+$\IN$, and no step creates a $\UNK$.
+\end{proof}
+
+\begin{lemma}[Soundness, digraph version]\label{lem:soundD}
+Let $\st_0,\dots,\st_T$ be a run of the process of \cref{def:processD} for a digraph
+$D$, and let $S$ be any 2-d kernel of $D$. Then for every vertex $v$ and every $t$: if
+$\st_t(v)=\IN$ then $v\in S$, and if $\st_t(v)=\OUT$ then $v\notin S$.
+\end{lemma}
+
+\begin{proof}
+As in \cref{lem:sound}, a vertex leaving $\UNK$ never changes again, and we induct on
+the step index.
+
+\emph{Reassignment by (Spread$'$).} Here $v$ becomes $\OUT$ because some $u\in N_D(v)$
+has $\st(u)=\IN$, with $u$ reassigned earlier, so $u\in S$ by the inductive hypothesis.
+Since $u\in N_D(v)$, at least one of $(u,v),(v,u)$ is an arc of $D$; as $u\in S$ and $S$
+is independent, $v\notin S$.
+
+\emph{Reassignment by (Force$'$).} Here $v$ becomes $\IN$ because
+$C:=\{u\in\Np_D(v):\st(u)\neq\OUT\}$ is a clique of $\und(D)$. Suppose $v\notin S$. Let
+$w\in\Np_D(v)\cap S$. If $\st(w)=\OUT$, then $w$ was reassigned earlier, so $w\notin S$
+by the inductive hypothesis, a contradiction; hence $\st(w)\neq\OUT$ and $w\in C$. Thus
+$\Np_D(v)\cap S\subseteq C$. Because $v\notin S$ and $S$ is a 2-d kernel of $D$, we have
+$|\Np_D(v)\cap S|\ge 2$; pick distinct $w_1,w_2\in\Np_D(v)\cap S\subseteq C$. Since
+$w_1,w_2\in S$ and $S$ is independent, $w_1w_2\notin E(\und(D))$; but $w_1,w_2\in C$ and
+$C$ is a clique of $\und(D)$, so $w_1w_2\in E(\und(D))$. This contradiction shows
+$v\in S$.
+\end{proof}
+
+\begin{theorem}\label{thm:chordaldigraph}
+Let $D$ be a digraph whose underlying graph $\und(D)$ is chordal, and let
+$\st_0,\dots,\st_T$ be a complete run of the process of \cref{def:processD}. Then:
+\begin{enumerate}[label=\textup{(\arabic*)},leftmargin=2.6em]
+\item $\st_T$ assigns $\UNK$ to no vertex.
+\item For every 2-d kernel $S$ of $D$ and every vertex $v$: $v\in S$ if and only if
+$\st_T(v)=\IN$. Consequently $D$ has at most one 2-d kernel, and, with
+$S^\ast=\{v:\st_T(v)=\IN\}$, the digraph $D$ has a 2-d kernel if and only if $S^\ast$ is
+one, and then it is the unique one.
+\item Whether $D$ has a 2-d kernel, and the 2-d kernel itself when it exists, can be
+determined in time polynomial in $|\V(D)|$. No hypothesis on out-degrees is used
+anywhere in the argument.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\emph{Key observation.} For any vertex $x$ and any $W\subseteq\V(D)$: if $N_D(x)\cap W$
+is a clique of $\und(D)$, then $\Np_D(x)\cap W$ is also a clique of $\und(D)$. Indeed,
+$\Np_D(x)\subseteq N_D(x)$ by \eqref{eq:contain}, so $\Np_D(x)\cap W\subseteq N_D(x)\cap
+W$, and any subset of a clique is a clique.
+
+\textbf{(1)} Suppose $W:=\{v:\st_T(v)=\UNK\}\neq\varnothing$.
+
+\begin{steps}
+\item No vertex of $W$ has an underlying neighbour $u$ with $\st_T(u)=\IN$: otherwise
+(Spread$'$) would apply, contradicting that $\st_T$ is terminal.
+
+\item Fix $v\in W$. By Step~1 every underlying neighbour of $v$ is $\OUT$ or in $W$.
+Since $\Np_D(v)\subseteq N_D(v)$, it follows that
+$C'_{\st_T}(v)=\{u\in\Np_D(v):\st_T(u)\neq\OUT\}=\Np_D(v)\cap W$.
+
+\item By \cref{lem:heredity} the graph $\und(D)[W]$ is chordal, and $W\neq\varnothing$,
+so by \cref{lem:dirac} it has a simplicial vertex $x$: the set $N_D(x)\cap W$, which is
+the neighbourhood of $x$ in $\und(D)[W]$, is a clique of $\und(D)[W]$, hence of
+$\und(D)$.
+
+\item By the key observation, $\Np_D(x)\cap W$ is a clique of $\und(D)$. By Step~2 this
+set equals $C'_{\st_T}(x)$. Hence (Force$'$) applies to $x$, contradicting that $\st_T$
+is terminal.
+\end{steps}
+So $W=\varnothing$, proving (1).
+
+\textbf{(2)} Identical to the proof of \cref{thm:chordal}(2), with \cref{lem:soundD} in
+place of \cref{lem:sound}.
+
+\textbf{(3)} Identical to the proof of \cref{thm:chordal}(3): a complete run has at most
+$|\V(D)|$ steps by \cref{lem:terminateD}, each step and each clique test is polynomial,
+and $S^\ast$ is checked against the definition of a 2-d kernel of $D$. The argument uses
+$\Np_D$, $N_D$, and chordality of $\und(D)$ only; it never refers to $\dip_D$ or
+$\dmin(D)$.
+\end{proof}
+
+\begin{remark}\label{rem:recover}
+If $G$ is a graph and $D$ is its associated symmetric digraph, then
+$\Np_D(v)=N_D(v)=N_G(v)$ and $\und(D)=G$, so \cref{def:processD} becomes exactly
+\cref{def:process} and \cref{lem:soundD} becomes \cref{lem:sound}. Thus
+\cref{thm:chordal} is the special case of \cref{thm:chordaldigraph} in which $D$ is
+symmetric. \Cref{thm:chordaldigraph} is strictly more general, since it also applies to
+digraphs that are not symmetric, for example to orientations of chordal graphs.
+\end{remark}
+
+\section{A lower bound for oriented graphs}
+\label{sec:oriented}
+
+\begin{theorem}\label{thm:oriented}
+Let $D$ be an oriented graph with $\dmin(D)\ge 2$. If $D$ has a 2-d kernel, then
+$|\V(D)|\ge 8$.
+\end{theorem}
+
+\begin{proof}
+Let $J$ be a 2-d kernel of $D$. Write $n=|\V(D)|$, $j=|J|$, $B=\V(D)\setminus J$, and
+$t=|B|=n-j$.
+
+\begin{steps}
+\item\textbf{($t\ge 1$ and $j\ge 1$.)}
+If $t=0$ then $J=\V(D)$ is independent, so $D$ has no arcs; but $\dmin(D)\ge 2$ and
+$\V(D)\neq\varnothing$ force some vertex to have out-degree at least $2$, a
+contradiction. So $t\ge 1$. If $j=0$ then $J=\varnothing$, and every vertex of $\V(D)$
+lies outside $J$ and would need $|\Np_D(v)\cap\varnothing|\ge 2$, that is $0\ge 2$,
+impossible since $\V(D)\neq\varnothing$. So $j\ge 1$.
+
+\item\textbf{(Lower bound on the number of arcs from $B$ to $J$.)}
+For $x\in J$ let $d_x=|\{b\in B:(b,x)\in\A(D)\}|$. The number of arcs from $B$ into $J$
+equals $\sum_{x\in J}d_x$. On the other hand, each $b\in B$ lies outside $J$, so
+2-domination gives $|\Np_D(b)\cap J|\ge 2$; summing over $b\in B$, the number of arcs
+from $B$ into $J$ is $\sum_{b\in B}|\Np_D(b)\cap J|\ge 2t$. Hence
+\begin{equation}\label{eq:lower}
+  \sum_{x\in J}d_x\ \ge\ 2t .
+\end{equation}
+
+\item\textbf{(Upper bound on each $d_x$.)}
+Fix $x\in J$. Since $J$ is independent, $x$ has no arc to another vertex of $J$, so
+$\Np_D(x)\subseteq B$. Let $P_x=\{b\in B:(b,x)\in\A(D)\}$, so $|P_x|=d_x$. For $b\in
+P_x$ the pair $(b,x)$ is an arc, and since $D$ is oriented, $(x,b)$ is not an arc; hence
+$b\notin\Np_D(x)$. Therefore $\Np_D(x)\subseteq B\setminus P_x$, so
+\[
+  \dip_D(x)\ \le\ |B\setminus P_x|\ =\ t-d_x .
+\]
+Since $\dip_D(x)\ge\dmin(D)\ge 2$, we get $2\le t-d_x$, that is
+\begin{equation}\label{eq:upper}
+  d_x\ \le\ t-2 \qquad\text{for every } x\in J .
+\end{equation}
+
+\item\textbf{(Combining.)}
+From \eqref{eq:lower} and \eqref{eq:upper},
+\begin{equation}\label{eq:combine}
+  2t\ \le\ \sum_{x\in J}d_x\ \le\ \sum_{x\in J}(t-2)\ =\ j(t-2).
+\end{equation}
+The left side of \eqref{eq:combine} is positive and $j\ge 1$, so $t-2>0$, that is
+$t\ge 3$. Dividing \eqref{eq:combine} by $t-2>0$ gives
+\begin{equation}\label{eq:jbound}
+  j\ \ge\ \frac{2t}{t-2}.
+\end{equation}
+
+\item\textbf{(Minimising $n=j+t$.)}
+Here $j$ and $t$ are integers with $t\ge 3$ and $j\ge\lceil 2t/(t-2)\rceil$ by
+\eqref{eq:jbound}. We bound $n=j+t$ from below for each $t$:
+\[
+\begin{array}{llll}
+t=3: & 2t/(t-2)=6, & j\ge 6, & n\ge 9;\\[2pt]
+t=4: & 2t/(t-2)=4, & j\ge 4, & n\ge 8;\\[2pt]
+t=5: & 2t/(t-2)=10/3, & j\ge 4, & n\ge 9;\\[2pt]
+t=6: & 2t/(t-2)=3, & j\ge 3, & n\ge 9;\\[2pt]
+t\ge 7: & 2t/(t-2)=2+\dfrac{4}{t-2}>2, & j\ge 3, & n=j+t\ge 3+7=10.
+\end{array}
+\]
+In every case $n\ge 8$. Hence $|\V(D)|\ge 8$.
+\end{steps}
+\end{proof}
+
+\begin{example}\label{ex:oriented8}
+The bound in \cref{thm:oriented} is attained. Let $D$ have vertex set
+$\{0,1,2,3,4,5,6,7\}$ and the out-neighbourhoods
+\[
+\begin{array}{llll}
+\Np(0)=\{5,6\}, & \Np(1)=\{6,7\}, & \Np(2)=\{4,7\}, & \Np(3)=\{4,5\},\\[2pt]
+\Np(4)=\{0,1\}, & \Np(5)=\{1,2\}, & \Np(6)=\{2,3\}, & \Np(7)=\{0,3\}.
+\end{array}
+\]
+Then:
+\begin{enumerate}[label=\textup{(\roman*)},leftmargin=2.4em]
+\item Every vertex has out-degree exactly $2$, so $\dmin(D)=2$.
+\item $D$ is an oriented graph. For each listed arc $(u,v)$ one checks that $u\notin
+\Np(v)$, so $(v,u)$ is not an arc. For instance $(0,5)$ is an arc and $\Np(5)=\{1,2\}$
+does not contain $0$; the other fifteen checks are identical.
+\item $J=\{0,1,2,3\}$ is a 2-d kernel. It is independent because $\Np(0),\Np(1),\Np(2),
+\Np(3)$ are all contained in $\{4,5,6,7\}$, so no arc has both ends in $J$. It is
+2-dominating because the vertices outside $J$ are $4,5,6,7$ and
+\[
+  \Np(4)=\{0,1\}\subseteq J,\quad \Np(5)=\{1,2\}\subseteq J,\quad
+  \Np(6)=\{2,3\}\subseteq J,\quad \Np(7)=\{0,3\}\subseteq J,
+\]
+each of size $2$.
+\end{enumerate}
+Thus $D$ is an oriented graph on $8$ vertices with $\dmin(D)=2$ that has a 2-d kernel, so
+$8$ is the least possible number of vertices. One checks in the same way that
+$\{4,5,6,7\}$ is also a 2-d kernel of $D$.
+\end{example}
+
+\section{2-d Kernels of acyclic digraphs}
+\label{sec:dag}
+
+\begin{lemma}[Sinks exist]\label{lem:sink}
+Every non-empty acyclic digraph $D$ has a vertex $z$ with $\Np_D(z)=\varnothing$.
+\end{lemma}
+
+\begin{proof}
+Suppose every vertex has out-degree at least $1$. Let $n=|\V(D)|\ge 1$. Choose any
+$u_0\in\V(D)$ and, for $i\ge 0$, choose $u_{i+1}\in\Np_D(u_i)$. Among $u_0,u_1,\dots,u_n$
+there are $n+1$ terms from a set of size $n$, so $u_a=u_b$ for some $0\le a<b\le n$. Then
+$u_a,u_{a+1},\dots,u_b$ is a closed directed walk of length $b-a\ge 1$. Among all pairs
+$(p,q)$ with $a\le p<q\le b$ and $u_p=u_q$, choose one with $q-p$ minimum. Then
+$u_p,u_{p+1},\dots,u_{q-1}$ are pairwise distinct, so
+$u_p\to u_{p+1}\to\dots\to u_{q-1}\to u_q=u_p$ is a directed cycle of $D$, contradicting
+acyclicity. Hence some vertex has out-degree $0$.
+\end{proof}
+
+\begin{lemma}[Topological order]\label{lem:topo}
+For every acyclic digraph $D$ with $|\V(D)|=n$ there is an ordering
+$v_1,v_2,\dots,v_n$ of $\V(D)$ such that every arc $(v_i,v_j)$ satisfies $i<j$.
+\end{lemma}
+
+\begin{proof}
+Induction on $n$. For $n=0$ the empty ordering works. For $n\ge 1$, by \cref{lem:sink}
+choose $z$ with $\Np_D(z)=\varnothing$. The digraph $D-z$ obtained by deleting $z$ and
+its incident arcs is acyclic, since any directed cycle of $D-z$ is one of $D$. By the
+inductive hypothesis $D-z$ has an ordering $w_1,\dots,w_{n-1}$ with every arc increasing.
+Set $v_i=w_i$ for $1\le i\le n-1$ and $v_n=z$. Arcs among $w_1,\dots,w_{n-1}$ are
+increasing by hypothesis; an arc $(v_i,v_n)=(v_i,z)$ has $i<n$; and there is no arc
+$(v_n,v_j)=(z,v_j)$ because $\Np_D(z)=\varnothing$. So every arc is increasing.
+\end{proof}
+
+\begin{definition}[Backward sweep]\label{def:sweep}
+Let $D$ be an acyclic digraph with a fixed topological order $v_1,\dots,v_n$
+(\cref{lem:topo}). Process the indices $i=n,n-1,\dots,1$ in this order. When index $i$
+is processed, every out-neighbour $v_j$ of $v_i$ has $j>i$, so $\st(v_j)$ is already
+defined; set
+\[
+  k_i\ =\ \bigl|\{\,j:(v_i,v_j)\in\A(D)\text{ and }\st(v_j)=\IN\,\}\bigr|.
+\]
+Then:
+\begin{itemize}[leftmargin=1.6em,itemsep=0.3ex]
+\item if $k_i=0$, set $\st(v_i)=\IN$;
+\item if $k_i=1$, stop and declare \emph{failure};
+\item if $k_i\ge 2$, set $\st(v_i)=\OUT$.
+\end{itemize}
+If index $1$ is processed without failure, the sweep \emph{succeeds}; put
+$S^\ast=\{v_i:\st(v_i)=\IN\}$.
+\end{definition}
+
+\begin{theorem}\label{thm:dag}
+Let $D$ be an acyclic digraph with a fixed topological order, and run the backward sweep
+of \cref{def:sweep}.
+\begin{enumerate}[label=\textup{(\arabic*)},leftmargin=2.6em]
+\item If $D$ has a 2-d kernel $S$, then the sweep succeeds and $S^\ast=S$.
+\item If the sweep succeeds, then $S^\ast$ is a 2-d kernel of $D$.
+\item Hence $D$ has a 2-d kernel if and only if the sweep succeeds, and in that case
+$S^\ast$ is the unique 2-d kernel of $D$. In particular $D$ has at most one 2-d kernel.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\textbf{(1)} Let $S$ be a 2-d kernel of $D$. For $i\in\{n,n-1,\dots,1\}$ let $P(i)$ be the
+statement:
+\begin{quote}
+the sweep does not fail while processing any index in $\{i,i+1,\dots,n\}$, and for every
+$j\in\{i,\dots,n\}$ we have $\st(v_j)=\IN$ if and only if $v_j\in S$.
+\end{quote}
+We prove $P(i)$ by downward induction on $i$. The hypothesis $P(i+1)$ is empty when
+$i=n$. Assume $P(i+1)$ and process index $i$.
+
+Every out-neighbour $v_j$ of $v_i$ has $j>i$, hence $j\in\{i+1,\dots,n\}$; so by
+$P(i+1)$, $\st(v_j)=\IN$ if and only if $v_j\in S$. Therefore
+\[
+  k_i=\bigl|\{j:(v_i,v_j)\in\A(D),\ \st(v_j)=\IN\}\bigr|
+     =\bigl|\{j:(v_i,v_j)\in\A(D),\ v_j\in S\}\bigr|
+     =|\Np_D(v_i)\cap S|.
+\]
+By \cref{lem:forced}(c), $|\Np_D(v_i)\cap S|\neq 1$, so $k_i\neq 1$ and the sweep does
+not fail at $i$.
+\begin{itemize}[leftmargin=1.4em,itemsep=0.3ex]
+\item If $k_i=0$: the sweep sets $\st(v_i)=\IN$; and $|\Np_D(v_i)\cap S|=0$, so $v_i\in
+S$ by \cref{lem:forced}(d). Both sides of the equivalence hold.
+\item If $k_i\ge 2$: the sweep sets $\st(v_i)=\OUT$; and $|\Np_D(v_i)\cap S|=k_i\ge 1$,
+so $v_i\notin S$ by \cref{lem:forced}(a). Both sides of the equivalence fail.
+\end{itemize}
+Together with $P(i+1)$ this gives $P(i)$. Hence $P(1)$ holds: the sweep never fails, so
+it succeeds, and $\st(v_j)=\IN$ if and only if $v_j\in S$ for all $j$, that is
+$S^\ast=S$.
+
+\textbf{(2)} Suppose the sweep succeeds and $S^\ast=\{v_i:\st(v_i)=\IN\}$.
+
+\emph{Independence.} Suppose some arc $(v_i,v_j)$ has both ends in $S^\ast$. Since it is
+an arc and the order is topological, $i<j$, so $v_j$ was processed before $v_i$, and
+$\st(v_j)=\IN$ (as $v_j\in S^\ast$) held when $v_i$ was processed. Hence $k_i\ge 1$. But
+$\st(v_i)=\IN$ (as $v_i\in S^\ast$) means the sweep took the branch $k_i=0$ at index
+$i$, so $k_i=0$: a contradiction. So no arc has both ends in $S^\ast$.
+
+\emph{2-domination.} Let $v_i\notin S^\ast$, so $\st(v_i)=\OUT$, which occurs only in
+the branch $k_i\ge 2$. When index $i$ was processed, at least two out-neighbours $v_j$
+of $v_i$ had $\st(v_j)=\IN$; each such $v_j$ lies in $S^\ast$, and its status is never
+changed afterwards. Hence $|\Np_D(v_i)\cap S^\ast|\ge 2$.
+
+So $S^\ast$ is independent and 2-dominating, that is a 2-d kernel of $D$.
+
+\textbf{(3)} If $D$ has a 2-d kernel $S$, then by (1) the sweep succeeds and $S=S^\ast$;
+so a 2-d kernel, if any exists, equals $S^\ast$ and is unique. If the sweep succeeds, then
+by (2) $S^\ast$ is a 2-d kernel. Hence $D$ has a 2-d kernel exactly when the sweep succeeds,
+and then $S^\ast$ is the only one.
+\end{proof}
+
+\begin{corollary}\label{cor:daglinear}
+Whether an acyclic digraph $D$ has a 2-d kernel, and the 2-d kernel itself when it exists,
+can be computed in time $O(n+m)$, where $n=|\V(D)|$ and $m=|\A(D)|$.
+\end{corollary}
+
+\begin{proof}
+A topological order is obtained in $O(n+m)$ time by repeatedly removing a vertex of
+out-degree $0$ (\cref{lem:sink}), maintaining current out-degrees as arcs are deleted
+and keeping the out-degree-$0$ vertices in a queue. The backward sweep of
+\cref{def:sweep} processes each vertex once and, for vertex $v_i$, inspects each arc
+leaving $v_i$ once in order to compute $k_i$; the total work is $O(n+m)$. By
+\cref{thm:dag}(3) the outcome of the sweep is itself the answer, so no separate
+verification step is needed.
+\end{proof}
+
+\begin{remark}\label{rem:orderfree}
+Although the backward sweep is defined relative to a chosen topological order, its
+outcome does not depend on the choice. If $D$ has a 2-d kernel, then for every topological
+order the sweep succeeds with $S^\ast$ equal to that unique 2-d kernel, by
+\cref{thm:dag}(1). If $D$ has no 2-d kernel, then for every topological order the sweep
+fails, since a successful sweep would produce a 2-d kernel by \cref{thm:dag}(2).
+\end{remark}
+
+\section{2-d Kernels of subdivisions}
+\label{sec:subdivision}
+
+\begin{definition}[Subdivision]\label{def:subdivision}
+Let $G$ be a graph. Its \emph{subdivision} $S(G)$ is the graph with vertex set
+\[
+  \V(S(G))\ =\ \V(G)\ \cup\ \{\,x_e:e\in E(G)\,\},
+\]
+where the $x_e$ are new, pairwise distinct vertices, one for each edge, and edge set
+\[
+  E(S(G))\ =\ \{\,ux_e,\ x_ew:\ e=uw\in E(G)\,\}.
+\]
+Thus each edge $uw$ of $G$ is replaced by the path $u,x_{uw},w$ of length $2$.
+\end{definition}
+
+\begin{theorem}\label{thm:subdivision}
+For every graph $G$, the set $\V(G)$ is a 2-d kernel of $S(G)$.
+\end{theorem}
+
+\begin{proof}
+We treat $S(G)$ as a graph, so that 2-domination of a vertex $v$ means
+$|N_{S(G)}(v)\cap\V(G)|\ge 2$.
+
+\begin{steps}
+\item\textbf{(Independence.)}
+Let $u,w\in\V(G)$. By \cref{def:subdivision}, the neighbours of $u$ in $S(G)$ are
+exactly the vertices $x_e$ for edges $e$ of $G$ incident with $u$; every such $x_e$ is a
+new vertex and does not lie in $\V(G)$. Hence $u$ and $w$ are non-adjacent in $S(G)$. So
+$\V(G)$ is independent in $S(G)$.
+
+\item\textbf{(2-domination.)}
+Let $v\in\V(S(G))\setminus\V(G)$. Then $v=x_e$ for some edge $e=uw$ of $G$, and by
+\cref{def:subdivision}, $N_{S(G)}(x_e)=\{u,w\}\subseteq\V(G)$ with $u\neq w$. Hence
+$|N_{S(G)}(v)\cap\V(G)|=2$.
+\end{steps}
+
+By Steps~1 and~2, $\V(G)$ is independent and 2-dominating in $S(G)$, hence a 2-d kernel.
+If $E(G)=\varnothing$ then $S(G)=G$, there is no vertex outside $\V(G)$, and $\V(G)$ is a
+2-d kernel of $S(G)$ with the 2-domination condition holding vacuously.
+\end{proof}
+
+\end{document}

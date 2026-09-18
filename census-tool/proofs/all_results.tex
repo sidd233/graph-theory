@@ -15,7 +15,7 @@
 \theoremstyle{remark}
 \newtheorem*{remark}{Remark}
 
-\title{2-Kernels in Graphs and Digraphs: Every Result, Proved or Disproved}
+\title{2-d Kernels in Graphs and Digraphs: Every Result, Proved or Disproved}
 \author{Reference compendium}
 \date{August 21, 2026}
 
@@ -23,25 +23,25 @@
 \maketitle
 \vspace{-1.5em}
 
-Throughout, a \textbf{2-kernel} of a digraph $D$ is a set $S \subseteq V$ that is
+Throughout, a \textbf{2-d kernel} of a digraph $D$ is a set $S \subseteq V$ that is
 \emph{independent} (no arc, in either direction, joins two vertices of $S$) and
 \emph{2-dominating} (every $v \notin S$ has arcs to at least 2 distinct vertices of
 $S$). Undirected graphs are treated as symmetric digraphs (each edge becomes arcs in
 both directions). $N^+(v)$ is the out-neighbourhood, $\delta^+(D)$ the smallest
-out-degree in $D$. Deciding 2-kernel existence on general graphs is NP-complete
+out-degree in $D$. Deciding 2-d kernel existence on general graphs is NP-complete
 (J.~A.~Telle, \emph{Nordic J. Comput.} \textbf{1} (1994) 157--171) — every
 polynomial-time result below is therefore a genuine dividing line, not a formality.
 
 \section*{Overview of all results}
 
 \begin{enumerate}[leftmargin=2.2em]
-\item \textbf{Bipartite digraphs (Theorem A)} — trivial 2-kernel whenever one side
+\item \textbf{Bipartite digraphs (Theorem A)} — trivial 2-d kernel whenever one side
 has out-degree $\ge 2$. \textit{Proved.}
 \item \textbf{Strongly connected, all-even-cycle digraphs (Theorem B)} — two disjoint
-2-kernels guaranteed. \textit{Proved.}
+2-d kernels guaranteed. \textit{Proved.}
 \item \textbf{Dropping strong connectivity} — the hypothesis is not removable.
 \textit{Disproved} (explicit 6-vertex counterexample).
-\item \textbf{Chordal graphs} — 2-kernel existence and uniqueness decidable in
+\item \textbf{Chordal graphs} — 2-d kernel existence and uniqueness decidable in
 polynomial time. \textit{Proved.}
 \item \textbf{Simplicial graphs} — decided by a simpler argument on an overlapping
 but different class. \textit{Proved.}
@@ -53,11 +53,11 @@ them. \textit{Disproved} (8-vertex counterexample).
 result. \textit{Disproved} ($C_5$ counterexample at degeneracy 2).
 \item \textbf{Chordal-underlying digraphs} — the chordal result lifts to digraphs
 with no extra restriction. \textit{Proved.}
-\item \textbf{Oriented graphs, tight bound} — no 2-kernel below 8 vertices once
+\item \textbf{Oriented graphs, tight bound} — no 2-d kernel below 8 vertices once
 digons are forbidden. \textit{Proved.}
 \item \textbf{Oriented graphs, extremal count} — exactly 2 isomorphism classes at
 the minimum, under a necessary added hypothesis. \textit{Proved (hypothesis-qualified)}.
-\item \textbf{DAGs} — unique 2-kernel, decidable in linear time. \textit{Proved.}
+\item \textbf{DAGs} — unique 2-d kernel, decidable in linear time. \textit{Proved.}
 \item \textbf{Subdivisions} — a free infinite family that always has one.
 \textit{Proved.}
 \item \textbf{Cubic graphs and girth} — whether avoiding short cycles helps.
@@ -68,7 +68,7 @@ the minimum, under a necessary added hypothesis. \textit{Proved (hypothesis-qual
 
 \begin{theorem}[A]
 If the underlying graph of a digraph $D$ is bipartite with parts $P, Q$, and every
-vertex of $Q$ has $d^+ \ge 2$, then $P$ is a 2-kernel.
+vertex of $Q$ has $d^+ \ge 2$, then $P$ is a 2-d kernel.
 \end{theorem}
 
 \begin{proof}
@@ -82,7 +82,7 @@ in $P$ — at least 2 of them.
 
 \begin{theorem}[B]
 If $D$ is strongly connected, every directed cycle of $D$ has even length, and
-$\delta^+(D) \ge 2$, then $D$ has two disjoint 2-kernels.
+$\delta^+(D) \ge 2$, then $D$ has two disjoint 2-d kernels.
 \end{theorem}
 
 \begin{proof}
@@ -106,7 +106,7 @@ get an $r\to v$ path one longer — so no arc joins two same-parity vertices ($V
 V_1$ are independent), and every out-neighbour of a $V_i$-vertex lies in $V_{1-i}$.
 So $S=V_{1-i}$ satisfies: every vertex outside $S$ (i.e.\ of $V_i$) has \emph{all} of
 its $\ge\delta^+(D)\ge2$ out-neighbours inside $S$ — 2-domination, automatically. Both
-$V_0$ and $V_1$ are 2-kernels, and they're disjoint since they partition $V$.
+$V_0$ and $V_1$ are 2-d kernels, and they're disjoint since they partition $V$.
 \end{proof}
 
 \section{Strong connectivity cannot be dropped}
@@ -117,10 +117,10 @@ each consecutive pair), plus $a\to1$, $a\to2$, $a\to b$, $b\to2$, $b\to3$. Every
 directed cycle is even (the digons are length-2, the outer ring is length 4, and $a,b$
 have nothing pointing into them so can't sit on any cycle). Every vertex has
 out-degree $\ge2$. But nothing reaches $a$ or $b$ — not strongly connected — and this
-digraph has \textbf{no} 2-kernel.
+digraph has \textbf{no} 2-d kernel.
 \end{example}
 
-\begin{proof}[Why no 2-kernel exists]
+\begin{proof}[Why no 2-d kernel exists]
 Within $\{1,2,3,4\}$ alone (an even cycle) the only two candidates are $\{1,3\}$ and
 $\{2,4\}$. Try $S \supseteq \{1,3\}$: $a$ is then forced \texttt{OUT} (it has an arc
 to $1\in S$, and joining $S$ itself would violate independence against that arc), so
@@ -133,7 +133,7 @@ $2\in S$ blocks it). Both possibilities fail.
 
 \emph{Checked exhaustively}: among all 126 digraphs on $\le6$ vertices with
 $\delta^+\ge2$ that are all-cycles-even but \textbf{not} strongly connected, 84
-(66.7\%) still lack a 2-kernel or have one only by luck — this is a typical failure
+(66.7\%) still lack a 2-d kernel or have one only by luck — this is a typical failure
 mode, not a contrived exception. Among the 81 that \emph{are} strongly connected and
 all-cycles-even, all 81 have one, exactly as Theorem B guarantees.
 
@@ -148,14 +148,14 @@ Run two rules to a fixed point, starting all vertices \texttt{UNKNOWN}: \textbf{
 if $v$ is \texttt{IN}, mark every neighbour \texttt{OUT}; \textbf{(Force)} if $v$ is
 \texttt{UNKNOWN} and its non-\texttt{OUT} neighbours contain no independent pair
 (i.e.\ form a clique, possibly of size $\le1$), mark $v$ \texttt{IN}. Then every
-status this fixes holds in \emph{every} 2-kernel of $G$, not just some candidate.
+status this fixes holds in \emph{every} 2-d kernel of $G$, not just some candidate.
 \end{proposition}
 
 \begin{proof}
 Induction on the order vertices get fixed. If $v$ is fixed \texttt{OUT} via Spread,
 it was triggered by a neighbour $u$ already \texttt{IN}; by induction $u\in S$ for
-every 2-kernel $S$, so $v\notin S$ (independence). If $v$ is fixed \texttt{IN} via
-Force: take any 2-kernel $S$ and suppose $v\notin S$. Every neighbour of $v$ already
+every 2-d kernel $S$, so $v\notin S$ (independence). If $v$ is fixed \texttt{IN} via
+Force: take any 2-d kernel $S$ and suppose $v\notin S$. Every neighbour of $v$ already
 \texttt{OUT} is (by induction) excluded from $S$, so $S\cap N(v)$ sits entirely
 inside $v$'s current non-\texttt{OUT} neighbours. Since $v\notin S$, 2-domination
 needs $|S\cap N(v)|\ge2$ — but $S$ is independent, so those $\ge2$ vertices are a
@@ -165,8 +165,8 @@ condition that made Force fire. So $v\in S$.
 
 \begin{theorem}
 On a chordal graph, running (Spread) and (Force) to a fixed point never leaves a
-vertex \texttt{UNKNOWN}. Consequently a chordal graph has at most one 2-kernel, and
-2-KERNEL is solvable in polynomial time on chordal graphs.
+vertex \texttt{UNKNOWN}. Consequently a chordal graph has at most one 2-d kernel, and
+2-D KERNEL is solvable in polynomial time on chordal graphs.
 \end{theorem}
 
 \begin{proof}
@@ -176,11 +176,11 @@ so $v$'s non-\texttt{OUT} neighbours are exactly $N(v)\cap W$. $G[W]$ is an indu
 subgraph of a chordal graph, hence chordal, hence has a simplicial vertex $x$: $N(x)
 \cap W$ is a clique — exactly $x$'s current non-\texttt{OUT} neighbourhood — so Force
 fires on $x$, contradicting the fixed point. Hence $W=\emptyset$. By the Proposition,
-the resulting set is the \emph{only} possible 2-kernel of $G$.
+the resulting set is the \emph{only} possible 2-d kernel of $G$.
 \end{proof}
 
 \emph{Confirmed exhaustively} on all 17{,}175 chordal graphs up to 9 vertices: 0
-\texttt{UNDECIDED}, maximum 2-kernel count 1.
+\texttt{UNDECIDED}, maximum 2-d kernel count 1.
 
 \emph{Literature note}: a closely related dichotomy (Golovach--Kratochv\'il, WG 2007)
 covers this shape of problem for finite domination thresholds; our threshold is
@@ -196,7 +196,7 @@ for some simplicial $x$ — weaker than chordal, and a different (overlapping) c
 \begin{theorem}
 On a simplicial graph, rules (Spread) and (Force) — in fact just the simpler pair,
 mark every simplicial vertex \texttt{IN}, then spread — decide the whole graph, and
-there is at most one 2-kernel.
+there is at most one 2-d kernel.
 \end{theorem}
 
 \begin{proof}
@@ -216,7 +216,7 @@ A \textbf{split graph} has vertices partitioned into a clique $C$ ($|C|\ge2$) an
 independent set $I$, with arbitrary edges between them.
 
 \begin{theorem}
-A split graph $G=(C,I)$ has a 2-kernel if and only if either
+A split graph $G=(C,I)$ has a 2-d kernel if and only if either
 \textup{(a)} every vertex of $C$ has $\ge2$ neighbours in $I$, or
 \textup{(b)} exactly one $c_0\in C$ has \emph{no} neighbour in $I$, and every other
 vertex of $C$ has $\ge1$ neighbour in $I$.
@@ -228,7 +228,7 @@ are exhaustive.
 
 \emph{$S\cap C=\emptyset$, so $S\subseteq I$.} Since $I$ is internally edge-free, any
 $v\in I\setminus S$ is adjacent to nothing in $S$ at all — so $S$ isn't maximal
-unless $S=I$ exactly. (Every 2-kernel is a maximal independent set, since anything
+unless $S=I$ exactly. (Every 2-d kernel is a maximal independent set, since anything
 outside it needs arcs into it.) So $S=I$ is forced. Domination then requires every
 $c\in C$ (all of which sit outside $S=I$) to have $\ge2$ neighbours in $I$ — case (a).
 
@@ -256,7 +256,7 @@ At $n\le7$, all 150 bipartite graphs in the census were fully decided by (Spread
 The 8-vertex graph with canonical encoding \texttt{G?KsZ\_}, parts $\{0,4,5,7\}$ and
 $\{1,2,3,6\}$, has two pendant (degree-1) vertices $0$ and $1$ whose unique
 neighbours ($6$ and $7$) lie in \emph{different} bipartition classes. It has no
-2-kernel at all.
+2-d kernel at all.
 \end{example}
 
 \begin{proof}[Why forcing cannot resolve it]
@@ -265,7 +265,7 @@ can't contain an independent pair), forcing $6,7$ \texttt{OUT} via Spread. Now
 $N(6)\setminus\text{OUT}=\{0,4,5\}$ and $N(7)\setminus\text{OUT}=\{1,2,3\}$ — each a
 3-element set containing a non-adjacent pair, so Force cannot fire on either. Nothing
 else changes; several vertices remain \texttt{UNKNOWN} forever, even though (checked
-by brute force) this graph in fact has no 2-kernel. This does not contradict Wloch's
+by brute force) this graph in fact has no 2-d kernel. This does not contradict Wloch's
 even-distance theorem for bipartite graphs (Australas. J. Combin.\ \textbf{53}
 (2012), Thm.\ 2.4) — it is exactly the situation that theorem's hypothesis excludes.
 \end{proof}
@@ -294,13 +294,13 @@ guarantees a low-degree vertex at every stage of removal, but says nothing about
 that vertex's neighbourhood being a clique. $C_5$ realizes exactly this gap: Force
 never fires on any vertex (every vertex's two neighbours are non-adjacent to each
 other), so the whole graph stays \texttt{UNDECIDED} — yet $C_5$, an odd cycle, in
-fact has no 2-kernel at all (Section 12's cycle fact).
+fact has no 2-d kernel at all (Section 12's cycle fact).
 \end{proof}
 
 \emph{Confirmed exhaustively}: at degeneracy $\le1$ (forests — already subsumed by
 the chordal theorem, since forests are chordal), forcing is complete, 0
 disagreements. At degeneracy 2, checked across 35{,}739 graphs: 3{,}388 disagreements
-(9.5\%), maximum 2-kernel count rises to 4. The conjecture fails at the very next
+(9.5\%), maximum 2-d kernel count rises to 4. The conjecture fails at the very next
 step past forests.
 
 \section{Chordal-underlying digraphs}
@@ -308,7 +308,7 @@ step past forests.
 \begin{theorem}
 If the underlying graph of a digraph $D$ is chordal, then (Spread) and (Force) —
 using $N^+(v)$ in place of $N(v)$ — decide $D$ completely, so $D$ has at most one
-2-kernel, with no restriction on out-degree at all.
+2-d kernel, with no restriction on out-degree at all.
 \end{theorem}
 
 \begin{proof}
@@ -335,12 +335,12 @@ the same two vertices) — the opposite extreme from treating a plain edge as tw
 arcs.
 
 \begin{theorem}
-Let $D$ be oriented with $\delta^+(D)\ge2$. If $D$ has a 2-kernel, $D$ has at least
+Let $D$ be oriented with $\delta^+(D)\ge2$. If $D$ has a 2-d kernel, $D$ has at least
 8 vertices, and 8 is attained.
 \end{theorem}
 
 \begin{proof}
-Let $J$ be a 2-kernel, $j=|J|$, $B=V\setminus J$, $t=|B|>0$. Writing $d_x$ for the
+Let $J$ be a 2-d kernel, $j=|J|$, $B=V\setminus J$, $t=|B|>0$. Writing $d_x$ for the
 number of $B$-vertices pointing into $x\in J$: 2-domination gives
 $\sum_{x\in J}d_x\ge2t$. Fix $x\in J$: since $J$ is independent, all of $x$'s
 out-arcs go to $B$; since there are no digons, $x$ cannot point at any $B$-vertex
@@ -355,14 +355,14 @@ $t=j=4$.
 \begin{example}
 $J=\{0,1,2,3\}$, $B=\{4,5,6,7\}$, arcs $(0,5)(0,6)(1,6)(1,7)(2,4)(2,7)(3,4)(3,5)$ and
 $(4,0)(4,1)(5,1)(5,2)(6,2)(6,3)(7,0)(7,3)$: every vertex out-degree exactly 2, no
-digon, and both $J$ and $B$ are 2-kernels.
+digon, and both $J$ and $B$ are 2-d kernels.
 \end{example}
 
 \section{Oriented graphs: the extremal count}
 
 \begin{proposition}
 Among 8-vertex oriented graphs in which \emph{every} vertex has out-degree
-\emph{exactly} 2 (not merely $\ge2$) and which have a 2-kernel of size 4, there are
+\emph{exactly} 2 (not merely $\ge2$) and which have a 2-d kernel of size 4, there are
 exactly 2 isomorphism classes (sizes 72 and 18 of 90 labelled instances), both
 balanced orientations of $K_{4,4}$.
 \end{proposition}
@@ -387,7 +387,7 @@ directly by computer search.
 This added hypothesis is necessary, not cosmetic: take the Example above and add one
 further arc entirely within $B$, say $4\to5$ (creates no digon, since $5\to4$ was
 never present). This is still oriented, 8 vertices, $\delta^+\ge2$, and $J$ remains
-a valid 2-kernel (its independence and domination depend only on arcs touching $J$).
+a valid 2-d kernel (its independence and domination depend only on arcs touching $J$).
 This graph has 17 arcs, so it cannot be isomorphic to any of the 90 sixteen-arc
 graphs above — a third, uncatalogued extremal example. So the Proposition's count of
 2 is exactly as qualified, not a count of every 8-vertex example satisfying only
@@ -397,7 +397,7 @@ Theorem 10's own hypotheses.
 \section{DAGs}
 
 \begin{theorem}
-A DAG has at most one 2-kernel, decidable in linear time.
+A DAG has at most one 2-d kernel, decidable in linear time.
 \end{theorem}
 
 \begin{proof}
@@ -411,7 +411,7 @@ already \texttt{IN}.
 \item $k=1$, via out-neighbour $u$: \texttt{IN} is impossible (arc $v_i\to u$ with
 $u$ already \texttt{IN} would put two adjacent vertices both in the set);
 \texttt{OUT} is impossible ($k<2$). \emph{Neither status is available} — no
-2-kernel of $D$ exists. Halt.
+2-d kernel of $D$ exists. Halt.
 \item $k\ge2$: \texttt{IN} is impossible (already has an \texttt{IN}
 out-neighbour); \texttt{OUT} is consistent ($k\ge2$ satisfies domination). Set
 $v_i:=\texttt{OUT}$.
@@ -421,12 +421,12 @@ $v_n:=\texttt{IN}$. If the sweep completes, let $S=\{v:\texttt{IN}\}$. Independe
 holds \emph{by construction}: any arc $v_i\to v_j$ with $v_i$ set \texttt{IN} was set
 via the $k=0$ case, meaning $v_j$ was not \texttt{IN} at that time — so $v_j$ is
 \texttt{OUT}, not in $S$. Domination of every \texttt{OUT} vertex holds directly from
-the $k\ge2$ condition that placed it there. So $S$ is a genuine 2-kernel, and since
+the $k\ge2$ condition that placed it there. So $S$ is a genuine 2-d kernel, and since
 every step is forced with no branching, the only one.
 \end{proof}
 
 \emph{Confirmed} on all 20{,}237 DAGs up to 7 vertices: max count 1, 0
-\texttt{UNDECIDED}. The fraction of DAGs \emph{with} a 2-kernel falls steadily
+\texttt{UNDECIDED}. The fraction of DAGs \emph{with} a 2-d kernel falls steadily
 (100\%, 75\%, 50\%, 29.5\%, 16.9\% at $n=1,4,5,6,7$) — this is the growing chance
 that some vertex lands at $k=1$ somewhere in the sweep, a specific structural event,
 not a vague ``check that might fail.''
@@ -437,7 +437,7 @@ The \textbf{subdivision} $S(G)$ replaces every edge $\{u,v\}$ with a fresh verte
 and edges $\{u,w\},\{w,v\}$.
 
 \begin{theorem}
-For every graph $G$, $V(G)$ is a 2-kernel of $S(G)$.
+For every graph $G$, $V(G)$ is a 2-d kernel of $S(G)$.
 \end{theorem}
 
 \begin{proof}
@@ -452,13 +452,13 @@ subdivision checked: 28 vertices).
 
 \section{Cubic graphs and girth — a null result}
 
-Does forbidding short cycles make a 2-kernel more likely, among 3-regular graphs?
+Does forbidding short cycles make a 2-d kernel more likely, among 3-regular graphs?
 Seeded random samples, $n=10,\dots,20$:
 
 \begin{center}
 \begin{tabular}{@{}lrrr@{}}
 \toprule
-family & classes & with a 2-kernel & fraction \\
+family & classes & with a 2-d kernel & fraction \\
 \midrule
 cubic, unrestricted & 293 & 160 & 0.546 \\
 cubic, triangle-free & 240 & 131 & 0.546 \\

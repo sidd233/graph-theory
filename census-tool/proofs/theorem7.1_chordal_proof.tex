@@ -30,7 +30,7 @@ A vertex left \texttt{UNKNOWN} at a fixed point is one neither rule ever applied
 \begin{lemma}[Soundness]
 \label{lem:sound}
 Whenever this process fixes a vertex $v$ as \texttt{IN} or \texttt{OUT}, that status
-holds for \emph{every} 2-kernel of $G$ — not merely for whatever candidate the
+holds for \emph{every} 2-d kernel of $G$ — not merely for whatever candidate the
 process itself is building.
 \end{lemma}
 
@@ -40,25 +40,25 @@ for every vertex fixed strictly before $v$, and consider how $v$ was fixed.
 
 \emph{Case: $v$ fixed \texttt{OUT}.} This happens via Spread, triggered by some
 neighbour $u$ already \texttt{IN}, with $u$ fixed strictly before $v$. By the
-inductive hypothesis $u \in S$ for every 2-kernel $S$; since $S$ is independent and
+inductive hypothesis $u \in S$ for every 2-d kernel $S$; since $S$ is independent and
 $u$ is a neighbour of $v$, $v \notin S$ for every such $S$.
 
 \emph{Case: $v$ fixed \texttt{IN}.} This happens via Force: at that moment, $v$'s
 neighbours not marked \texttt{OUT} contain no independent pair. Every neighbour of
 $v$ already marked \texttt{OUT} was fixed strictly before $v$, so by the inductive
-hypothesis it is excluded from every 2-kernel $S$. Take any 2-kernel $S$ of $G$ and
+hypothesis it is excluded from every 2-d kernel $S$. Take any 2-d kernel $S$ of $G$ and
 suppose toward a contradiction $v \notin S$. Then $S \cap N(v)$ avoids every
 neighbour already known \texttt{OUT}, so $S \cap N(v)$ sits entirely inside $v$'s
 current non-\texttt{OUT} neighbours. Since $v \notin S$, 2-domination requires
 $|S \cap N(v)| \ge 2$ — but $S$ is independent, so those $\ge 2$ vertices are
 pairwise non-adjacent, i.e.\ an independent pair inside $v$'s non-\texttt{OUT}
 neighbourhood. This contradicts the very condition that made Force fire. So
-$v \in S$ for every 2-kernel $S$.
+$v \in S$ for every 2-d kernel $S$.
 \end{proof}
 
 \begin{theorem}[E2.1]
 On a chordal graph $G$, running (Spread) and (Force) to a fixed point never leaves a
-vertex \texttt{UNKNOWN}. Consequently $G$ has at most one 2-kernel, and 2-KERNEL is
+vertex \texttt{UNKNOWN}. Consequently $G$ has at most one 2-d kernel, and 2-D KERNEL is
 solvable in polynomial time on chordal graphs (the general problem is NP-complete).
 \end{theorem}
 
@@ -82,17 +82,17 @@ the assumption that we are at a fixed point where no rule can fire.
 
 Hence $W = \emptyset$: every vertex ends up \texttt{IN} or \texttt{OUT}. By
 Lemma~\ref{lem:sound}, this final assignment records, for every vertex, its status in
-\emph{every} 2-kernel of $G$. So if $G$ has a 2-kernel at all, it is exactly
+\emph{every} 2-d kernel of $G$. So if $G$ has a 2-d kernel at all, it is exactly
 $S = \{v : v \text{ fixed } \texttt{IN}\}$, and no other set can be one — $G$ has at
-most one 2-kernel.
+most one 2-d kernel.
 
 For the complexity claim: chordal graphs are recognized, and a simplicial-vertex
 elimination ordering produced, in polynomial time (via lexicographic breadth-first
 search); each application of Force or Spread is a polynomial-time clique/neighbour
 check; and the process above fixes one previously-\texttt{UNKNOWN} vertex per
 firing, so it terminates after at most $n$ firings. Checking the resulting $S$
-against the definition of a 2-kernel is also polynomial. So the whole procedure —
-decide existence, and produce the unique 2-kernel if one exists — runs in
+against the definition of a 2-d kernel is also polynomial. So the whole procedure —
+decide existence, and produce the unique 2-d kernel if one exists — runs in
 polynomial time.
 \end{proof}
 

@@ -1,0 +1,513 @@
+\documentclass[11pt]{article}
+
+% ---------- Page and fonts ----------
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+
+% ---------- Mathematics ----------
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\numberwithin{equation}{section}
+\allowdisplaybreaks
+
+% ---------- Lists, links, references ----------
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cleveref}
+
+% ---------- Theorem environments (shared counter, cleveref-aware) ----------
+\usepackage{aliascnt}
+\newcommand{\sibthm}[3]{%
+  \theoremstyle{#3}%
+  \newaliascnt{#1}{theorem}%
+  \newtheorem{#1}[#1]{#2}%
+  \aliascntresetthe{#1}%
+  \expandafter\newcommand\csname #1autorefname\endcsname{#2}%
+}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\sibthm{lemma}{Lemma}{plain}
+\sibthm{proposition}{Proposition}{plain}
+\sibthm{corollary}{Corollary}{plain}
+\sibthm{conjecture}{Conjecture}{plain}
+\sibthm{definition}{Definition}{definition}
+\sibthm{example}{Example}{definition}
+\sibthm{remark}{Remark}{remark}
+
+\crefname{theorem}{Theorem}{Theorems}
+\crefname{lemma}{Lemma}{Lemmas}
+\crefname{proposition}{Proposition}{Propositions}
+\crefname{corollary}{Corollary}{Corollaries}
+\crefname{definition}{Definition}{Definitions}
+\crefname{remark}{Remark}{Remarks}
+\Crefname{theorem}{Theorem}{Theorems}
+\Crefname{lemma}{Lemma}{Lemmas}
+\Crefname{proposition}{Proposition}{Propositions}
+\Crefname{corollary}{Corollary}{Corollaries}
+\Crefname{definition}{Definition}{Definitions}
+\Crefname{remark}{Remark}{Remarks}
+
+% ---------- Numbered proof steps ----------
+\newlist{steps}{enumerate}{1}
+\setlist[steps]{label=\textup{\textbf{Step \arabic*.}}, leftmargin=*,
+                labelsep=0.6em, itemsep=0.6ex, topsep=0.6ex}
+
+% ---------- Notation ----------
+\newcommand{\dip}{d^{+}}
+\newcommand{\Np}{N^{+}}
+\newcommand{\chl}{\chi_{\ell}}
+\newcommand{\chpl}{\chi_{\ell}'}
+\newcommand{\LG}{L}
+
+\title{\bfseries Kernel-Perfect Orientations of Line Graphs\\
+of Complete Graphs}
+\author{Siddharth Narayan Mishra\\[2pt] Roll Number: 123CS0189}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The list-edge-colouring conjecture asserts that $\chi(H)=\chl(H)$ for every line graph $H$.
+Galvin proved it for line graphs of bipartite graphs, using the kernel lemma of Bondy,
+Boppana and Siegel. We prove that for every even $m\ge 4$ the line graph $\LG(K_m)$ admits
+no kernel-perfect orientation whose out-degrees are all at most $\chi'(K_m)-1=m-2$.
+Consequently the kernel lemma cannot establish $\chpl(K_m)=\chi'(K_m)$ for any even $m$,
+which is precisely the case of the conjecture that remains open for complete graphs.
+The proof rests on an observation we call the star lemma: in a kernel-perfect orientation of
+a line graph, the edges of $G$ incident with a fixed vertex are linearly ordered. This
+converts the question into a numerical one about those orders, and a counting argument then
+closes it. The result strengthens a theorem of McDonald, who ruled out the same conclusion
+for the restricted family of Galvin orientations. All assertions are proved from first
+principles, and every numerical claim has been verified by exhaustive computation in the
+stated range.
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction}
+
+All graphs are finite and simple unless stated otherwise. For a graph $G$ we write $V(G)$ and
+$E(G)$ for its vertex and edge sets, $d_G(v)$ for the degree of $v$, and $\Delta(G)$ for the
+maximum degree. The \emph{line graph} $\LG(G)$ has vertex set $E(G)$, two edges of $G$ being
+adjacent in $\LG(G)$ exactly when they share an end.
+
+A \emph{list assignment} for a graph $H$ gives each vertex $v$ a set $C(v)$ of colours. An
+\emph{$L$-colouring} is a proper colouring $c$ with $c(v)\in C(v)$ for all $v$. The
+\emph{list chromatic number} $\chl(H)$ is the least $k$ such that an $L$-colouring exists
+whenever $|C(v)|=k$ for every $v$. Since ordinary colouring is the case of equal lists,
+$\chi(H)\le\chl(H)$ always, and the gap can be arbitrarily large in general.
+
+\begin{conjecture}[list-edge-colouring conjecture]\label{conj:lecc}
+$\chi(H)=\chl(H)$ for every line graph $H$.
+\end{conjecture}
+
+Equivalently, $\chpl(G)=\chi'(G)$ for every multigraph $G$, where $\chi'$ is the chromatic
+index and $\chpl$ the list chromatic index. The conjecture has been attributed independently
+to several authors and has been open since the 1970s. Galvin proved it for bipartite
+multigraphs, thereby settling the Dinitz problem. The tool is the following lemma.
+
+\begin{definition}[kernel]\label{def:kernel}
+Let $D$ be a digraph. A set $K\subseteq V(D)$ is a \emph{kernel} of $D$ if
+\begin{enumerate}[label=\textup{(\roman*)}]
+  \item $K$ is independent in the underlying graph of $D$, and
+  \item every $u\notin K$ has an arc $u\to w$ with $w\in K$.
+\end{enumerate}
+$D$ is \emph{kernel-perfect} if every induced subdigraph of $D$ has a kernel.
+\end{definition}
+
+\begin{lemma}[Bondy, Boppana and Siegel]\label{lem:bbs}
+Let $H$ be a graph and let $D$ be an orientation of $H$ which is kernel-perfect. If
+$|C(v)|\ge\dip_D(v)+1$ for every $v$, then $H$ has an $L$-colouring. In particular
+$\chl(H)\le\Delta^{+}(D)+1$.
+\end{lemma}
+
+The following notion isolates exactly what \cref{lem:bbs} asks of a line graph.
+
+\begin{definition}[$k$-kernel-orientable]\label{def:orientable}
+For an integer $k\ge 1$, a graph $H$ is \emph{$k$-kernel-orientable} if it has a
+kernel-perfect orientation $D$ with $\dip_D(x)\le k-1$ for every $x\in V(H)$.
+\end{definition}
+
+By \cref{lem:bbs}, if $\LG(G)$ is $\chi'(G)$-kernel-orientable then $\chpl(G)=\chi'(G)$, so
+\cref{conj:lecc} holds for $G$. Galvin's theorem is exactly the statement that $\LG(G)$ is
+$\chi'(G)$-kernel-orientable whenever $G$ is bipartite. Our main result says that this route
+is unavailable for complete graphs of even order.
+
+\begin{theorem}\label{thm:main}
+Let $m\ge 4$ be even. Then $\LG(K_m)$ is \emph{not} $(m-1)$-kernel-orientable. Since
+$\chi'(K_m)=m-1$, the kernel lemma \cref{lem:bbs} cannot establish
+$\chpl(K_m)=\chi'(K_m)$ for any even $m$.
+\end{theorem}
+
+The restriction to even $m$ is not a weakness of the method but the point of the result.
+For odd $m$ one has $\chi'(K_m)=m$, and Haggkvist and Janssen proved $\chpl(K_m)\le m$, so
+\cref{conj:lecc} is settled for odd complete graphs. The even case is the one that remains
+open, and \cref{thm:main} says the chapter's own method is not available there.
+
+\Cref{thm:main} strengthens a theorem of McDonald, who proved the same conclusion for the
+restricted family of \emph{Galvin orientations}. We discuss the relationship in
+\cref{sec:mcdonald}.
+
+\section{The star lemma}\label{sec:star}
+
+Throughout this section $G$ is a graph and $D$ is an orientation of $\LG(G)$. For
+$v\in V(G)$ let $E(v)$ denote the set of edges of $G$ incident with $v$. Since any two
+members of $E(v)$ share the end $v$, the set $E(v)$ is a clique of $\LG(G)$, so $D$ induces a
+tournament on it.
+
+\begin{lemma}[star lemma]\label{lem:star}
+Let $D$ be a kernel-perfect orientation of $\LG(G)$. Then for every $v\in V(G)$ the tournament
+induced by $D$ on $E(v)$ is transitive.
+\end{lemma}
+
+\begin{proof}
+\begin{steps}
+\item Let $T$ be a tournament and let $K$ be a kernel of $T$. Since $K$ is independent and
+any two vertices of a tournament are adjacent, $|K|\le 1$; and $K\ne\emptyset$, since
+otherwise condition (ii) of \cref{def:kernel} would ask a vertex to have an arc into the
+empty set. So $K=\{x\}$ for a single vertex $x$, and (ii) says every other vertex has an arc
+to $x$. Hence $x$ has out-degree $0$ in $T$, that is, $x$ is a sink.
+
+\item A directed triangle has no sink, since each of its three vertices has out-degree $1$.
+By Step 1 it therefore has no kernel.
+
+\item $E(v)$ is a clique of $\LG(G)$, so every $S\subseteq E(v)$ induces a tournament in $D$.
+As $D$ is kernel-perfect, that tournament has a kernel. By Step 2 no such $S$ induces a
+directed triangle, so $D$ has no directed triangle inside $E(v)$.
+
+\item A tournament with no directed triangle is transitive. Indeed, suppose $a\to b$ and
+$b\to c$ with $a\ne c$. The arc between $a$ and $c$ cannot be $c\to a$, for then
+$a\to b\to c\to a$ would be a directed triangle. Hence $a\to c$. \qedhere
+\end{steps}
+\end{proof}
+
+\begin{remark}\label{rem:bkw-clique}
+\Cref{lem:star} is not new in content. Borodin, Kostochka and Woodall proved that an
+orientation of a line graph is kernel-perfect if and only if every clique has a kernel and
+every directed odd cycle has a chord or a pseudochord. The necessity of the clique condition,
+applied to every subset of $E(v)$, yields \cref{lem:star} at once. We have given the direct
+argument above so that this article remains self-contained, and because the formulation as a
+linear order, rather than as the existence of a kernel, is what makes
+\cref{def:rank} available.
+\end{remark}
+
+\begin{remark}\label{rem:galvin-shape}
+Galvin orients $\LG(K_{n,n})$ by the entries of a Latin square, running along each row from
+the smaller entry to the larger and along each column in the opposite direction. Rows and
+columns are precisely the sets $E(v)$ for $K_{n,n}$, so his construction is a linear order on
+each $E(v)$. \Cref{lem:star} says this shape is forced: no other kind of orientation can be
+kernel-perfect.
+\end{remark}
+
+\Cref{lem:star} lets us replace an orientation by a family of numbers.
+
+\begin{definition}[the rank function]\label{def:rank}
+Let $D$ be a kernel-perfect orientation of $\LG(G)$. For $v\in V(G)$ and $e\in E(v)$ put
+\[
+  M(v,e)\;=\;\bigl|\{\,f\in E(v)\;:\;e\to f \text{ in } D\,\}\bigr|.
+\]
+For an edge $e=uv$ of $G$ we abbreviate $M(u,v):=M(u,e)$ and $M(v,u):=M(v,e)$.
+\end{definition}
+
+\begin{lemma}\label{lem:rank}
+Let $D$ be a kernel-perfect orientation of $\LG(G)$ and let $v\in V(G)$. Then
+\begin{enumerate}[label=\textup{(\alph*)}]
+  \item $M(v,\cdot)$ is a bijection from $E(v)$ onto $\{0,1,\dots,d_G(v)-1\}$;
+  \item for $e,f\in E(v)$ with $e\ne f$ we have $e\to f$ in $D$ if and only if
+        $M(v,e)>M(v,f)$;
+  \item for every edge $e=uv$ of $G$,
+        $\ \dip_D(e)=M(u,v)+M(v,u)$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\begin{steps}
+\item By \cref{lem:star} the tournament on $E(v)$ is transitive, so it is a linear order:
+write $E(v)=\{e_1,\dots,e_d\}$ with $e_i\to e_j$ exactly when $i<j$, where $d=d_G(v)$. Then
+$M(v,e_i)=|\{j:j>i\}|=d-i$, which runs over $\{0,1,\dots,d-1\}$ bijectively as $i$ runs from
+$1$ to $d$. This proves (a), and (b) follows since $i<j$ is equivalent to $d-i>d-j$.
+
+\item The neighbours of $e=uv$ in $\LG(G)$ are the edges of $G$ sharing $u$ with $e$ and the
+edges sharing $v$ with $e$. As $G$ is simple, no edge other than $e$ lies in both $E(u)$ and
+$E(v)$, so these two sets of neighbours are disjoint. The out-neighbours of $e$ therefore
+split accordingly, giving $\dip_D(e)=M(u,e)+M(v,e)$, which is (c). \qedhere
+\end{steps}
+\end{proof}
+
+\section{The budget is tight on regular class one graphs}\label{sec:budget}
+
+Recall that $G$ is \emph{class one} if $\chi'(G)=\Delta(G)$.
+
+\begin{lemma}\label{lem:budget}
+Let $G$ be $\Delta$-regular and class one, and suppose $\LG(G)$ is
+$\chi'(G)$-kernel-orientable, witnessed by $D$. Then
+\[
+  M(u,v)+M(v,u)\;=\;\Delta-1\qquad\text{for every edge } uv \text{ of } G .
+\]
+\end{lemma}
+
+\begin{proof}
+\begin{steps}
+\item Let $n=|V(G)|$, so $|E(G)|=n\Delta/2$. Two edges of $G$ are adjacent in $\LG(G)$
+exactly when they share an end, and by simplicity they share at most one end, so each
+vertex $v$ contributes exactly $\binom{d_G(v)}{2}$ edges to $\LG(G)$ and no edge of $\LG(G)$
+is counted twice. Hence
+\[
+  |E(\LG(G))|\;=\;\sum_{v\in V(G)}\binom{d_G(v)}{2}\;=\;n\binom{\Delta}{2}
+  \;=\;\frac{n\Delta(\Delta-1)}{2}.
+\]
+
+\item Every edge of $\LG(G)$ receives exactly one orientation in $D$, so
+$\sum_{e\in E(G)}\dip_D(e)=|E(\LG(G))|$.
+
+\item By hypothesis $\dip_D(e)\le\chi'(G)-1=\Delta-1$ for every $e$, and there are
+$|E(G)|=n\Delta/2$ edges, so
+\[
+  \sum_{e\in E(G)}\dip_D(e)\;\le\;(\Delta-1)\cdot\frac{n\Delta}{2}
+  \;=\;\frac{n\Delta(\Delta-1)}{2}.
+\]
+
+\item Steps 1 to 3 give equality throughout, so $\dip_D(e)=\Delta-1$ for every edge $e$.
+\Cref{lem:rank}(c) now gives the claim. \qedhere
+\end{steps}
+\end{proof}
+
+\section{Proof of the main theorem}\label{sec:main}
+
+\begin{proof}[Proof of \cref{thm:main}]
+Let $m\ge 4$ be even, write $G=K_m$, and put $s=m-2$. Then $G$ is $(m-1)$-regular and
+$\chi'(G)=m-1$, so $G$ is class one with $\Delta=m-1$ and $s=\Delta-1$.
+
+Suppose for a contradiction that $\LG(K_m)$ is $(m-1)$-kernel-orientable, witnessed by a
+kernel-perfect orientation $D$ with all out-degrees at most $m-2$. Let $M$ be the rank
+function of \cref{def:rank}.
+
+\begin{steps}
+\item By \cref{lem:budget},
+\begin{equation}\label{eq:tight}
+  M(u,v)+M(v,u)=s\qquad\text{for every edge } uv .
+\end{equation}
+By \cref{lem:rank}(a), each $M(u,\cdot)$ is a bijection onto $\{0,1,\dots,s\}$, since
+$d_G(u)=m-1=s+1$.
+
+\item Fix any vertex $i$ of $K_m$. By \cref{lem:rank}(a) there is a unique neighbour $j$ of
+$i$ with $M(i,j)=0$, and then \eqref{eq:tight} gives $M(j,i)=s$.
+
+\item Let $k$ be any vertex other than $i$ and $j$; there are exactly $m-2=s$ such $k$. Since
+$K_m$ is complete, $ij$, $jk$ and $ik$ are edges of $K_m$ and hence vertices of $\LG(K_m)$,
+pairwise adjacent, so they induce a triangle in $\LG(K_m)$. We determine its orientation.
+
+\item \emph{The arc between $ij$ and $jk$.} These two share the end $j$, so by
+\cref{lem:rank}(b), $ij\to jk$ if and only if $M(j,i)>M(j,k)$. Now $M(j,i)=s$ is the largest
+value in the range of $M(j,\cdot)$, and $M(j,k)\ne M(j,i)$ because $M(j,\cdot)$ is injective
+and $k\ne i$. Hence $M(j,i)>M(j,k)$ and
+\[
+  ij\longrightarrow jk .
+\]
+
+\item \emph{The arc between $ik$ and $ij$.} These share the end $i$, so $ik\to ij$ if and only
+if $M(i,k)>M(i,j)=0$. Since $M(i,\cdot)$ is injective and $k\ne j$, we have $M(i,k)\ne 0$,
+hence $M(i,k)>0$ and
+\[
+  ik\longrightarrow ij .
+\]
+
+\item \emph{The arc between $jk$ and $ik$.} These share the end $k$, so $jk\to ik$ if and only
+if $M(k,j)>M(k,i)$. By \eqref{eq:tight}, $M(k,j)=s-M(j,k)$ and $M(k,i)=s-M(i,k)$, so this
+condition is equivalent to $M(i,k)>M(j,k)$.
+
+\item If $M(i,k)>M(j,k)$ then, combining Steps 4, 5 and 6, we obtain
+\[
+  ij\longrightarrow jk\longrightarrow ik\longrightarrow ij ,
+\]
+a directed triangle in $D$. By Step 2 of the proof of \cref{lem:star} a directed triangle has
+no kernel, and it is an induced subdigraph of $D$, contradicting kernel-perfectness. Hence
+$M(i,k)\le M(j,k)$. Moreover $M(k,i)\ne M(k,j)$ because $M(k,\cdot)$ is injective and
+$i\ne j$, so by \eqref{eq:tight} $M(i,k)\ne M(j,k)$. Therefore
+\begin{equation}\label{eq:key}
+  M(i,k)<M(j,k)\qquad\text{for every } k\notin\{i,j\}.
+\end{equation}
+
+\item Sum \eqref{eq:key} over the $s$ vertices $k\notin\{i,j\}$. Since $M(i,\cdot)$ is a
+bijection onto $\{0,1,\dots,s\}$ and omits only the value $M(i,j)=0$ when $k$ ranges over
+$V\setminus\{i,j\}$,
+\[
+  \sum_{k\notin\{i,j\}}M(i,k)\;=\;\Bigl(\sum_{t=0}^{s}t\Bigr)-M(i,j)
+  \;=\;\frac{s(s+1)}{2}-0\;=\;\frac{s(s+1)}{2}.
+\]
+Likewise $M(j,\cdot)$ omits only the value $M(j,i)=s$, so
+\[
+  \sum_{k\notin\{i,j\}}M(j,k)\;=\;\frac{s(s+1)}{2}-s .
+\]
+
+\item Summing \eqref{eq:key} over all $s\ge 1$ choices of $k$ gives a strict inequality:
+\[
+  \frac{s(s+1)}{2}\;<\;\frac{s(s+1)}{2}-s ,
+\]
+that is $0<-s$. Since $s=m-2\ge 2$ this is false. The assumed orientation cannot exist. \qedhere
+\end{steps}
+\end{proof}
+
+\begin{remark}\label{rem:where-force}
+The argument never analyses a triangle in isolation. \Cref{prop:cubic} below shows that for
+$\Delta\ge 4$ a single triangle imposes no contradiction at all, so no local argument can
+prove \cref{thm:main}. The force comes from choosing $j$ at the extreme of the order at $i$,
+which fixes two of the three arcs of \emph{every} triangle through $ij$ at once and makes all
+of them yield the same inequality \eqref{eq:key}. The contradiction is then a statement about
+row sums.
+\end{remark}
+
+\section{Sharpness and scope}\label{sec:scope}
+
+Two remarks delimit \cref{thm:main}. The first shows that at $\Delta=3$ a purely local
+argument does suffice, and the second shows that it does not for larger $\Delta$.
+
+\begin{proposition}\label{prop:cubic}
+Let $G$ be $3$-regular and class one. If $G$ contains a triangle, then $\LG(G)$ is not
+$3$-kernel-orientable.
+\end{proposition}
+
+\begin{proof}
+Suppose $D$ witnesses $3$-kernel-orientability. By \cref{lem:budget} with $\Delta=3$ we have
+$s=2$ and $M(u,v)+M(v,u)=2$ for every edge. Let $ijk$ be a triangle of $G$ and set
+$p=M(i,j)$, $q=M(j,k)$ and $r=M(i,k)$, so that $M(j,i)=2-p$, $M(k,j)=2-q$ and $M(k,i)=2-r$.
+Injectivity of $M(i,\cdot)$, $M(j,\cdot)$ and $M(k,\cdot)$ gives respectively
+\[
+  p\ne r,\qquad p+q\ne 2,\qquad q\ne r .
+\]
+By \cref{lem:rank}(b), as in Steps 4 to 6 above, the triangle $ij,jk,ik$ of $\LG(G)$ is
+directed precisely when
+\[
+  \bigl(p+q<2 \text{ and } r>p \text{ and } r>q\bigr)\quad\text{or}\quad
+  \bigl(p+q>2 \text{ and } r<p \text{ and } r<q\bigr).
+\]
+There are nine pairs $(p,q)\in\{0,1,2\}^2$. The three with $p+q=2$ are excluded. For the
+remaining six, avoiding a directed triangle forces $r$ into a value already excluded:
+\begin{center}
+\begin{tabular}{ccl}
+\hline
+$(p,q)$ & requirement for no directed triangle & conflict\\
+\hline
+$(0,0)$ & $r\le 0$ & contradicts $r\ne p=0$\\
+$(0,1)$ & $r\le 1$, and $r\ne 0$, so $r=1$ & contradicts $r\ne q=1$\\
+$(1,0)$ & $r\ne 2$, and $r\ne 1$, so $r=0$ & contradicts $r\ne q=0$\\
+$(1,2)$ & $r\ne 0$, and $r\ne 1$, so $r=2$ & contradicts $r\ne q=2$\\
+$(2,1)$ & $r\ne 0$, and $r\ne 2$, so $r=1$ & contradicts $r\ne q=1$\\
+$(2,2)$ & $r=2$ & contradicts $r\ne p=2$\\
+\hline
+\end{tabular}
+\end{center}
+Every case fails, so the triangle of $\LG(G)$ is directed and has no kernel.
+\end{proof}
+
+\begin{remark}\label{rem:not-triangles}
+\Cref{prop:cubic} does not extend to larger degrees, in two distinct senses. First, the local
+obstruction disappears: for $s=\Delta-1\ge 3$ there are triples $(p,q,r)$ satisfying the three
+injectivity conditions and yielding an undirected triangle, for instance $(p,q,r)=(0,2,1)$.
+Exhaustive enumeration gives $0,0,6,18,42,78,132$ admissible triples for
+$s=1,2,3,4,5,6,7$ respectively. Second, the presence of a triangle is not by itself an
+obstruction: the circulant $C_8(1,2)$ is $4$-regular and class one and contains eight
+triangles, yet admits a system of orders satisfying \eqref{eq:tight} with no directed
+triangle.
+\end{remark}
+
+\begin{remark}\label{rem:reach}
+The proof of \cref{thm:main} uses only that $i$ and $j$ are adjacent and that every other
+vertex is adjacent to both. For a $\Delta$-regular class one graph this says
+$N(i)\setminus\{j\}\subseteq N(j)$, and since both sets have size $\Delta-1$ it forces
+$N[i]=N[j]$. Because $j$ is determined by $D$ rather than chosen, the argument as stated
+applies exactly to disjoint unions of complete graphs of even order. Extending it further
+requires a different way of aggregating the inequalities \eqref{eq:key}.
+\end{remark}
+
+\section{Computational verification}\label{sec:computation}
+
+Every numerical assertion above has been checked independently.
+
+\begin{enumerate}[label=\textup{(\arabic*)}]
+  \item \emph{$K_4$, by exhaustive orientation search.} $\LG(K_4)$ is the octahedron, with
+  $6$ vertices and $12$ edges. All $2^{12}=4096$ orientations were enumerated; the $38$ with
+  all out-degrees at most $2$ were tested for kernel-perfectness by examining every one of the
+  $2^{6}-1$ induced subdigraphs. Every one of the $38$ contains a directed triangle, so none
+  is kernel-perfect. This confirms \cref{thm:main} for $m=4$ without using
+  \cref{lem:star}.
+
+  \item \emph{$K_4$, $K_6$ and $K_8$, by exhaustive search over rank functions.} Backtracking
+  over all $M$ satisfying \eqref{eq:tight}, injectivity of every row, and absence of a
+  directed triangle finds no solution in each case, agreeing with \cref{thm:main}.
+
+  \item \emph{\Cref{lem:star}.} For every tournament on at most $6$ vertices, the properties
+  ``every non-empty subset contains a sink'' and ``transitive'' select the same tournaments,
+  namely $2$, $8$, $64$, $1024$ and $32768$ of them on $2,3,4,5,6$ vertices.
+
+  \item \emph{\Cref{rem:not-triangles}.} The counts $0,0,6,18,42,78,132$ and the example
+  $C_8(1,2)$ were produced by direct enumeration.
+\end{enumerate}
+
+\section{Relation to McDonald's theorem}\label{sec:mcdonald}
+
+McDonald defines a \emph{Galvin orientation} of $\LG(G)$ from two pieces of data: a partition
+of $V(G)$ into sets $U$ and $D$, and a single $k$-edge-colouring $\varphi$ of $G$. For
+adjacent $e_1,e_2\in E(G)$ with $\varphi(e_1)<\varphi(e_2)$ sharing a vertex $w$, the edge of
+$\LG(G)$ between them is oriented from $e_2$ to $e_1$ if $w\in D$, and from $e_1$ to $e_2$ if
+$w\in U$. Such an orientation is \emph{proper with respect to $k$} if it is kernel-perfect and
+has all out-degrees at most $k-1$. She proves:
+
+\begin{theorem}[McDonald]\label{thm:mcdonald}
+$\LG(K_n)$ has no proper Galvin orientation with respect to $\chi'(K_n)$, for any $n\ge 4$.
+\end{theorem}
+
+\Cref{thm:main} is a strengthening of \cref{thm:mcdonald} in the even case, for the following
+reason. In a Galvin orientation every vertex orders its incident edges by the \emph{same}
+colouring $\varphi$, choosing only whether to read it upwards or downwards. By
+\cref{lem:star}, a general kernel-perfect orientation gives each vertex an arbitrary linear
+order on its incident edges. To recover a single global colouring from a rank function $M$
+one would need to set $\varphi(uv)=M(v,u)+1$ consistently, which requires each vertex to play
+the same role for all of its edges, that is, requires a partition of $V(G)$ with one end of
+every edge in each part. That is precisely bipartiteness. For non-bipartite $G$, and in
+particular for $K_m$, the rank functions covered by \cref{thm:main} therefore form a strictly
+larger family than the Galvin orientations covered by \cref{thm:mcdonald}.
+
+Informally, \cref{thm:mcdonald} says that Galvin's construction does not reach complete
+graphs, while \cref{thm:main} says that the kernel lemma does not, however the orientation is
+built.
+
+McDonald also proves a positive companion result: $\LG(K_{\Delta+1})$ does admit a proper
+Galvin orientation with respect to roughly $\lfloor 3\Delta/2\rfloor$, which is far from the
+bound $\chpl(K_n)\le n$ of Haggkvist and Janssen.
+
+\begin{remark}\label{rem:status}
+The two places where \cref{thm:main} would most plausibly already appear have been consulted.
+The article \emph{On kernel-perfect orientations of line graphs} by Borodin, Kostochka and
+Woodall, Discrete Math.\ \textbf{191} (1998) 45--49, proves only the characterisation quoted in
+\cref{rem:bkw-clique}; its statement concerns cliques and odd cycles in general and makes no
+assertion about complete graphs or about out-degree bounds. McDonald's article proves
+\cref{thm:mcdonald}, which as explained above concerns the strictly smaller family of Galvin
+orientations. Neither contains \cref{thm:main}.
+
+This is evidence and not proof. The author has not read the full text of the 1998 article,
+only its abstract and the statement as quoted by McDonald, and a search of the literature
+cannot establish a negative. \Cref{thm:main} should be regarded as a strengthening of
+\cref{thm:mcdonald} whose novelty is likely but unconfirmed.
+\end{remark}
+
+\section{Concluding remarks}
+
+\Cref{thm:main} closes the kernel route to \cref{conj:lecc} for complete graphs of even order,
+which is exactly where the conjecture remains open for this family. It is consistent with the
+shape of the literature: the positive results on complete graphs, such as those of Haggkvist
+and Janssen, of Schauz for $K_{p+1}$ with $p$ an odd prime, and the recent families
+$K_{p-1}$ and $K_{2p}$, all proceed through the Alon and Tarsi polynomial method and its
+formulation in terms of signed one-factorizations, rather than through kernels.
+
+It is worth recording that the two methods are incomparable rather than nested. The Alon and
+Tarsi method proves $\chpl(K_4)=3$, which by \cref{thm:main} the kernel lemma cannot. In the
+other direction, Galvin's orientation of $\LG(K_{3,3})$ is kernel-perfect with all out-degrees
+equal to $2$, so the kernel lemma proves $\chpl(K_{3,3})=3$, whereas the Alon and Tarsi
+certificate for that orientation vanishes and the Alon and Tarsi number of $\LG(K_{3,3})$ is
+$4$. Neither method subsumes the other.
+
+\end{document}

@@ -1,16 +1,16 @@
 # census-tool
 
-Census tooling for **2-kernels** — the `(2-d)`-kernel of Włoch (*Australas. J. Combin.*
+Census tooling for **2-d kernels** — the `(2-d)`-kernel of Włoch (*Australas. J. Combin.*
 **53** (2012) 273–284) — in graphs and digraphs.
 
-A 2-kernel of a digraph `D = (V, A)` is a set `S ⊆ V` such that:
+A 2-d kernel of a digraph `D = (V, A)` is a set `S ⊆ V` such that:
 
 1. **independence** — no arc of `A` has both ends in `S`;
 2. **2-domination** — every `v ∉ S` has `|N⁺(v) ∩ S| ≥ 2`.
 
 An undirected graph is treated as its symmetric digraph, so one engine covers both cases.
 Existence is NP-complete, so this tool is about exhaustively (or, past feasible size,
-exponential-but-fast and sampled) computing 2-kernel data across many graph/digraph
+exponential-but-fast and sampled) computing 2-d kernel data across many graph/digraph
 families, storing it, and querying it — not a polynomial-time solver.
 
 See `PLAN.md` for design rationale and interpretation decisions, and `FINDINGS.md` for the
@@ -61,7 +61,7 @@ print(len(all_2kernels(D)))
 ## Tool 1: `python -m twokernel.census` — build and query the database
 
 Populates `census.sqlite3` (one row per isomorphism class, keyed by its canonical
-graph6/digraph6 string) with structural invariants and 2-kernel data, then lets you run
+graph6/digraph6 string) with structural invariants and 2-d kernel data, then lets you run
 canned reports against it.
 
 ```
@@ -89,7 +89,7 @@ Available `query` reports: `summary`, `classes`, `forcing`, `digraphs`, `cubic`,
 ### Browsing the database directly
 
 The database has two tables: `graphs` (one row per graph, ~40 columns of invariants plus
-2-kernel results) and `membership` (`key → family`). With the `sqlite3` CLI installed:
+2-d kernel results) and `membership` (`key → family`). With the `sqlite3` CLI installed:
 
 ```
 sqlite3 census.sqlite3 -header -column "SELECT key, n, m, has_2kernel, count_2kernels FROM graphs LIMIT 10;"
@@ -117,8 +117,8 @@ for row in conn.execute("SELECT * FROM graphs LIMIT 10"):
 ## Tool 2: `python -m twokernel.experiments` — standalone experiments
 
 Runs the two experiments that are structural checks/proofs rather than SQL queries over
-the census: **E5** (every atlas graph's vertex set is a 2-kernel of its subdivision) and
-**E6** (structure of 2-kernels in DAGs). Prints results directly; doesn't touch the
+the census: **E5** (every atlas graph's vertex set is a 2-d kernel of its subdivision) and
+**E6** (structure of 2-d kernels in DAGs). Prints results directly; doesn't touch the
 database.
 
 ```

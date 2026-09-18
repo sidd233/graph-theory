@@ -89,7 +89,7 @@
 }
 
 % ================= Document =================
-\title{2-Kernels of a Digraph}
+\title{2-d Kernels of a Digraph}
 \author{Siddharth Narayan Mishra}
 \date{\today}
 
@@ -97,7 +97,7 @@
 
 \maketitle
 
-\section{2-Kernel}
+\section{2-d Kernel}
 
 \begin{definition}[Independent Set]
   Let $D=(V,A)$ be a digraph. A set $S\subseteq V(D)$ is \textbf{independent} if no two vertices of $S$ are joined by an arc of $D$, i.e.\ $(u,v)\notin A(D)$ for every $u,v\in S$.
@@ -111,21 +111,21 @@
   \]
 \end{definition}
 
-\begin{definition}[2-Kernel]
-  Let $D=(V,A)$ be a digraph. A subset $N\subseteq V(D)$ is a \textbf{2-kernel} of $D$ if $N$ is both independent and 2-dominant. Equivalently, $N$ is a 2-kernel if
+\begin{definition}[2-d Kernel]
+  Let $D=(V,A)$ be a digraph. A subset $N\subseteq V(D)$ is a \textbf{2-d kernel} of $D$ if $N$ is both independent and 2-dominant. Equivalently, $N$ is a 2-d kernel if
 
   \begin{enumerate}
     \item no two vertices of $N$ are joined by an arc of $D$, and
     \item every vertex $x\in V(D)\setminus N$ has arcs into at least two distinct vertices of $N$.
   \end{enumerate}
 
-  This is stronger than the classical (von Neumann--Morgenstern) kernel, which only requires each outside vertex to reach $N$ by \emph{some} arc; a 2-kernel requires \emph{at least two}.
+  This is stronger than the classical (von Neumann--Morgenstern) kernel, which only requires each outside vertex to reach $N$ by \emph{some} arc; a 2-d kernel requires \emph{at least two}.
 \end{definition}
 
 \bigskip
 
 \begin{example}
-  In the digraph below, $N=\{v_1,v_3\}$ is a 2-kernel: $v_1$ and $v_3$ are not joined by an arc, and each of $v_2,v_4$ has an arc into both $v_1$ and $v_3$, so each outside vertex has two arcs into $N$.
+  In the digraph below, $N=\{v_1,v_3\}$ is a 2-d kernel: $v_1$ and $v_3$ are not joined by an arc, and each of $v_2,v_4$ has an arc into both $v_1$ and $v_3$, so each outside vertex has two arcs into $N$.
 
   \begin{center}
     \begin{tikzpicture}[
@@ -147,7 +147,7 @@
 \end{example}
 
 \begin{remark}
-  If $N$ is a 2-kernel of $D$, then $N$ is also an ordinary kernel of $D$ (independence is unchanged, and having two arcs into $N$ certainly gives at least one). The converse fails: $N=\{v_1,v_3\}$ ceases to be a 2-kernel if, say, the arc $v_4\to v_3$ is deleted, even though it remains an ordinary kernel as long as $v_4\to v_1$ survives.
+  If $N$ is a 2-d kernel of $D$, then $N$ is also an ordinary kernel of $D$ (independence is unchanged, and having two arcs into $N$ certainly gives at least one). The converse fails: $N=\{v_1,v_3\}$ ceases to be a 2-d kernel if, say, the arc $v_4\to v_3$ is deleted, even though it remains an ordinary kernel as long as $v_4\to v_1$ survives.
 \end{remark}
 
 \end{document}
