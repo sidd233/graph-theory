@@ -1,0 +1,18 @@
+<frozen site>:101: RuntimeWarning: Unexpected value in sys.prefix, expected /home/sid/work/gt/odd-torus/env, got /home/sid/work/gt/odd-torus/ws-W5/../env
+<frozen site>:101: RuntimeWarning: Unexpected value in sys.exec_prefix, expected /home/sid/work/gt/odd-torus/env, got /home/sid/work/gt/odd-torus/ws-W5/../env
+square #0: X_k periodic from k = 4, period 4; bad k in 1..7: [2, 6]; for k >= 4: bad iff k mod 4 in [2]
+square #1: X_k periodic from k = 3, period 4; bad k in 1..6: [2, 6]; for k >= 3: bad iff k mod 4 in [2]
+square #2: X_k periodic from k = 4, period 4; bad k in 1..7: [2, 6]; for k >= 4: bad iff k mod 4 in [2]
+square #3: X_k periodic from k = 3, period 4; bad k in 1..6: [2, 6]; for k >= 3: bad iff k mod 4 in [2]
+square #4: X_k periodic from k = 3, period 4; bad k in 1..6: [2, 6]; for k >= 3: bad iff k mod 4 in [2]
+square #5: X_k periodic from k = 4, period 4; bad k in 1..7: [2, 6]; for k >= 4: bad iff k mod 4 in [2]
+square #6: X_k periodic from k = 3, period 4; bad k in 1..6: [2, 6]; for k >= 3: bad iff k mod 4 in [2]
+square #7: X_k periodic from k = 4, period 4; bad k in 1..7: [2, 6]; for k >= 4: bad iff k mod 4 in [2]
+square #8: X_k periodic from k = 4, period 4; bad k in 1..7: [2, 6]; for k >= 4: bad iff k mod 4 in [2]
+square #9: X_k periodic from k = 3, period 4; bad k in 1..6: [2, 6]; for k >= 3: bad iff k mod 4 in [2]
+square #10: X_k periodic from k = 4, period 4; bad k in 1..7: [2, 6]; for k >= 4: bad iff k mod 4 in [2]
+square #11 (Galvin-type): X_k periodic from k = 3, period 4; bad k in 1..6: [2, 6]; for k >= 3: bad iff k mod 4 in [2]
+
+real	0m12.303s
+user	0m12.245s
+sys	0m0.009s

@@ -1,0 +1,37 @@
+=== kernel_torus.py 3 3 --all
+KERNEL-PERFECT orientation #1 after 1 refinements:
+KERNEL-PERFECT orientation #2 after 1 refinements:
+KERNEL-PERFECT orientation #3 after 1 refinements:
+KERNEL-PERFECT orientation #4 after 1 refinements:
+KERNEL-PERFECT orientation #5 after 1 refinements:
+KERNEL-PERFECT orientation #6 after 1 refinements:
+KERNEL-PERFECT orientation #7 after 1 refinements:
+KERNEL-PERFECT orientation #8 after 1 refinements:
+KERNEL-PERFECT orientation #9 after 1 refinements:
+KERNEL-PERFECT orientation #10 after 1 refinements:
+KERNEL-PERFECT orientation #11 after 1 refinements:
+KERNEL-PERFECT orientation #12 after 1 refinements:
+T(3,3): 12 kernel-perfect found, 1 refinements, kernel-less set sizes {3: 1}, 0.0s
+=== kernel_torus.py 3 5 --all
+UNSAT: T(3,5) has no kernel-perfect orientation with out-degree <= 2
+T(3,5): 0 kernel-perfect found, 2 refinements, kernel-less set sizes {3: 1, 7: 1}, 0.0s
+=== kernel_torus.py 3 7 --all
+UNSAT: T(3,7) has no kernel-perfect orientation with out-degree <= 2
+T(3,7): 0 kernel-perfect found, 4 refinements, kernel-less set sizes {3: 1, 9: 2, 11: 1}, 0.0s
+=== kernel_torus.py 3 9 --all
+KERNEL-PERFECT orientation #1 after 6 refinements:
+KERNEL-PERFECT orientation #2 after 6 refinements:
+KERNEL-PERFECT orientation #3 after 6 refinements:
+KERNEL-PERFECT orientation #4 after 6 refinements:
+KERNEL-PERFECT orientation #5 after 6 refinements:
+KERNEL-PERFECT orientation #6 after 6 refinements:
+KERNEL-PERFECT orientation #7 after 6 refinements:
+KERNEL-PERFECT orientation #8 after 6 refinements:
+KERNEL-PERFECT orientation #9 after 6 refinements:
+KERNEL-PERFECT orientation #10 after 6 refinements:
+KERNEL-PERFECT orientation #11 after 6 refinements:
+KERNEL-PERFECT orientation #12 after 6 refinements:
+T(3,9): 12 kernel-perfect found, 6 refinements, kernel-less set sizes {3: 1, 11: 2, 13: 3}, 66.8s
+=== kernel_torus.py 5 5 --all
+UNSAT: T(5,5) has no kernel-perfect orientation with out-degree <= 2
+T(5,5): 0 kernel-perfect found, 4 refinements, kernel-less set sizes {5: 1, 7: 1, 9: 2}, 0.0s

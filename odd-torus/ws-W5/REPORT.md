@@ -1,0 +1,36 @@
+# W5: Reconcile the old odd-torus/ code with the orchestrator's kernel section
+
+## Results
+- [COMPUTER-VERIFIED] Admissible (all out-degrees 2) orientation counts agree with the orchestrator: 148, 2116, 33028, 525316 for C₃ □ C₃, C₃ □ C₅, C₃ □ C₇, C₃ □ C₉, and 143224 for C₅ □ C₅. Independent method: exact transfer-matrix count tr(Tⁿ) over row-arc boundary states.
+- [COMPUTER-VERIFIED] Kernel-perfect admissible orientation counts agree: 12, 0, 0, 12 for C₃ □ C₃, C₅, C₇, C₉, and 0 for C₅ □ C₅. Independent method: the old SAT search with lazy kernel-less cuts closed under torus automorphisms (odd-torus/kernel_torus.py --all, C checker kp_check.c).
+- [COMPUTER-VERIFIED] The 12 kernel-perfect orientations of C₃ □ C₉ found by the old code are exactly the 12 Latin lifts of orch/latin_lift.py (as sets of arcs).
+- [COMPUTER-VERIFIED, all k ≥ 1 via eventual periodicity] **Correction to the story.** For each of the 12 Latin squares, the lift to C₃ □ C_{3k} is kernel-perfect iff k ≢ 2 (mod 4). It fails for k = 2, 6, 10, ..., and it is kernel-perfect for k = 4, 8, .... The story says "It fails for even k (e.g. C₃ □ C₆)"; that is true only for k ≡ 2 (mod 4). The orchestrator's prove_lift_final.py is correct for odd k but records only the parity of k, so its "zero-trace products with even k: 2" means "some even k fails", not "every even k fails". This does not affect the odd-n theorem (odd n = 3k forces k odd), but the even-k sentence must be fixed before it goes in the paper.
+- [COMPUTER-VERIFIED] The orchestrator's 20-state automaton agrees with direct kernel search: 0 disagreements in 23400 induced subdigraphs (its own validate_auto.py, rerun here).
+- What strip_dp.py computes: an exact kernel-perfectness test for one orientation of C₃ □ Cₙ, by a column DP over all induced subdigraphs (feasible partial-kernel profiles (guess for column n−1, kernel vertex of column 0, (kernel vertex, unabsorbed set)) per column). It returns a kernel-less induced subdigraph or None. It is the same idea as the orchestrator's automaton, written independently on 2026-10-12. It has nothing to do with the strip-lemma coefficient c_S, so it does not overlap W1 (W1 was told).
+- What the old automaton.py computes: the same test, for all n at once, for the Galvin-type orientation (colour (i + j) mod 3) only. Its answer (bad iff n ≡ 2 mod 4, among 3 | n) is the Galvin-type square's case of the correction above.
+
+## Evidence
+All runs with /home/sid/work/gt/odd-torus/env/bin/python. The orchestrator's scripts were copied unchanged into ws-W5/orch/.
+- script: ws-W5/count_orient.py, command: `python count_orient.py` (in ws-W5), output (count_orient.txt): `C3 x C9: transfer-matrix count 525316, orchestrator 525316: agree`, `C5 x C5: transfer-matrix count 143224, orchestrator 143224: agree`, all five agree; symmetry check C_m □ C_n = C_n □ C_m for (3,4), (3,5), (4,5), (3,7).
+- script: ws-W5/run_kp_counts.sh (runs odd-torus/kernel_torus.py m n --all), command: `bash ws-W5/run_kp_counts.sh > ws-W5/kp_counts.txt 2> ws-W5/kp_counts_progress.txt` (in odd-torus), output: `T(3,3): 12 kernel-perfect found`, `UNSAT: T(3,5) ...`, `UNSAT: T(3,7) ...`, `T(3,9): 12 kernel-perfect found, 6 refinements ..., 66.8s`, `UNSAT: T(5,5) has no kernel-perfect orientation with out-degree <= 2`.
+- script: ws-W5/kp39_are_lifts.py, command: `env/bin/python kernel_torus.py 3 9 --all | env/bin/python ws-W5/kp39_are_lifts.py` (in odd-torus), output: `old SAT code: 12 kernel-perfect orientations; Latin lifts: 12; equal sets: True`.
+- script: ws-W5/lift_k_set.py, command: `python lift_k_set.py` (in ws-W5), output (lift_k_set.txt), for every square #0 to #11: `X_k periodic from k = 3 (or 4), period 4; bad k in 1..7: [2, 6]; for k >= 4: bad iff k mod 4 in [2]`. Square #11 is the Galvin-type one.
+- script: ws-W5/orch/prove_lift_final.py (orchestrator, unchanged), command: `python prove_lift_final.py` (in ws-W5/orch), output: every square `zero-trace products with odd k: 0; with even k: 2`, `RESULT: lifts kernel-perfect on C3 x C_{3k} for every odd k: True`.
+- script: ws-W5/orch/validate_auto.py (orchestrator, unchanged), output: `including random orientations: 0 disagreements in 23400`.
+- script: odd-torus/automaton.py (old), command: `python automaton.py --check 15` (in odd-torus), output: `X_t is periodic from t = 10 with period 4`, `for n >= 10: D_n is not kernel-perfect iff n mod 4 in [2]`, `agrees with strip_dp for n = 3, 6, ..., 15`.
+
+## Cross-checks
+- Latin lifts by k: lift_k_set.py (orchestrator's automaton, exact per-k closure) and lift_vs_strip_dp.py (old strip_dp.py, a separate implementation) agree for all 12 squares and k from 1 to 8: kernel-less exactly at k = 2 and 6 (lift_vs_strip_dp.txt).
+- The old exhaustive C check of the Galvin-type orientation of C₃ □ C₁₂ (c_t312.out: `T(3,12) C checker: 0`, i.e. no kernel-less subset of the 2³⁶) agrees with "k = 4 is kernel-perfect".
+- Orientation counts: transfer matrix (here) vs backtracking enumeration (orchestrator). Kernel-perfect counts: SAT with lazy cuts (old) vs exhaustive enumeration with kpc (orchestrator).
+
+## Problems / disagreements
+- The story's sentence "It fails for even k (e.g. C₃ □ C₆)" is wrong as stated: the lifts are kernel-perfect for k ≡ 0 (mod 4). Fix: "It fails exactly for k ≡ 2 (mod 4) (e.g. C₃ □ C₆), and holds for k ≡ 0 (mod 4) (e.g. C₃ □ C₁₂)." Ponder (2) in the story ("Why does it fail for even k?") should be restated accordingly.
+- The story's "Result: for odd n, C₃ □ Cₙ has a kernel-perfect admissible orientation iff 3 | n, then exactly 12". "At least 12" is proved for all odd multiples of 3 (lifts plus closure). "Exactly 12" is checked only for n = 3, 9; it also needs the hand proof that non-Latin p gives an induced odd directed cycle, plus the structure lemma that columns must be transitive. If the paper says "exactly 12" for all n, it rests on those two proofs, not on computation.
+- Invalid old output: odd-torus/bounded_13.out reports a 2-vertex kernel-less set for T(9,15) and T(15,15). Those graphs have 135 and 225 vertices, beyond the 127-vertex limit of kp_check128.c (static arrays of 128 entries; ctypes silently truncates wider masks, checked: (1<<70)|5 stored as 5). Also, a 2-vertex induced subdigraph of an oriented graph always has a kernel (the head of the arc, or both vertices), so the output is impossible. Disregard those two lines. The T(3,15), T(9,9), T(3,21) lines in that file are within range.
+- Minor: the old scripts' docstrings say to run with ../lecc-small/env/bin/python; odd-torus/env works as well. Both folders contain a module named automaton.py, so do not put both on sys.path in the wrong order (lift_vs_strip_dp.py puts orch/ first).
+
+## Next
+1. Fix the even-k sentence and Ponder (2) in toroidal_grid_story.tex and in kernel_section.tex if it repeats it.
+2. Explain the mod 4 pattern by hand (a period-4 phenomenon in the block products), which would also give the optional hand proof the story asks for.
+3. If the paper keeps "exactly 12" for all odd n, check that the structure lemma and the winding-cycle theorem together cover every admissible orientation, and spot-check C₃ □ C₁₅ (45 vertices) by the old SAT search with a size-bounded checker.

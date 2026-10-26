@@ -1,0 +1,1 @@
+old SAT code: 12 kernel-perfect orientations; Latin lifts: 12; equal sets: True

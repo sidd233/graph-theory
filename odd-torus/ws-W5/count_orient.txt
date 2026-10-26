@@ -1,0 +1,13 @@
+C3 x C3: transfer-matrix count 148, orchestrator 148: agree
+C3 x C5: transfer-matrix count 2116, orchestrator 2116: agree
+C3 x C7: transfer-matrix count 33028, orchestrator 33028: agree
+C3 x C9: transfer-matrix count 525316, orchestrator 525316: agree
+C5 x C5: transfer-matrix count 143224, orchestrator 143224: agree
+symmetry C3 x C4 = 548, C4 x C3 = 548
+symmetry C3 x C5 = 2116, C5 x C3 = 2116
+symmetry C4 x C5 = 16892, C5 x C4 = 16892
+symmetry C3 x C7 = 33028, C7 x C3 = 33028
+
+real	0m0.444s
+user	0m0.435s
+sys	0m0.007s

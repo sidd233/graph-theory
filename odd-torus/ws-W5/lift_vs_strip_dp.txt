@@ -1,0 +1,16 @@
+square #0: strip_dp kernel-less for k in 1..8: [2, 6]
+square #1: strip_dp kernel-less for k in 1..8: [2, 6]
+square #2: strip_dp kernel-less for k in 1..8: [2, 6]
+square #3: strip_dp kernel-less for k in 1..8: [2, 6]
+square #4: strip_dp kernel-less for k in 1..8: [2, 6]
+square #5: strip_dp kernel-less for k in 1..8: [2, 6]
+square #6: strip_dp kernel-less for k in 1..8: [2, 6]
+square #7: strip_dp kernel-less for k in 1..8: [2, 6]
+square #8: strip_dp kernel-less for k in 1..8: [2, 6]
+square #9: strip_dp kernel-less for k in 1..8: [2, 6]
+square #10: strip_dp kernel-less for k in 1..8: [2, 6]
+square #11: strip_dp kernel-less for k in 1..8: [2, 6]
+
+real	3m44.837s
+user	3m41.595s
+sys	0m2.475s
