@@ -1,0 +1,99 @@
+closed-walk lengths <= cmax of the disjointness graph D(a,b) of 2-d kernels:
+   D(3,3): |kernels|=6 lengths=[2, 3, 4, 5, 6, 7, 8, 9]
+   D(3,6): |kernels|=6 lengths=[2, 3, 4, 5, 6, 7, 8, 9]
+   D(3,9): |kernels|=6 lengths=[2, 3, 4, 5, 6, 7, 8, 9]
+   D(4,4): |kernels|=2 lengths=[2, 4, 6, 8]
+   D(4,6): |kernels|=2 lengths=[2, 4, 6, 8]
+   D(4,8): |kernels|=2 lengths=[2, 4, 6, 8]
+   D(5,5): |kernels|=10 lengths=[2, 4, 5, 6, 7, 8, 9]
+   D(6,6): |kernels|=8 lengths=[2, 3, 4, 5, 6, 7, 8, 9]
+   D(6,8): |kernels|=2 lengths=[2, 4, 6, 8]
+   D(6,9): |kernels|=6 lengths=[2, 3, 4, 5, 6, 7, 8, 9]
+   D(7,7): |kernels|=14 lengths=[2, 4, 6, 7, 8, 9]
+   D(8,8): |kernels|=18 lengths=[2, 4, 5, 6, 7, 8, 9]
+   D(9,9): |kernels|=24 lengths=[2, 3, 4, 5, 6, 7, 8, 9]
+3 3 3: layered_prediction=True SAT=True
+3 3 4: layered_prediction=True SAT=True
+3 3 5: layered_prediction=True SAT=True
+3 3 6: layered_prediction=True SAT=True
+3 3 7: layered_prediction=True SAT=True
+3 3 8: layered_prediction=True SAT=True
+3 3 9: layered_prediction=True SAT=True
+3 4 4: layered_prediction=False SAT=False
+3 4 5: layered_prediction=False SAT=False
+3 4 6: layered_prediction=True SAT=True
+3 4 7: layered_prediction=False SAT=False
+3 4 8: layered_prediction=False SAT=False
+3 4 9: layered_prediction=True SAT=True
+3 5 5: layered_prediction=False SAT=False
+3 5 6: layered_prediction=True SAT=True
+3 5 7: layered_prediction=False SAT=False
+3 5 8: layered_prediction=False SAT=False
+3 5 9: layered_prediction=True SAT=True
+3 6 6: layered_prediction=True SAT=True
+3 6 7: layered_prediction=True SAT=True
+3 6 8: layered_prediction=True SAT=True
+3 6 9: layered_prediction=True SAT=True
+3 7 7: layered_prediction=False SAT=False
+3 7 8: layered_prediction=False SAT=False
+3 7 9: layered_prediction=True SAT=True
+3 8 8: layered_prediction=False SAT=False
+3 8 9: layered_prediction=True SAT=True
+3 9 9: layered_prediction=True SAT=True
+4 4 4: layered_prediction=True SAT=True
+4 4 5: layered_prediction=False SAT=False
+4 4 6: layered_prediction=True SAT=True
+4 4 7: layered_prediction=False SAT=False
+4 4 8: layered_prediction=True SAT=True
+4 4 9: layered_prediction=False SAT=True   <-- DIFFERS
+4 5 5: layered_prediction=True SAT=True
+4 5 6: layered_prediction=False SAT=False
+4 5 7: layered_prediction=False SAT=False
+4 5 8: layered_prediction=False SAT=False
+4 5 9: layered_prediction=False SAT=False
+4 6 6: layered_prediction=True SAT=True
+4 6 7: layered_prediction=False SAT=False
+4 6 8: layered_prediction=True SAT=True
+4 6 9: layered_prediction=True SAT=True
+4 7 7: layered_prediction=True SAT=True
+4 7 8: layered_prediction=False SAT=False
+4 7 9: layered_prediction=False SAT=False
+4 8 8: layered_prediction=True SAT=True
+4 8 9: layered_prediction=False SAT=True   <-- DIFFERS
+4 9 9: layered_prediction=True SAT=True
+5 5 5: layered_prediction=True SAT=True
+5 5 6: layered_prediction=True SAT=True
+5 5 7: layered_prediction=True SAT=True
+5 5 8: layered_prediction=True SAT=True
+5 5 9: layered_prediction=True SAT=True
+5 6 6: layered_prediction=True SAT=True
+5 6 7: layered_prediction=False SAT=False
+5 6 8: layered_prediction=False SAT=False
+5 6 9: layered_prediction=True SAT=True
+5 7 7: layered_prediction=False SAT=False
+5 7 8: layered_prediction=False SAT=False
+5 7 9: layered_prediction=False SAT=False
+5 8 8: layered_prediction=True SAT=True
+5 8 9: layered_prediction=False SAT=False
+5 9 9: layered_prediction=True SAT=True
+6 6 6: layered_prediction=True SAT=True
+6 6 7: layered_prediction=True SAT=True
+6 6 8: layered_prediction=True SAT=True
+6 6 9: layered_prediction=True SAT=True
+6 7 7: layered_prediction=True SAT=True
+6 7 8: layered_prediction=False SAT=False
+6 7 9: layered_prediction=True SAT=True
+6 8 8: layered_prediction=True SAT=True
+6 8 9: layered_prediction=True SAT=True
+6 9 9: layered_prediction=True SAT=True
+7 7 7: layered_prediction=True SAT=True
+7 7 8: layered_prediction=True SAT=True
+7 7 9: layered_prediction=True SAT=True
+7 8 8: layered_prediction=True SAT=True
+7 8 9: layered_prediction=False SAT=False
+7 9 9: layered_prediction=True SAT=True
+8 8 8: layered_prediction=True SAT=True
+8 8 9: layered_prediction=True SAT=True
+8 9 9: layered_prediction=True SAT=True
+9 9 9: layered_prediction=True SAT=True
+triples where layered prediction != SAT: 2

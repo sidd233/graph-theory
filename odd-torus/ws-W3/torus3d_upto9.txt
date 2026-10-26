@@ -1,0 +1,121 @@
+3 3 3 | gcd3=3 pairwise_gcds=(3, 3, 3) | kernel=YES size=9 | 0.00s
+3 3 4 | gcd3=1 pairwise_gcds=(3, 1, 1) | kernel=YES size=12 | 0.00s
+3 3 5 | gcd3=1 pairwise_gcds=(3, 1, 1) | kernel=YES size=15 | 0.00s
+3 3 6 | gcd3=3 pairwise_gcds=(3, 3, 3) | kernel=YES size=18 | 0.00s
+3 3 7 | gcd3=1 pairwise_gcds=(3, 1, 1) | kernel=YES size=21 | 0.00s
+3 3 8 | gcd3=1 pairwise_gcds=(3, 1, 1) | kernel=YES size=24 | 0.00s
+3 3 9 | gcd3=3 pairwise_gcds=(3, 3, 3) | kernel=YES size=27 | 0.00s
+3 4 4 | gcd3=1 pairwise_gcds=(1, 1, 4) | kernel=no size=None | 0.00s
+3 4 5 | gcd3=1 pairwise_gcds=(1, 1, 1) | kernel=no size=None | 0.00s
+3 4 6 | gcd3=1 pairwise_gcds=(1, 3, 2) | kernel=YES size=24 | 0.00s
+3 4 7 | gcd3=1 pairwise_gcds=(1, 1, 1) | kernel=no size=None | 0.00s
+3 4 8 | gcd3=1 pairwise_gcds=(1, 1, 4) | kernel=no size=None | 0.00s
+3 4 9 | gcd3=1 pairwise_gcds=(1, 3, 1) | kernel=YES size=36 | 0.00s
+3 5 5 | gcd3=1 pairwise_gcds=(1, 1, 5) | kernel=no size=None | 0.00s
+3 5 6 | gcd3=1 pairwise_gcds=(1, 3, 1) | kernel=YES size=30 | 0.00s
+3 5 7 | gcd3=1 pairwise_gcds=(1, 1, 1) | kernel=no size=None | 0.00s
+3 5 8 | gcd3=1 pairwise_gcds=(1, 1, 1) | kernel=no size=None | 0.00s
+3 5 9 | gcd3=1 pairwise_gcds=(1, 3, 1) | kernel=YES size=45 | 0.00s
+3 6 6 | gcd3=3 pairwise_gcds=(3, 3, 6) | kernel=YES size=36 | 0.00s
+3 6 7 | gcd3=1 pairwise_gcds=(3, 1, 1) | kernel=YES size=42 | 0.00s
+3 6 8 | gcd3=1 pairwise_gcds=(3, 1, 2) | kernel=YES size=48 | 0.00s
+3 6 9 | gcd3=3 pairwise_gcds=(3, 3, 3) | kernel=YES size=54 | 0.00s
+3 7 7 | gcd3=1 pairwise_gcds=(1, 1, 7) | kernel=no size=None | 0.01s
+3 7 8 | gcd3=1 pairwise_gcds=(1, 1, 1) | kernel=no size=None | 0.01s
+3 7 9 | gcd3=1 pairwise_gcds=(1, 3, 1) | kernel=YES size=63 | 0.00s
+3 8 8 | gcd3=1 pairwise_gcds=(1, 1, 8) | kernel=no size=None | 0.01s
+3 8 9 | gcd3=1 pairwise_gcds=(1, 3, 1) | kernel=YES size=72 | 0.00s
+3 9 9 | gcd3=3 pairwise_gcds=(3, 3, 9) | kernel=YES size=81 | 0.00s
+4 4 4 | gcd3=4 pairwise_gcds=(4, 4, 4) | kernel=YES size=32 | 0.00s
+4 4 5 | gcd3=1 pairwise_gcds=(4, 1, 1) | kernel=no size=None | 0.00s
+4 4 6 | gcd3=2 pairwise_gcds=(4, 2, 2) | kernel=YES size=48 | 0.00s
+4 4 7 | gcd3=1 pairwise_gcds=(4, 1, 1) | kernel=no size=None | 0.02s
+4 4 8 | gcd3=4 pairwise_gcds=(4, 4, 4) | kernel=YES size=64 | 0.00s
+4 4 9 | gcd3=1 pairwise_gcds=(4, 1, 1) | kernel=YES size=45 | 0.00s
+4 5 5 | gcd3=1 pairwise_gcds=(1, 1, 5) | kernel=YES size=40 | 0.00s
+4 5 6 | gcd3=1 pairwise_gcds=(1, 2, 1) | kernel=no size=None | 0.00s
+4 5 7 | gcd3=1 pairwise_gcds=(1, 1, 1) | kernel=no size=None | 0.00s
+4 5 8 | gcd3=1 pairwise_gcds=(1, 4, 1) | kernel=no size=None | 0.01s
+4 5 9 | gcd3=1 pairwise_gcds=(1, 1, 1) | kernel=no size=None | 0.01s
+4 6 6 | gcd3=2 pairwise_gcds=(2, 2, 6) | kernel=YES size=72 | 0.00s
+4 6 7 | gcd3=1 pairwise_gcds=(2, 1, 1) | kernel=no size=None | 0.03s
+4 6 8 | gcd3=2 pairwise_gcds=(2, 4, 2) | kernel=YES size=96 | 0.00s
+4 6 9 | gcd3=1 pairwise_gcds=(2, 1, 3) | kernel=YES size=72 | 0.01s
+4 7 7 | gcd3=1 pairwise_gcds=(1, 1, 7) | kernel=YES size=84 | 0.00s
+4 7 8 | gcd3=1 pairwise_gcds=(1, 4, 1) | kernel=no size=None | 0.05s
+4 7 9 | gcd3=1 pairwise_gcds=(1, 1, 1) | kernel=no size=None | 0.10s
+4 8 8 | gcd3=4 pairwise_gcds=(4, 4, 8) | kernel=YES size=128 | 0.00s
+4 8 9 | gcd3=1 pairwise_gcds=(4, 1, 1) | kernel=YES size=90 | 0.00s
+4 9 9 | gcd3=1 pairwise_gcds=(1, 1, 9) | kernel=YES size=144 | 0.00s
+5 5 5 | gcd3=5 pairwise_gcds=(5, 5, 5) | kernel=YES size=50 | 0.00s
+5 5 6 | gcd3=1 pairwise_gcds=(5, 1, 1) | kernel=YES size=60 | 0.00s
+5 5 7 | gcd3=1 pairwise_gcds=(5, 1, 1) | kernel=YES size=70 | 0.00s
+5 5 8 | gcd3=1 pairwise_gcds=(5, 1, 1) | kernel=YES size=80 | 0.00s
+5 5 9 | gcd3=1 pairwise_gcds=(5, 1, 1) | kernel=YES size=90 | 0.00s
+5 6 6 | gcd3=1 pairwise_gcds=(1, 1, 6) | kernel=YES size=60 | 0.00s
+5 6 7 | gcd3=1 pairwise_gcds=(1, 1, 1) | kernel=no size=None | 0.04s
+5 6 8 | gcd3=1 pairwise_gcds=(1, 1, 2) | kernel=no size=None | 0.05s
+5 6 9 | gcd3=1 pairwise_gcds=(1, 1, 3) | kernel=YES size=90 | 0.01s
+5 7 7 | gcd3=1 pairwise_gcds=(1, 1, 7) | kernel=no size=None | 0.04s
+5 7 8 | gcd3=1 pairwise_gcds=(1, 1, 1) | kernel=no size=None | 0.04s
+5 7 9 | gcd3=1 pairwise_gcds=(1, 1, 1) | kernel=no size=None | 0.05s
+5 8 8 | gcd3=1 pairwise_gcds=(1, 1, 8) | kernel=YES size=120 | 0.01s
+5 8 9 | gcd3=1 pairwise_gcds=(1, 1, 1) | kernel=no size=None | 0.13s
+5 9 9 | gcd3=1 pairwise_gcds=(1, 1, 9) | kernel=YES size=135 | 0.00s
+6 6 6 | gcd3=6 pairwise_gcds=(6, 6, 6) | kernel=YES size=108 | 0.00s
+6 6 7 | gcd3=1 pairwise_gcds=(6, 1, 1) | kernel=YES size=84 | 0.00s
+6 6 8 | gcd3=2 pairwise_gcds=(6, 2, 2) | kernel=YES size=144 | 0.00s
+6 6 9 | gcd3=3 pairwise_gcds=(6, 3, 3) | kernel=YES size=108 | 0.00s
+6 7 7 | gcd3=1 pairwise_gcds=(1, 1, 7) | kernel=YES size=126 | 0.01s
+6 7 8 | gcd3=1 pairwise_gcds=(1, 2, 1) | kernel=no size=None | 0.29s
+6 7 9 | gcd3=1 pairwise_gcds=(1, 3, 1) | kernel=YES size=126 | 0.01s
+6 8 8 | gcd3=2 pairwise_gcds=(2, 2, 8) | kernel=YES size=192 | 0.00s
+6 8 9 | gcd3=1 pairwise_gcds=(2, 3, 1) | kernel=YES size=144 | 0.08s
+6 9 9 | gcd3=3 pairwise_gcds=(3, 3, 9) | kernel=YES size=162 | 0.00s
+7 7 7 | gcd3=7 pairwise_gcds=(7, 7, 7) | kernel=YES size=112 | 0.00s
+7 7 8 | gcd3=1 pairwise_gcds=(7, 1, 1) | kernel=YES size=168 | 0.00s
+7 7 9 | gcd3=1 pairwise_gcds=(7, 1, 1) | kernel=YES size=144 | 0.01s
+7 8 8 | gcd3=1 pairwise_gcds=(1, 1, 8) | kernel=YES size=168 | 0.05s
+7 8 9 | gcd3=1 pairwise_gcds=(1, 1, 1) | kernel=no size=None | 1.86s
+7 9 9 | gcd3=1 pairwise_gcds=(1, 1, 9) | kernel=YES size=205 | 0.00s
+8 8 8 | gcd3=8 pairwise_gcds=(8, 8, 8) | kernel=YES size=256 | 0.00s
+8 8 9 | gcd3=1 pairwise_gcds=(8, 1, 1) | kernel=YES size=216 | 0.01s
+8 9 9 | gcd3=1 pairwise_gcds=(1, 1, 9) | kernel=YES size=232 | 0.01s
+9 9 9 | gcd3=9 pairwise_gcds=(9, 9, 9) | kernel=YES size=224 | 0.01s
+existence == (gcd(a,b,c) > 1) on all 84 triples: False
+  exception: 3 3 4 True
+  exception: 3 3 5 True
+  exception: 3 3 7 True
+  exception: 3 3 8 True
+  exception: 3 4 6 True
+  exception: 3 4 9 True
+  exception: 3 5 6 True
+  exception: 3 5 9 True
+  exception: 3 6 7 True
+  exception: 3 6 8 True
+  exception: 3 7 9 True
+  exception: 3 8 9 True
+  exception: 4 4 9 True
+  exception: 4 5 5 True
+  exception: 4 6 9 True
+  exception: 4 7 7 True
+  exception: 4 8 9 True
+  exception: 4 9 9 True
+  exception: 5 5 6 True
+  exception: 5 5 7 True
+  exception: 5 5 8 True
+  exception: 5 5 9 True
+  exception: 5 6 6 True
+  exception: 5 6 9 True
+  exception: 5 8 8 True
+  exception: 5 9 9 True
+  exception: 6 6 7 True
+  exception: 6 7 7 True
+  exception: 6 7 9 True
+  exception: 6 8 9 True
+  exception: 7 7 8 True
+  exception: 7 7 9 True
+  exception: 7 8 8 True
+  exception: 7 9 9 True
+  exception: 8 8 9 True
+  exception: 8 9 9 True
