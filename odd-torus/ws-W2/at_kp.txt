@@ -1,0 +1,20 @@
+C3xC3: (a) full torus coefficient of prod x^2 mod p1,p2 = [0, 0]
+C3xC3: (b) G-v, v=(0,0): first nonzero monomial with t_w1=t_w2=1: w1=(0, 1) w2=(1, 0) coef mod p = 3
+C3xC3: (c) G-e, row edge (0,0)-(0, 1): 6 of 9 vertices w give a nonzero coefficient of x_w prod x^2; e.g. w=(1, 0)
+C3xC3: (c) G-e, column edge (0,0)-(1, 0): 6 of 9 vertices w give a nonzero coefficient of x_w prod x^2; e.g. w=(0, 1)
+C3xC4: (a) full torus coefficient of prod x^2 mod p1,p2 = [36, 36]
+C3xC4: (b) G-v, v=(0,0): first nonzero monomial with t_w1=t_w2=1: w1=(0, 1) w2=(0, 2) coef mod p = 33554387
+C3xC4: (c) G-e, row edge (0,0)-(0, 1): 12 of 12 vertices w give a nonzero coefficient of x_w prod x^2; e.g. w=(0, 0)
+C3xC4: (c) G-e, column edge (0,0)-(1, 0): 8 of 12 vertices w give a nonzero coefficient of x_w prod x^2; e.g. w=(0, 0)
+C3xC5: (a) full torus coefficient of prod x^2 mod p1,p2 = [0, 0]
+C3xC5: (b) G-v, v=(0,0): first nonzero monomial with t_w1=t_w2=1: w1=(0, 1) w2=(1, 0) coef mod p = 33554384
+C3xC5: (c) G-e, row edge (0,0)-(0, 1): 10 of 15 vertices w give a nonzero coefficient of x_w prod x^2; e.g. w=(1, 0)
+C3xC5: (c) G-e, column edge (0,0)-(1, 0): 12 of 15 vertices w give a nonzero coefficient of x_w prod x^2; e.g. w=(0, 1)
+C3xC7: (a) full torus coefficient of prod x^2 mod p1,p2 = [0, 0]
+C3xC7: (b) G-v, v=(0,0): first nonzero monomial with t_w1=t_w2=1: w1=(0, 1) w2=(1, 0) coef mod p = 27
+C3xC7: (c) G-e, row edge (0,0)-(0, 1): 14 of 21 vertices w give a nonzero coefficient of x_w prod x^2; e.g. w=(1, 0)
+C3xC7: (c) G-e, column edge (0,0)-(1, 0): 18 of 21 vertices w give a nonzero coefficient of x_w prod x^2; e.g. w=(0, 1)
+C4xC5: (a) full torus coefficient of prod x^2 mod p1,p2 = [4380, 4380]
+C4xC5: (b) G-v, v=(0,0): first nonzero monomial with t_w1=t_w2=1: w1=(0, 1) w2=(0, 2) coef mod p = 358
+C4xC5: (c) G-e, row edge (0,0)-(0, 1): 16 of 20 vertices w give a nonzero coefficient of x_w prod x^2; e.g. w=(0, 0)
+C4xC5: (c) G-e, column edge (0,0)-(1, 0): 20 of 20 vertices w give a nonzero coefficient of x_w prod x^2; e.g. w=(0, 0)

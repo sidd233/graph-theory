@@ -1,0 +1,2 @@
+certify torus 5 5 q=4 ckpt/t55q4.json: 24 cuts, 4800 cut clauses incl. images verified, 0 INVALID; CNF has 15633 clauses (0s)
+independent re-solve with glucose4: UNSAT (agrees) in 224.3s

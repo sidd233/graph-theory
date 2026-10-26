@@ -27,6 +27,7 @@ import json
 import math
 import os
 import random
+import threading
 import sys
 import time
 
@@ -95,6 +96,8 @@ class Search:
         self.shrink, self.glits, self.diverse, self.tries = shrink, glits, diverse, tries
         self.wneg = -math.log(k / q)
         self._yc, self.yvar = {}, {}
+        self.orbit = []
+        self.targeted = False
         self.rng = random.Random(seed)
         self.log = log
         self.pool = IDPool()
@@ -191,21 +194,44 @@ class Search:
         for the literal vertices w ), and its validity is certified by peeling V - S."""
         if not self.shrink:
             return [("n", v, c[v]) for v in range(self.N)]
-        best, bestw = None, math.inf
+        return min(self.shrink_candidates(L, c, set(range(self.N))), key=lambda x: x[0])[1]
+
+    def shrink_candidates(self, L, c, S0):
+        """Greedy shrinking of S0 (removal orders: random, and colour-biased = vertices of the
+        rarest colours of c first) to a locally minimal-cost S; yields (cost, cut)."""
+        cnt = {}
+        for v in S0:
+            cnt[c[v]] = cnt.get(c[v], 0) + 1
         for t in range(self.tries):
-            order = list(range(self.N))
+            order = sorted(S0)
             self.rng.shuffle(order)
-            S = set(range(self.N))
-            cost, lits = len(S) * self.wneg, []
+            if t % 2:
+                order.sort(key=lambda v: cnt[c[v]])
+            S = set(S0)
+            ok, cost, lits = self.peel_cost(L, c, S)
+            if not ok:
+                return
+            cost += len(S) * self.wneg
             for v in order:
                 S2 = S - {v}
                 ok, cost2, lits2 = self.peel_cost(L, c, S2)
                 if ok and cost2 + len(S2) * self.wneg < cost:
                     S, cost, lits = S2, cost2 + len(S2) * self.wneg, lits2
-            if cost < bestw:
-                bestw = cost
-                best = [("n", v, c[v]) for v in sorted(S)] + lits
-        return best
+            yield cost, [("n", v, c[v]) for v in sorted(S)] + lits
+
+    def targeted_cuts(self, L):
+        """Single-colour cuts: for colour a, a maximal independent I inside A(a) = {v: a in L(v)},
+        coloured a, then shrunk as above. Yields (cost, cut)."""
+        for a in range(self.q):
+            A = [v for v in range(self.N) if a in L[v]]
+            for t in range(2):
+                self.rng.shuffle(A)
+                I = set()
+                for v in A:
+                    if not (self.adj[v] & I):
+                        I.add(v)
+                c = {v: a for v in I}
+                yield from self.shrink_candidates(L, c, I)
 
     def ycost(self, X, t):
         """-log P(|L & X| < t) for a uniform random k-subset L of [q], |X| = X."""
@@ -220,6 +246,7 @@ class Search:
         k, adj = self.k, self.adj
         D = set(range(self.N)) - S
         X = {w: frozenset(c[u] for u in adj[w] if u in S) for w in D}
+        assert all(c[u] != c[v] for u in S for v in adj[u] if v in S)
         deg = {w: len(adj[w] & D) for w in D}
         rem, cost, lits = set(D), 0.0, []
         while rem:
@@ -257,13 +284,23 @@ class Search:
 
     def add_cut(self, cl):
         self.master.add_clause([self.lit(x) for x in cl])
+        for p in self.orbit:      # images under automorphisms / colour maps are also valid cuts
+            pv, pc = p
+            img = []
+            for x in cl:
+                if x[0] == "n":
+                    img.append(("n", pv[x[1]], pc[x[2]]))
+                else:
+                    img.append(("y", pv[x[1]], sorted(pc[a] for a in x[2]), x[3]))
+            self.master.add_clause([self.lit(x) for x in img])
         self.cuts.append(cl)
         self.stats["cuts"] += 1
         self.stats["lits"] += len(cl)
 
     # ------------------------------------------------------------------ main loop
-    def run(self, time_limit=None, ckpt=None, every=2000, report=1000):
+    def run(self, time_limit=None, ckpt=None, every=120, report=1000):
         t0 = time.time()
+        self._last_dump = t0
         N, q = self.N, self.q
         while True:
             if time_limit and time.time() - t0 > time_limit:
@@ -271,7 +308,18 @@ class Search:
                          f"cuts={self.stats['cuts']} t={time.time() - t0:.0f}s")
                 self.dump(ckpt)
                 return "unfinished", None
-            if not self.master.solve():
+            timer = None
+            if time_limit:
+                timer = threading.Timer(max(1.0, time_limit - (time.time() - t0)),
+                                        self.master.interrupt)
+                timer.start()
+            r = self.master.solve_limited(expect_interrupt=True)
+            if timer:
+                timer.cancel()
+            if r is None:
+                self.master.clear_interrupt()
+                continue
+            if not r:
                 self.log(f"NONE: master UNSAT after iters={self.stats['iters']} "
                          f"cuts={self.stats['cuts']} t={time.time() - t0:.1f}s")
                 self.dump(ckpt)
@@ -284,9 +332,24 @@ class Search:
                 self.log(f"FOUND candidate bad assignment after iters={self.stats['iters']} "
                          f"t={time.time() - t0:.1f}s: {L}")
                 return "found", L
+            cands = []
             for c in cs:
                 assert is_proper_list_colouring(N, self.E, L, c)
-                cl = self.cut_from(L, c)
+                if self.shrink:
+                    cands += list(self.shrink_candidates(L, c, set(range(N))))
+                else:
+                    cands.append((0, self.cut_from(L, c)))
+            if self.targeted:
+                cands += list(self.targeted_cuts(L))
+            cands.sort(key=lambda x: x[0])
+            seen = set()
+            for cost, cl in cands:
+                key = json.dumps(cl)
+                if key in seen:
+                    continue
+                seen.add(key)
+                if len(seen) > max(self.diverse, 1):
+                    break
                 assert verify_cut(self.N, self.E, self.k, cl), cl
                 assert not cut_holds(cl, L), "cut does not exclude current L"
                 self.add_cut(cl)
@@ -294,7 +357,7 @@ class Search:
             if report and it % report == 0:
                 self.log(f"  iters={it} cuts={self.stats['cuts']} avg_cut_len="
                          f"{self.stats['lits'] / self.stats['cuts']:.2f} t={time.time() - t0:.0f}s")
-            if ckpt and it % every == 0:
+            if ckpt and time.time() - self._last_dump > every:
                 self.dump(ckpt)
 
     def dump(self, ckpt):
@@ -304,6 +367,7 @@ class Search:
         with open(tmp, "w") as f:
             json.dump({"stats": self.stats, "cuts": self.cuts}, f)
         os.replace(tmp, ckpt)
+        self._last_dump = time.time()
 
     def load(self, ckpt):
         with open(ckpt) as f:
@@ -312,6 +376,18 @@ class Search:
             self.add_cut([tuple(x) for x in cl])
         self.stats["iters"] = d["stats"]["iters"]
         self.log(f"resumed {len(d['cuts'])} cuts from {ckpt}")
+
+
+def orbit_maps(A, N):
+    """Nontrivial symmetries (vertex map, colour map). graph: torus automorphisms; colour:
+    all permutations of the palette (only for q <= 5); both: products."""
+    from graphs import torus_automorphisms
+    ident_v, ident_c = list(range(N)), list(range(A.q))
+    vs = torus_automorphisms(A.a, A.b) if A.kind == "torus" and A.orbit in ("graph", "both") \
+        else [ident_v]
+    cs = [list(p) for p in itertools.permutations(range(A.q))] \
+        if A.orbit in ("colour", "both") else [ident_c]
+    return [(v, c) for v in vs for c in cs if not (v == ident_v and c == ident_c)]
 
 
 def build(kind, a, b):
@@ -336,6 +412,8 @@ def main():
     ap.add_argument("--overlap", action="store_true")
     ap.add_argument("--shrink", action="store_true")
     ap.add_argument("--glits", action="store_true")
+    ap.add_argument("--targeted", action="store_true")
+    ap.add_argument("--orbit", choices=["graph", "colour", "both"])
     ap.add_argument("--diverse", type=int, default=1)
     ap.add_argument("--tries", type=int, default=8)
     ap.add_argument("--seed", type=int, default=0)
@@ -355,10 +433,15 @@ def main():
             f.flush()
 
     log(f"=== {' '.join(sys.argv[1:])}")
+    log(f"started {time.strftime('%Y-%m-%d %I:%M:%S %p')}")
     log(f"graph {A.kind} {A.a} {A.b}: N={N} |E|={len(E)} q={A.q} k={A.k}")
     gs = (A.a, A.b) if (A.gsym and A.kind == "torus") else None
     S = Search(N, E, A.q, A.k, A.colsym, A.fix0, gs, A.crit, A.overlap, A.shrink, A.glits,
                A.diverse, A.tries, A.seed, log=log)
+    S.targeted = A.targeted
+    if A.orbit:
+        S.orbit = orbit_maps(A, N)
+        log(f"adding images of every cut under {len(S.orbit)} symmetries")
     if A.resume and A.ckpt and os.path.exists(A.ckpt):
         S.load(A.ckpt)
     res, L = S.run(A.time_limit, A.ckpt, report=A.report)
