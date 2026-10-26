@@ -1,0 +1,25 @@
+b= 3: YYYYYYYYYYYYYYYYYYYYYY
+b= 4: Y..Y..Y..Y..Y..Y..Y..Y
+b= 5: Y..Y..Y..Y..Y..Y..Y..Y
+b= 6: YYYYYYYYYYYYYYYYYYYYYY
+b= 7: Y..Y..Y..Y..Y..Y..Y..Y
+b= 8: Y..Y..Y..Y..Y..Y..Y..Y
+b= 9: YYYYYYYYYYYYYYYYYYYYYY
+b=10: Y..Y..Y..Y..Y..Y..Y..Y
+b=11: Y..Y..Y..Y..Y..Y..Y..Y
+b=12: YYYYYYYYYYYYYYYYYYYYYY
+b=13: Y..Y..Y..Y..Y..Y..Y..Y
+b=14: Y..Y..Y..Y..Y..Y..Y..Y
+b=15: YYYYYYYYYYYYYYYYYYYYYY
+b=16: Y..Y..Y..Y..Y..Y..Y..Y
+b=17: Y..Y..Y..Y..Y..Y..Y..Y
+b=18: YYYYYYYYYYYYYYYYYYYYYY
+b=19: Y..Y..Y..Y..Y..Y..Y..Y
+b=20: Y..Y..Y..Y..Y..Y..Y..Y
+b=21: YYYYYYYYYYYYYYYYYYYYYY
+b=22: Y..Y..Y..Y..Y..Y..Y..Y
+b=23: Y..Y..Y..Y..Y..Y..Y..Y
+b=24: YYYYYYYYYYYYYYYYYYYYYY
+(columns c = 3..24; Y = fall 3-colourable)
+disagreements with 'iff 3|b or 3|c': 0
+disagreements with 3D SAT for C_3 x C_b x C_c (b, c <= 9): 0

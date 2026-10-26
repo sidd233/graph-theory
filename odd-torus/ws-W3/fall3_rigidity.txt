@@ -1,0 +1,13 @@
+C_3 x C_3: fall 3-colourings=12 line-shift type=12
+C_3 x C_4: fall 3-colourings=36 line-shift type=36
+C_3 x C_5: fall 3-colourings=60 line-shift type=60
+C_3 x C_6: fall 3-colourings=132 line-shift type=132
+C_4 x C_6: fall 3-colourings=36 line-shift type=36
+C_5 x C_6: fall 3-colourings=60 line-shift type=60
+C_6 x C_6: fall 3-colourings=252 line-shift type=252
+C_3 x C_9: fall 3-colourings=1020 line-shift type=1020
+C_6 x C_9: fall 3-colourings=1140 line-shift type=1140
+C_4 x C_9: fall 3-colourings=36 line-shift type=36
+C_5 x C_9: fall 3-colourings=60 line-shift type=60
+C_7 x C_9: fall 3-colourings=252 line-shift type=252
+C_6 x C_7: fall 3-colourings=252 line-shift type=252
