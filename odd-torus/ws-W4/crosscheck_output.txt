@@ -1,0 +1,5 @@
+m=5 n=3: positions=22 agree=22 disagree=0 exact_zero=0
+m=5 n=5: positions=40 agree=40 disagree=0 exact_zero=0
+m=5 n=7: positions=58 agree=58 disagree=0 exact_zero=0
+m=5 n=9: positions=76 agree=76 disagree=0 exact_zero=0
+m=5 n=11: positions=94 agree=94 disagree=0 exact_zero=0
