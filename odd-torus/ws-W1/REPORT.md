@@ -82,9 +82,10 @@ All commands run in odd-torus/ws-W1 with /home/sid/work/gt/odd-torus/env/bin/pyt
 - The brief leaves μ_3 undefined. The natural value is μ_3 = ω⁶ − ω³ = 0, which gives c_S = 0 for k = 3, as the data show.
 - The sign of c_S depends on the orientation convention. Whether c_S is nonzero does not.
 - A caution for the gluing step, Case A of toroidal_grid_story.tex. The strip runs from C₃ (column 1) around to C₀ (column m), so S = {(r,C₀),(r,C₀),(r',C₃)} has k = 2 and s ≡ 2r + r' ≡ r' − r. This is nonzero only if r' ≠ r, so the argument must make sure r' ≠ r. When s ≡ 0 and m is odd, c_S = 0 for every such S.
+  - RESOLVED (orchestrator review, 2026-10-26): in the note, r' and r'' are defined as the two rows other than r, so r' ≠ r and s ≡ r' − r ≢ 0 automatically. Not a gap.
 - Process note: the subagent harness refused to let the W1 agent write this file, so the coordinating session saved it from the agent's report.
 
 ## Next
 1. Record that the strip lemma (Step 2, [P, Theorem 4]) is now independently PROVED. The remaining unchecked input of the m = 3 proof is [P, Lemma 3.5] (propagation).
-2. Check that Case A guarantees r' ≠ r, and that it uses the same orientation and indexing of S as here.
+2. (Done: Case A has r' ≠ r by definition.) W1 is CLOSED.
 3. For m = 5 (C₅ □ P_m), adapt strip_coeff.py and direct_expand.py. The 6-state affine collapse no longer applies, so a real transfer matrix is needed.
