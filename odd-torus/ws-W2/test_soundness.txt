@@ -1,0 +1,12 @@
+T3 (G) encoding vs predicate C3xC5 q=5: 300 agree, 0 disagree, 159 satisfy the predicate
+T3 (G) encoding vs predicate C5xC5 q=4: 300 agree, 0 disagree, 157 satisfy the predicate
+T3 (G) encoding vs predicate C5xC5 q=6: 300 agree, 0 disagree, 158 satisfy the predicate
+T2 orbit representatives C3xC3 q=3 k=2 allbad: 13983 tested, 0 without a representative, |auts|=72 8s
+T2 orbit representatives C3xC3 q=4 k=2 randombad: 300 tested, 0 without a representative, |auts|=72 8s
+T2 orbit representatives C3xC5 q=3 k=2 randombad: 200 tested, 0 without a representative, |auts|=60 8s
+T2 orbit representatives C3xC3 q=4 k=3 random: 300 tested, 0 without a representative, |auts|=72 8s
+T2 orbit representatives C3xC5 q=5 k=3 random: 200 tested, 0 without a representative, |auts|=60 8s
+T2 orbit representatives C5xC5 q=4 k=3 random: 100 tested, 0 without a representative, |auts|=200 9s
+T2 orbit representatives C5xC5 q=6 k=3 random: 100 tested, 0 without a representative, |auts|=200 9s
+T2 orbit representatives C3xC7 q=5 k=3 random: 60 tested, 0 without a representative, |auts|=84 9s
+T1 brute force vs search: 2331 agreements, 0 disagreements (218 graphs with a bad assignment, 119 without; (C) tested on 155 graphs, (O) on 154) 57s
