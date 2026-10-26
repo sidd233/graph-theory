@@ -1,0 +1,108 @@
+m=5: 30 column states, 48 damaged-column states
+charpoly of realified T = (x)^12 * (x^4 + 10*x^2 + 5)^4 * (x^8 + 35*x^6 + 110*x^4 + 100*x^2 + 25)^4
+every nonzero factor is h(x^2) with all roots of h real negative (exact Sturm count): nonzero eigenvalues are +-i*l, l > 0
+exact: T^1 q(T) = 0 and T^0 q(T) != 0, q = product of the distinct nonzero irreducible factors (deg 12), squarefree
+certified: dominant pair +-i*l1, l1 in [5.623207630895731111605709 +/- 1.02e-25] (l1^2 = [31.620464060163980943 +/- 2.22e-19]); all other |z| <= [3.0776835371752534026 +/- 2.98e-20]; r = [0.547318139253023 +/- 3.71e-16]
+built T^0..T^53 exactly (0.2s)
+
+=== m=5 edge col, w row i=0 ===  (0.4s)
+  validation: double expansion encloses the exact c(a,b) for 132 pairs (n <= 25)
+  dominant amplitude B(a=0, b=1 mod 2) = [+/- 1.94e-116] + [11.1808050973798 +/- 1.52e-14]j
+  dominant amplitude B(a=1, b=0 mod 2) = [+/- 1.94e-116] + [-11.1808050973798 +/- 1.52e-14]j
+  Region I (a,b >= K) certified with K = 3: tail bound [7.718456780 +/- 1.83e-10] < min|B| = [11.18080510 +/- 2.63e-9]
+  Region II  (b < K fixed): a0(b) = [3, 2, 3]
+  Region III (a < K fixed): b0(a) = [3, 2, 3]
+  uncovered (a,b): [(0, 1), (1, 0)]  -> exact check needed for n <= 3
+  exact values at uncovered (a,b): [-9, 9]  (all nonzero)
+
+=== m=5 edge col, w row i=1 ===  (0.5s)
+  validation: double expansion encloses the exact c(a,b) for 132 pairs (n <= 25)
+  dominant amplitude B(a=0, b=1 mod 2) = [+/- 1.94e-116] + [11.1808050973798 +/- 1.52e-14]j
+  dominant amplitude B(a=1, b=0 mod 2) = [+/- 1.94e-116] + [-11.1808050973798 +/- 1.52e-14]j
+  Region I (a,b >= K) certified with K = 3: tail bound [7.718456780 +/- 1.83e-10] < min|B| = [11.18080510 +/- 2.63e-9]
+  Region II  (b < K fixed): a0(b) = [3, 2, 3]
+  Region III (a < K fixed): b0(a) = [3, 2, 3]
+  uncovered (a,b): [(0, 1), (1, 0)]  -> exact check needed for n <= 3
+  exact values at uncovered (a,b): [-9, 9]  (all nonzero)
+
+=== m=5 edge col, w row i=2 ===  (0.6s)
+  validation: double expansion encloses the exact c(a,b) for 132 pairs (n <= 25)
+  dominant amplitude B(a=0, b=1 mod 2) = [+/- 1.19e-116] + [-29.2717277665284 +/- 3.39e-14]j
+  dominant amplitude B(a=1, b=0 mod 2) = [+/- 1.19e-116] + [29.2717277665284 +/- 3.39e-14]j
+  Region I (a,b >= K) certified with K = 1: tail bound [26.79133844 +/- 2.89e-9] < min|B| = [29.27172777 +/- 3.48e-9]
+  Region II  (b < K fixed): a0(b) = [1]
+  Region III (a < K fixed): b0(a) = [1]
+  uncovered (a,b): []  -> exact check needed for n <= 0
+  exact values at uncovered (a,b): []  (all nonzero)
+
+=== m=5 edge col, w row i=3 ===  (0.8s)
+  validation: double expansion encloses the exact c(a,b) for 132 pairs (n <= 25)
+  dominant amplitude B(a=0, b=1 mod 2) = [+/- 8.03e-149] + [36.1818453382972 +/- 3.75e-14]j
+  dominant amplitude B(a=1, b=0 mod 2) = [+/- 8.03e-149] + [-36.1818453382972 +/- 3.75e-14]j
+  Region I (a,b >= K) certified with K = 1: tail bound [26.79133844 +/- 2.89e-9] < min|B| = [36.18184534 +/- 1.71e-9]
+  Region II  (b < K fixed): a0(b) = [1]
+  Region III (a < K fixed): b0(a) = [1]
+  uncovered (a,b): []  -> exact check needed for n <= 0
+  exact values at uncovered (a,b): []  (all nonzero)
+
+=== m=5 edge col, w row i=4 ===  (0.9s)
+  validation: double expansion encloses the exact c(a,b) for 132 pairs (n <= 25)
+  dominant amplitude B(a=0, b=1 mod 2) = [+/- 1.19e-116] + [-29.2717277665284 +/- 3.39e-14]j
+  dominant amplitude B(a=1, b=0 mod 2) = [+/- 1.19e-116] + [29.2717277665284 +/- 3.39e-14]j
+  Region I (a,b >= K) certified with K = 1: tail bound [26.79133844 +/- 2.89e-9] < min|B| = [29.27172777 +/- 3.48e-9]
+  Region II  (b < K fixed): a0(b) = [1]
+  Region III (a < K fixed): b0(a) = [1]
+  uncovered (a,b): []  -> exact check needed for n <= 0
+  exact values at uncovered (a,b): []  (all nonzero)
+
+=== m=5 edge row, w row i=1 ===  (1.1s)
+  validation: double expansion encloses the exact c(a,b) for 144 pairs (n <= 25)
+  dominant amplitude B(a=0, b=0 mod 2) = [3.28464256059898 +/- 4.20e-15] + [+/- 2.55e-117]j
+  dominant amplitude B(a=1, b=1 mod 2) = [-3.28464256059898 +/- 4.20e-15] + [+/- 2.55e-117]j
+  Region I (a,b >= K) certified with K = 2: tail bound [2.641212539 +/- 3.49e-10] < min|B| = [3.284642561 +/- 4.02e-10]
+  Region II  (b < K fixed): a0(b) = [4, 3]
+  Region III (a < K fixed): b0(a) = [4, 3]
+  uncovered (a,b): [(0, 2), (1, 1), (2, 0)]  -> exact check needed for n <= 3
+  exact values at uncovered (a,b): [-9, 18, -9]  (all nonzero)
+
+=== m=5 edge row, w row i=2 ===  (1.2s)
+  validation: double expansion encloses the exact c(a,b) for 144 pairs (n <= 25)
+  dominant amplitude B(a=0, b=0 mod 2) = [-5.31466330394363 +/- 9.72e-16] + [+/- 9.68e-118]j
+  dominant amplitude B(a=1, b=1 mod 2) = [5.31466330394363 +/- 9.72e-16] + [+/- 9.69e-118]j
+  Region I (a,b >= K) certified with K = 2: tail bound [2.641212539 +/- 3.49e-10] < min|B| = [5.314663304 +/- 5.64e-11]
+  Region II  (b < K fixed): a0(b) = [2, 1]
+  Region III (a < K fixed): b0(a) = [2, 1]
+  uncovered (a,b): []  -> exact check needed for n <= 0
+  exact values at uncovered (a,b): []  (all nonzero)
+
+=== m=5 edge row, w row i=3 ===  (1.4s)
+  validation: double expansion encloses the exact c(a,b) for 144 pairs (n <= 25)
+  dominant amplitude B(a=0, b=0 mod 2) = [5.31466330394363 +/- 9.72e-16] + [+/- 9.68e-118]j
+  dominant amplitude B(a=1, b=1 mod 2) = [-5.31466330394363 +/- 9.72e-16] + [+/- 9.69e-118]j
+  Region I (a,b >= K) certified with K = 2: tail bound [2.641212539 +/- 3.49e-10] < min|B| = [5.314663304 +/- 5.64e-11]
+  Region II  (b < K fixed): a0(b) = [2, 1]
+  Region III (a < K fixed): b0(a) = [2, 1]
+  uncovered (a,b): []  -> exact check needed for n <= 0
+  exact values at uncovered (a,b): []  (all nonzero)
+
+=== m=5 edge row, w row i=4 ===  (1.6s)
+  validation: double expansion encloses the exact c(a,b) for 144 pairs (n <= 25)
+  dominant amplitude B(a=0, b=0 mod 2) = [-3.28464256059898 +/- 4.20e-15] + [+/- 2.55e-117]j
+  dominant amplitude B(a=1, b=1 mod 2) = [3.28464256059898 +/- 4.20e-15] + [+/- 2.55e-117]j
+  Region I (a,b >= K) certified with K = 2: tail bound [2.641212539 +/- 3.49e-10] < min|B| = [3.284642561 +/- 4.02e-10]
+  Region II  (b < K fixed): a0(b) = [4, 3]
+  Region III (a < K fixed): b0(a) = [4, 3]
+  uncovered (a,b): [(0, 2), (1, 1), (2, 0)]  -> exact check needed for n <= 3
+  exact values at uncovered (a,b): [9, -18, 9]  (all nonzero)
+
+=== summary ===
+  m=5 col i=0: K=3, uncovered n <= 3 (checked exactly), min|B| >= [11.180805 +/- 9.74e-8]
+  m=5 col i=1: K=3, uncovered n <= 3 (checked exactly), min|B| >= [11.180805 +/- 9.74e-8]
+  m=5 col i=2: K=1, uncovered n <= 0 (checked exactly), min|B| >= [29.271728 +/- 2.34e-7]
+  m=5 col i=3: K=1, uncovered n <= 0 (checked exactly), min|B| >= [36.181845 +/- 3.39e-7]
+  m=5 col i=4: K=1, uncovered n <= 0 (checked exactly), min|B| >= [29.271728 +/- 2.34e-7]
+  m=5 row i=1: K=2, uncovered n <= 3 (checked exactly), min|B| >= [3.2846426 +/- 3.95e-8]
+  m=5 row i=2: K=2, uncovered n <= 0 (checked exactly), min|B| >= [5.3146633 +/- 3.95e-9]
+  m=5 row i=3: K=2, uncovered n <= 0 (checked exactly), min|B| >= [5.3146633 +/- 3.95e-9]
+  m=5 row i=4: K=2, uncovered n <= 3 (checked exactly), min|B| >= [3.2846426 +/- 3.95e-8]
+time 1.6s

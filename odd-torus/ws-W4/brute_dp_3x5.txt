@@ -1,0 +1,23 @@
+col e, w=(0,1): DP -9, transfer -9+0w OK
+col e, w=(0,2): DP 15, transfer 15+0w OK
+col e, w=(0,3): DP -15, transfer -15+0w OK
+col e, w=(0,4): DP 9, transfer 9+0w OK
+col e, w=(1,1): DP -9, transfer -9+0w OK
+col e, w=(1,2): DP 15, transfer 15+0w OK
+col e, w=(1,3): DP -15, transfer -15+0w OK
+col e, w=(1,4): DP 9, transfer 9+0w OK
+col e, w=(2,1): DP 18, transfer 18+0w OK
+col e, w=(2,2): DP -30, transfer -30+0w OK
+col e, w=(2,3): DP 30, transfer 30+0w OK
+col e, w=(2,4): DP -18, transfer -18+0w OK
+row e, w=(1,0): DP -9, transfer -9+0w OK
+row e, w=(1,1): DP -9, transfer -9+0w OK
+row e, w=(1,2): DP 18, transfer 18+0w OK
+row e, w=(1,3): DP -18, transfer -18+0w OK
+row e, w=(1,4): DP 18, transfer 18+0w OK
+row e, w=(2,0): DP 9, transfer 9+0w OK
+row e, w=(2,1): DP 9, transfer 9+0w OK
+row e, w=(2,2): DP -18, transfer -18+0w OK
+row e, w=(2,3): DP 18, transfer 18+0w OK
+row e, w=(2,4): DP -18, transfer -18+0w OK
+C3xC5: agree 22, disagree 0

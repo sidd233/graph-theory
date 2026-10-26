@@ -1,0 +1,21 @@
+F(y) = y**4 + 35*y**3 + 110*y**2 + 100*y + 25; factorisation over Q (flint): (1, [(x^4 + 35*x^3 + 110*x^2 + 100*x + 25, 1)])
+g(x) has degree 11 in x, odd; (x^2-y) g(x) = x q1(x) q2(x) mod F(y): verified
+col i=0 B(e,o): beta(y) mod F = 38*y**3/3875 + 1034*y**2/3875 + 487*y/775 + 184/775 ; nonzero polynomial: True ; numerically B = beta/nu = 11.180805097379815109*i  (nu = i*sqrt(-y))
+col i=0 B(o,e): beta(y) mod F = -38*y**3/3875 - 1034*y**2/3875 - 487*y/775 - 184/775 ; nonzero polynomial: True ; numerically B = beta/nu = -11.180805097379815109*i  (nu = i*sqrt(-y))
+col i=1 B(e,o): beta(y) mod F = 38*y**3/3875 + 1034*y**2/3875 + 487*y/775 + 184/775 ; nonzero polynomial: True ; numerically B = beta/nu = 11.180805097379815109*i  (nu = i*sqrt(-y))
+col i=1 B(o,e): beta(y) mod F = -38*y**3/3875 - 1034*y**2/3875 - 487*y/775 - 184/775 ; nonzero polynomial: True ; numerically B = beta/nu = -11.180805097379815109*i  (nu = i*sqrt(-y))
+col i=2 B(e,o): beta(y) mod F = -41*y**3/3875 - 711*y**2/3875 - 337*y/775 - 161/775 ; nonzero polynomial: True ; numerically B = beta/nu = -29.271727766528433841*i  (nu = i*sqrt(-y))
+col i=2 B(o,e): beta(y) mod F = 41*y**3/3875 + 711*y**2/3875 + 337*y/775 + 161/775 ; nonzero polynomial: True ; numerically B = beta/nu = 29.271727766528433841*i  (nu = i*sqrt(-y))
+col i=3 B(e,o): beta(y) mod F = 6*y**3/3875 - 646*y**2/3875 - 12*y/31 - 46/775 ; nonzero polynomial: True ; numerically B = beta/nu = 36.181845338297237465*i  (nu = i*sqrt(-y))
+col i=3 B(o,e): beta(y) mod F = -6*y**3/3875 + 646*y**2/3875 + 12*y/31 + 46/775 ; nonzero polynomial: True ; numerically B = beta/nu = -36.181845338297237465*i  (nu = i*sqrt(-y))
+col i=4 B(e,o): beta(y) mod F = -41*y**3/3875 - 711*y**2/3875 - 337*y/775 - 161/775 ; nonzero polynomial: True ; numerically B = beta/nu = -29.271727766528433841*i  (nu = i*sqrt(-y))
+col i=4 B(o,e): beta(y) mod F = 41*y**3/3875 + 711*y**2/3875 + 337*y/775 + 161/775 ; nonzero polynomial: True ; numerically B = beta/nu = 29.271727766528433841*i  (nu = i*sqrt(-y))
+row i=1 B(e,e): beta(y) mod F = 118*y**3/3875 + 712*y**2/775 + 1478*y/775 + 96/155 ; nonzero polynomial: True ; numerically B = beta/y = 3.2846425605989758074
+row i=1 B(o,o): beta(y) mod F = 96*y**3/3875 + 3242*y**2/3875 + 56*y/31 + 442/775 ; nonzero polynomial: True ; numerically B = beta = -3.2846425605989758074
+row i=2 B(e,e): beta(y) mod F = 46*y**3/3875 + 452*y**2/775 + 986*y/775 + 14/31 ; nonzero polynomial: True ; numerically B = beta/y = -5.3146633039436290287
+row i=2 B(o,o): beta(y) mod F = 14*y**3/775 + 2404*y**2/3875 + 1088*y/775 + 414/775 ; nonzero polynomial: True ; numerically B = beta = 5.3146633039436290287
+row i=3 B(e,e): beta(y) mod F = -46*y**3/3875 - 452*y**2/775 - 986*y/775 - 14/31 ; nonzero polynomial: True ; numerically B = beta/y = 5.3146633039436290287
+row i=3 B(o,o): beta(y) mod F = -14*y**3/775 - 2404*y**2/3875 - 1088*y/775 - 414/775 ; nonzero polynomial: True ; numerically B = beta = -5.3146633039436290287
+row i=4 B(e,e): beta(y) mod F = -118*y**3/3875 - 712*y**2/775 - 1478*y/775 - 96/155 ; nonzero polynomial: True ; numerically B = beta/y = -3.2846425605989758074
+row i=4 B(o,o): beta(y) mod F = -96*y**3/3875 - 3242*y**2/3875 - 56*y/31 - 442/775 ; nonzero polynomial: True ; numerically B = beta = 3.2846425605989758074
+all dominant amplitudes are nonzero elements of Q(nu): PROVED exactly (F irreducible over Q, beta != 0 mod F)

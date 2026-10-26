@@ -55,6 +55,19 @@ def main(K_max=40, a_max=2000):
         XP = [X * Pz for Pz in Pn]
         DP = [Di * Pz for Pz in Pn]
         A = [[(XP[z] * DP[zz]).trace() for zz in range(12)] for z in range(12)]
+        # validation: the double spectral expansion reproduces the exact c(a,b) for all a,b >= 1, n <= 15
+        nval = 0
+        Xex = B['G'] if et == 'col' else B['H']
+        for a in range(1, 14):
+            for b in range(1, 14):
+                if (a + b) % 2 != par_sum or nfun(a, b) > 15:
+                    continue
+                ex = (Xex @ Tex[a] @ B['D'][i] @ Tex[b]).trace()
+                exv = acb(flint.fmpq(ex[0].numerator, ex[0].denominator)) + acb(flint.fmpq(ex[1].numerator, ex[1].denominator)) * (acb(-0.5) + acb(0, 1) * arb(3).sqrt() / 2)
+                sp = sum((A[z][zz] * Zn[z] ** a * Zn[zz] ** b for z in range(12) for zz in range(12)), acb(0))
+                assert (sp - exv).contains(0) and sp.rad() < 1e-6, (a, b)
+                nval += 1
+        log(f"  validation: spectral expansion contains the exact value for {nval} pairs (a,b), a,b >= 1, n <= 15")
         Bd = {}
         for p in (0, 1):
             q = (par_sum - p) % 2

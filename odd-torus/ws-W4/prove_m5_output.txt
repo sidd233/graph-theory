@@ -7,6 +7,7 @@ dominant root nu = i*l1, l1 in [5.62320763089573111160570889823 +/- 4.23e-30]
 projector sanity: sum P_z contains I: True; sum z P_z contains T: True; traces (ranks) of P_z, z=0 first: [6, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
 
 === edge col, w row i=0  (a+b = n-2, a+b = 1 mod 2) ===
+  validation: spectral expansion contains the exact value for 42 pairs (a,b), a,b >= 1, n <= 15
   dominant amplitude B(a=0 mod 2, b=1 mod 2) = [+/- 5.63e-85] + [11.1808050973798 +/- 1.52e-14]j  |B| >= [11.18080510 +/- 2.63e-9]
   dominant amplitude B(a=1 mod 2, b=0 mod 2) = [+/- 5.63e-85] + [-11.1808050973798 +/- 1.52e-14]j  |B| >= [11.18080510 +/- 2.63e-9]
   Region I certified with K = 3: error bound [7.718456780 +/- 1.83e-10] < min|B| = [11.18080510 +/- 2.63e-9]
@@ -15,6 +16,7 @@ projector sanity: sum P_z contains I: True; sum z P_z contains T: True; traces (
   uncovered (a,b) count 2, largest n among them: 3
 
 === edge col, w row i=1  (a+b = n-2, a+b = 1 mod 2) ===
+  validation: spectral expansion contains the exact value for 42 pairs (a,b), a,b >= 1, n <= 15
   dominant amplitude B(a=0 mod 2, b=1 mod 2) = [+/- 5.63e-85] + [11.1808050973798 +/- 1.52e-14]j  |B| >= [11.18080510 +/- 2.63e-9]
   dominant amplitude B(a=1 mod 2, b=0 mod 2) = [+/- 5.63e-85] + [-11.1808050973798 +/- 1.52e-14]j  |B| >= [11.18080510 +/- 2.63e-9]
   Region I certified with K = 3: error bound [7.718456780 +/- 1.83e-10] < min|B| = [11.18080510 +/- 2.63e-9]
@@ -23,6 +25,7 @@ projector sanity: sum P_z contains I: True; sum z P_z contains T: True; traces (
   uncovered (a,b) count 2, largest n among them: 3
 
 === edge col, w row i=2  (a+b = n-2, a+b = 1 mod 2) ===
+  validation: spectral expansion contains the exact value for 42 pairs (a,b), a,b >= 1, n <= 15
   dominant amplitude B(a=0 mod 2, b=1 mod 2) = [+/- 5.63e-85] + [-29.2717277665284 +/- 3.39e-14]j  |B| >= [29.27172777 +/- 3.48e-9]
   dominant amplitude B(a=1 mod 2, b=0 mod 2) = [+/- 5.63e-85] + [29.2717277665284 +/- 3.39e-14]j  |B| >= [29.27172777 +/- 3.48e-9]
   Region I certified with K = 1: error bound [26.79133844 +/- 2.89e-9] < min|B| = [29.27172777 +/- 3.48e-9]
@@ -31,6 +34,7 @@ projector sanity: sum P_z contains I: True; sum z P_z contains T: True; traces (
   uncovered (a,b) count 0, largest n among them: 0
 
 === edge col, w row i=3  (a+b = n-2, a+b = 1 mod 2) ===
+  validation: spectral expansion contains the exact value for 42 pairs (a,b), a,b >= 1, n <= 15
   dominant amplitude B(a=0 mod 2, b=1 mod 2) = [+/- 5.63e-85] + [36.1818453382972 +/- 3.75e-14]j  |B| >= [36.18184534 +/- 1.71e-9]
   dominant amplitude B(a=1 mod 2, b=0 mod 2) = [+/- 5.63e-85] + [-36.1818453382972 +/- 3.75e-14]j  |B| >= [36.18184534 +/- 1.71e-9]
   Region I certified with K = 1: error bound [26.79133844 +/- 2.89e-9] < min|B| = [36.18184534 +/- 1.71e-9]
@@ -39,6 +43,7 @@ projector sanity: sum P_z contains I: True; sum z P_z contains T: True; traces (
   uncovered (a,b) count 0, largest n among them: 0
 
 === edge col, w row i=4  (a+b = n-2, a+b = 1 mod 2) ===
+  validation: spectral expansion contains the exact value for 42 pairs (a,b), a,b >= 1, n <= 15
   dominant amplitude B(a=0 mod 2, b=1 mod 2) = [+/- 5.63e-85] + [-29.2717277665284 +/- 3.39e-14]j  |B| >= [29.27172777 +/- 3.48e-9]
   dominant amplitude B(a=1 mod 2, b=0 mod 2) = [+/- 5.63e-85] + [29.2717277665284 +/- 3.39e-14]j  |B| >= [29.27172777 +/- 3.48e-9]
   Region I certified with K = 1: error bound [26.79133844 +/- 2.89e-9] < min|B| = [29.27172777 +/- 3.48e-9]
@@ -47,6 +52,7 @@ projector sanity: sum P_z contains I: True; sum z P_z contains T: True; traces (
   uncovered (a,b) count 0, largest n among them: 0
 
 === edge row, w row i=1  (a+b = n-1, a+b = 0 mod 2) ===
+  validation: spectral expansion contains the exact value for 49 pairs (a,b), a,b >= 1, n <= 15
   dominant amplitude B(a=0 mod 2, b=0 mod 2) = [3.28464256059898 +/- 4.20e-15] + [+/- 9.36e-86]j  |B| >= [3.284642561 +/- 4.02e-10]
   dominant amplitude B(a=1 mod 2, b=1 mod 2) = [-3.28464256059898 +/- 4.20e-15] + [+/- 9.36e-86]j  |B| >= [3.284642561 +/- 4.02e-10]
   Region I certified with K = 2: error bound [2.641212539 +/- 3.49e-10] < min|B| = [3.284642561 +/- 4.02e-10]
@@ -55,6 +61,7 @@ projector sanity: sum P_z contains I: True; sum z P_z contains T: True; traces (
   uncovered (a,b) count 3, largest n among them: 3
 
 === edge row, w row i=2  (a+b = n-1, a+b = 0 mod 2) ===
+  validation: spectral expansion contains the exact value for 49 pairs (a,b), a,b >= 1, n <= 15
   dominant amplitude B(a=0 mod 2, b=0 mod 2) = [-5.31466330394363 +/- 9.72e-16] + [+/- 9.36e-86]j  |B| >= [5.314663304 +/- 5.64e-11]
   dominant amplitude B(a=1 mod 2, b=1 mod 2) = [5.31466330394363 +/- 9.72e-16] + [+/- 9.36e-86]j  |B| >= [5.314663304 +/- 5.64e-11]
   Region I certified with K = 2: error bound [2.641212539 +/- 3.49e-10] < min|B| = [5.314663304 +/- 5.64e-11]
@@ -63,6 +70,7 @@ projector sanity: sum P_z contains I: True; sum z P_z contains T: True; traces (
   uncovered (a,b) count 0, largest n among them: 0
 
 === edge row, w row i=3  (a+b = n-1, a+b = 0 mod 2) ===
+  validation: spectral expansion contains the exact value for 49 pairs (a,b), a,b >= 1, n <= 15
   dominant amplitude B(a=0 mod 2, b=0 mod 2) = [5.31466330394363 +/- 9.72e-16] + [+/- 9.36e-86]j  |B| >= [5.314663304 +/- 5.64e-11]
   dominant amplitude B(a=1 mod 2, b=1 mod 2) = [-5.31466330394363 +/- 9.72e-16] + [+/- 9.36e-86]j  |B| >= [5.314663304 +/- 5.64e-11]
   Region I certified with K = 2: error bound [2.641212539 +/- 3.49e-10] < min|B| = [5.314663304 +/- 5.64e-11]
@@ -71,6 +79,7 @@ projector sanity: sum P_z contains I: True; sum z P_z contains T: True; traces (
   uncovered (a,b) count 0, largest n among them: 0
 
 === edge row, w row i=4  (a+b = n-1, a+b = 0 mod 2) ===
+  validation: spectral expansion contains the exact value for 49 pairs (a,b), a,b >= 1, n <= 15
   dominant amplitude B(a=0 mod 2, b=0 mod 2) = [-3.28464256059898 +/- 4.20e-15] + [+/- 9.36e-86]j  |B| >= [3.284642561 +/- 4.02e-10]
   dominant amplitude B(a=1 mod 2, b=1 mod 2) = [3.28464256059898 +/- 4.20e-15] + [+/- 9.36e-86]j  |B| >= [3.284642561 +/- 4.02e-10]
   Region I certified with K = 2: error bound [2.641212539 +/- 3.49e-10] < min|B| = [3.284642561 +/- 4.02e-10]
@@ -89,4 +98,4 @@ projector sanity: sum P_z contains I: True; sum z P_z contains T: True; traces (
   row i=3: K=2, exact check needed for odd n <= 0, min|B| >= [5.3146633 +/- 3.95e-9]
   row i=4: K=2, exact check needed for odd n <= 3, min|B| >= [3.2846426 +/- 3.95e-8]
 N_needed (exact check of all odd n <= N_needed suffices) = 3
-time 3.7s
+time 3.9s
