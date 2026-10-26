@@ -1,0 +1,13 @@
+m= 3: Y..Y..Y..Y..Y..Y..Y..Y..Y..Y..Y..Y..Y.
+m= 4: .Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y
+m= 5: ..Y....Y....Y....Y....Y....Y....Y....Y
+m= 6: YY.Y.YYY.Y.YYY.Y.YYY.Y.YYY.Y.YYY.Y.YYY
+m= 7: ....Y......Y......Y......Y......Y.....
+m= 8: .Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y.Y
+m= 9: Y..Y..Y..Y..Y..Y..Y..Y..Y..Y..Y..Y..Y.
+m=10: .YYY.Y.Y.Y.YYY.Y.Y.Y.YYY.Y.Y.Y.YYY.Y.Y
+m=11: ........Y..........Y..........Y.......
+m=12: YY.Y.YYY.Y.YYY.Y.YYY.Y.YYY.Y.YYY.Y.YYY
+m=13: ..........Y............Y............Y.
+m=14: .Y.YYY.Y.Y.Y.Y.Y.YYY.Y.Y.Y.Y.Y.YYY.Y.Y
+(columns n = 3..40; Y = SAT, . = UNSAT)  disagreements with gcd>1: 0

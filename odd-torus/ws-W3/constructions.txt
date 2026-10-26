@@ -1,0 +1,60 @@
+2D diagonal construction: 6074 (m, n, K, direction) cases with 3<=m,n<=40, gcd>1 (all MIS K of Z_d for d<=15, 6 sampled K for d>15); failures: 0
+number of MIS of Z_d, d=2..20: [2, 3, 2, 5, 5, 7, 10, 12, 17, 22, 29, 39, 51, 68, 90, 119, 158, 209, 277]
+covering lifts of SAT kernels of C_p x C_p, p in (3,4,5,7), to all multiples <= 40: 358 cases, failures: 0
+
+C_4 x C_4: S = {(r,c): (r+c) mod 4 in [0, 2]}, |S| = 8, valid = True
+   X.X.
+   .X.X
+   X.X.
+   .X.X
+
+C_3 x C_3: S = {(r,c): (r+c) mod 3 in [0]}, |S| = 3, valid = True
+   X..
+   ..X
+   .X.
+
+C_5 x C_5: S = {(r,c): (r+c) mod 5 in [0, 2]}, |S| = 10, valid = True
+   X.X..
+   .X..X
+   X..X.
+   ..X.X
+   .X.X.
+
+C_7 x C_7: S = {(r,c): (r+c) mod 7 in [0, 2, 4]}, |S| = 21, valid = True
+   X.X.X..
+   .X.X..X
+   X.X..X.
+   .X..X.X
+   X..X.X.
+   ..X.X.X
+   .X.X.X.
+
+C_11 x C_11: S = {(r,c): (r+c) mod 11 in [0, 2, 5, 8]}, |S| = 44, valid = True
+   X.X..X..X..
+   .X..X..X..X
+   X..X..X..X.
+   ..X..X..X.X
+   .X..X..X.X.
+   X..X..X.X..
+   ..X..X.X..X
+   .X..X.X..X.
+   X..X.X..X..
+   ..X.X..X..X
+   .X.X..X..X.
+
+C_13 x C_13: S = {(r,c): (r+c) mod 13 in [0, 2, 4, 7, 10]}, |S| = 65, valid = True
+   X.X.X..X..X..
+   .X.X..X..X..X
+   X.X..X..X..X.
+   .X..X..X..X.X
+   X..X..X..X.X.
+   ..X..X..X.X.X
+   .X..X..X.X.X.
+   X..X..X.X.X..
+   ..X..X.X.X..X
+   .X..X.X.X..X.
+   X..X.X.X..X..
+   ..X.X.X..X..X
+   .X.X.X..X..X.
+
+3D construction (x1+x2+x3) mod d in K, a<=b<=c<=12, gcd(a,b,c)>1: 139 cases, failures: 0
