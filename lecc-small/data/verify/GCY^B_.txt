@@ -1,0 +1,3 @@
+(P) all 12 vertex-deleted subgraphs: independent AT check passes
+(R) 6972 reducibility witnesses: independent AT check passes
+exit=0

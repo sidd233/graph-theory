@@ -1,0 +1,6 @@
+mode 0 palette 8: 200 of 200 copied-border holes have a strategy
+mode 1 palette 6: 200 of 200 copied-border holes have a strategy
+mode 0 palette 6: 200 of 200 copied-border holes have a strategy
+FAIL block 1a b 1a 13 7 1a border 1a b 1a 1a 1a 1a 13 13 7 1a
+FAIL block b e 1a 13 7 b border b e 1a 1a b b 13 13 7 b
+mode 0 palette 5: 198 of 200 copied-border holes have a strategy

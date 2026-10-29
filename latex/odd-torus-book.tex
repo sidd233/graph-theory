@@ -1,0 +1,900 @@
+\documentclass[11pt,oneside,openany]{book}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,decorations.pathreplacing}
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=green!40!black,urlcolor=blue!50!black]{hyperref}
+
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+
+\definecolor{prc}{RGB}{30,120,60}
+\definecolor{cac}{RGB}{30,80,170}
+\definecolor{vec}{RGB}{200,120,0}
+\definecolor{opc}{RGB}{190,30,45}
+\definecolor{citc}{RGB}{90,90,90}
+\definecolor{pinc}{RGB}{200,30,30}
+\definecolor{forbc}{RGB}{120,40,160}
+
+% ---------------------------------------------------------------- numbered results in boxes
+\newcounter{res}[chapter]
+\renewcommand{\theres}{\thechapter.\arabic{res}}
+\newenvironment{resultbox}[3]{\refstepcounter{res}\begin{tcolorbox}[breakable,colback=#1!5,colframe=#1,
+  fonttitle=\bfseries,title={#2 \theres\ifx&#3&\else\ (#3)\fi}]}{\end{tcolorbox}}
+\newenvironment{theorem}[1][]{\begin{resultbox}{prc}{Theorem}{#1}}{\end{resultbox}}
+\newenvironment{lemma}[1][]{\begin{resultbox}{prc}{Lemma}{#1}}{\end{resultbox}}
+\newenvironment{corollary}[1][]{\begin{resultbox}{prc}{Corollary}{#1}}{\end{resultbox}}
+\newenvironment{cited}[1][]{\begin{resultbox}{citc}{Known result}{#1}}{\end{resultbox}}
+\newenvironment{computed}[1][]{\begin{resultbox}{cac}{Computer-assisted result}{#1}}{\end{resultbox}}
+\newenvironment{verified}[1][]{\begin{resultbox}{vec}{Verified, not proved}{#1}}{\end{resultbox}}
+\newenvironment{openq}[1][]{\begin{resultbox}{opc}{Open}{#1}}{\end{resultbox}}
+\newenvironment{definition}[1][]{\refstepcounter{res}\par\medskip\noindent\textbf{Definition \theres}\ifx&#1&\else\ (#1)\fi.\ }{\par\medskip}
+\newenvironment{note}{\par\smallskip\noindent\textit{Note.}\ }{\par\smallskip}
+\newenvironment{ponder}{\begin{tcolorbox}[breakable,colback=yellow!7,colframe=orange!70!black,fonttitle=\bfseries,title={Think it over}]\begin{enumerate}[label=\textbf{Q\arabic*.},leftmargin=2.4em,itemsep=0.25em]}{\end{enumerate}\end{tcolorbox}}
+\newenvironment{steps}[1][]{\begin{enumerate}[label=\textbf{Step \arabic*.},leftmargin=4.2em,itemsep=0.3em,#1]}{\end{enumerate}}
+
+\newcommand{\T}{\mathbin{\square}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\cB}[1]{\cite{#1}}
+
+\titleformat{\chapter}[display]{\bfseries\huge\color{cac!80!black}}{\large\color{gray}Chapter \thechapter}{0.3em}{}
+\pagestyle{fancy}\fancyhf{}\fancyhead[L]{\small\leftmark}\fancyhead[R]{\small\thepage}
+
+\begin{document}
+
+\begin{titlepage}
+\centering\vspace*{2.5cm}
+{\color{cac!80!black}\Huge\bfseries List Colouring the Odd Torus\par}
+\vspace{0.6cm}
+{\Large A step-by-step account of what is proved, what is computed,\\ and what is still open\par}
+\vspace{2cm}
+{\large Siddharth Narayan Mishra \quad and \quad Amrutanshu\par}
+\vspace{0.5cm}
+{\large Version of 28 October 2026, 2 PM\par}
+\vfill
+{\small Every computer-assisted claim names the script in \texttt{\textasciitilde/work/gt/odd-torus/} that
+reproduces it (Appendix~\ref{app:scripts}).}
+\end{titlepage}
+
+\tableofcontents
+
+% ======================================================================================
+\chapter*{How to read this book}
+\addcontentsline{toc}{chapter}{How to read this book}
+
+Results are numbered by chapter (Lemma 4.5 is the fifth numbered item of Chapter 4) and are reused by
+number later. The colour of a box tells you how the result is established:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{ll}
+\toprule
+\textcolor{citc}{\textbf{Known result}} & published by others; we cite it and do not prove it\\
+\textcolor{prc}{\textbf{Theorem / Lemma}} & proved in this book by hand\\
+\textcolor{cac}{\textbf{Computer-assisted result}} & proved, but one step is an exact computation (script named)\\
+\textcolor{vec}{\textbf{Verified, not proved}} & true in every case we tested; no proof yet\\
+\textcolor{opc}{\textbf{Open}} & not known\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+To check our work, read a chapter, then try its ``Think it over'' questions. Chapters 1 and 2 are
+background; Chapter 3 is the main finished theorem; Chapter 4 has lemmas for every odd $m$; Chapters 5 and 6
+are about the open case $m = 5$; Chapter 7 records dead ends.
+
+\textbf{Notation used throughout.}
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{ll}
+\toprule
+$C_k$ & the cycle with vertices $0, 1, \dots, k-1$\\
+$C_m \T C_n$ & the torus grid: vertex $(i, j)$, row $i \in \Z_m$, column $j \in \Z_n$\\
+$L(v)$ & the list of allowed colours at $v$; always $|L(v)| = 3$ unless stated\\
+palette & the set of all colours appearing in any list\\
+$\omega$ & $e^{2\pi i/3}$, a cube root of unity\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ======================================================================================
+\chapter{The problem}
+
+\section{List colouring}
+
+\begin{definition}[List colouring]
+Let $G$ be a graph and let every vertex $v$ have a list $L(v)$ of colours. An \emph{$L$-colouring} is a
+choice of one colour $c(v) \in L(v)$ for each vertex, such that adjacent vertices get different colours.
+$G$ is \emph{$k$-choosable} if it has an $L$-colouring for \emph{every} choice of lists with
+$|L(v)| = k$. The smallest such $k$ is the \emph{choice number} $\chi_\ell(G)$.
+\end{definition}
+
+Ordinary colouring is the special case where all lists are equal. So $\chi_\ell(G) \ge \chi(G)$, and the
+difference can be large: the adversary chooses the lists.
+
+\begin{definition}[Torus grid]
+For $m, n \ge 3$, $C_m \T C_n$ has vertices $(i, j)$ with $i \in \Z_m$ (the \emph{row}) and $j \in \Z_n$
+(the \emph{column}). The vertex $(i, j)$ is adjacent to $(i \pm 1, j)$ (its \emph{column neighbours}) and
+to $(i, j \pm 1)$ (its \emph{row neighbours}). Every vertex has degree 4. Each column is a copy of $C_m$;
+each row is a copy of $C_n$.
+\end{definition}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.75,v/.style={circle,draw,fill=white,minimum size=7pt,inner sep=0pt}]
+  \foreach \i in {0,...,4}{\foreach \j in {0,...,6}{\node[v] (w\i\j) at (\j,-\i) {};}}
+  \foreach \i in {0,...,4}{\foreach \j in {0,...,5}{\pgfmathtruncatemacro{\k}{\j+1}\draw (w\i\j)--(w\i\k);}}
+  \foreach \j in {0,...,6}{\foreach \i in {0,...,3}{\pgfmathtruncatemacro{\k}{\i+1}\draw (w\i\j)--(w\k\j);}}
+  \foreach \i in {0,...,4}{\draw[dashed,gray] (w\i6)--++(0.6,0); \draw[dashed,gray] (w\i0)--++(-0.6,0);}
+  \foreach \j in {0,...,6}{\draw[dashed,gray] (w4\j)--++(0,-0.5); \draw[dashed,gray] (w0\j)--++(0,0.5);}
+  \node[left=12pt,font=\small] at (w20) {rows $0$ to $4$};
+  \node[above=10pt,font=\small] at (w03) {columns $0$ to $6$};
+\end{tikzpicture}
+
+{\small $C_5 \T C_7$. Dashed edges wrap around.}
+\end{center}
+
+\section{The conjecture and what is known}
+
+\begin{cited}[Cai, Wang and Zhu \cB{CWZ}]\label{conj}
+\textbf{Conjecture.} Every torus grid $C_m \T C_n$ is 3-choosable.
+\end{cited}
+
+\begin{cited}[Li, Shao, Petrov and Gordeev \cB{LSPG}]\label{lspg}
+If $m$ or $n$ is even, $C_m \T C_n$ is 3-choosable. If $m$ and $n$ are both odd, the Alon--Tarsi number of
+$C_m \T C_n$ is 4.
+\end{cited}
+
+So the open case is $m, n$ both odd. The second sentence matters: the standard algebraic method
+(Section 2.2) \emph{cannot} prove 3-choosability for odd tori. Any proof must contain a step that looks
+at the actual lists.
+
+\begin{cited}[Galvin \cB{Gal}]\label{galvin}
+$C_3 \T C_3$ is 3-choosable. (It is the line graph of $K_{3,3}$, and Galvin proved that line graphs of
+bipartite graphs have choice number equal to their chromatic number.)
+\end{cited}
+
+\begin{cited}[Sabidussi \cB{Sab}]\label{sabidussi}
+$\chi(G \T H) = \max(\chi(G), \chi(H))$. In particular every odd torus $C_m \T C_n$ has a proper
+colouring with 3 colours.
+\end{cited}
+
+\begin{ponder}
+\item Show directly that $\chi_\ell(C_3 \T C_n) \ge 3$. (Hint: columns.)
+\item Lists of size 5 are always enough for a 4-regular graph. Why? (Colour greedily.)
+\item Why does $C_m \T C_n$ have exactly twice as many edges as vertices?
+\end{ponder}
+
+% ======================================================================================
+\chapter{Tools from the literature}
+
+This chapter lists every published result we use. Nothing here is ours.
+
+\section{Cycles and degree lists}
+
+\begin{cited}[Erd\H{o}s, Rubin and Taylor \cB{ERT}; Borodin \cB{Bor}]\label{gallai}
+Let $G$ be connected and $|L(v)| \ge \deg(v)$ for every vertex. Then $G$ is $L$-colourable, unless every
+block of $G$ is a complete graph or an odd cycle (a ``Gallai tree'').
+\end{cited}
+
+Two special cases are used again and again.
+
+\begin{cited}[cycles; special case of \ref{gallai}]\label{cycle}
+\begin{enumerate}[label=(\alph*),nosep]
+\item A cycle whose lists all have size at least 2 can be coloured, unless the cycle is odd and all its
+lists are the same 2-set.
+\item A cycle with one list of size 3 and the others of size at least 2 can always be coloured.
+\end{enumerate}
+\end{cited}
+
+\section{The polynomial method}
+
+For a graph $G$ with a fixed orientation of its edges, the \emph{graph polynomial} is
+$P_G = \prod_{(u,v)} (x_u - x_v)$, one factor per arc. A colouring is proper exactly when $P_G \ne 0$.
+
+\begin{cited}[Combinatorial Nullstellensatz, Alon \cB{Alon}]\label{cn}
+Let $\deg P = \sum_v t_v$ and suppose the coefficient of $\prod_v x_v^{t_v}$ in $P$ is nonzero. If
+$|S_v| > t_v$ for every $v$, then $P$ is nonzero somewhere on $\prod_v S_v$.
+\end{cited}
+
+Applied to $P_G$: if that coefficient is nonzero, $G$ can be coloured from any lists with
+$|L(v)| \ge t_v + 1$.
+
+\begin{cited}[Coefficient formula, Laso\'n \cB{Lason}; Karasev and Petrov \cB{KP}]\label{coef}
+If $\deg P = \sum t_v$ and $|A_v| = t_v + 1$, then
+$[\prod x_v^{t_v}]\,P = \sum_{a \in \prod A_v} P(a) / \prod_v \varphi_v'(a_v)$, where
+$\varphi_v(z) = \prod_{b \in A_v}(z - b)$.
+\end{cited}
+
+\begin{cited}[Alon and Tarsi \cB{AT}]\label{at}
+Let $D$ be an orientation of $G$. If the numbers of even and odd Eulerian subgraphs of $D$ differ, then
+$G$ is $L$-colourable whenever $|L(v)| > \text{outdeg}_D(v)$ for every $v$.
+\end{cited}
+
+\begin{note}
+In a bipartite graph every cycle is even, so every Eulerian subgraph has an even number of edges. Hence
+there are no odd Eulerian subgraphs, while the empty subgraph is even: \emph{every} orientation of a
+bipartite graph satisfies the hypothesis of \ref{at}.
+\end{note}
+
+\begin{cited}[Hakimi \cB{Hak}]\label{hakimi}
+A graph has an orientation with $\text{outdeg}(v) \le k(v)$ for all $v$ if and only if every subgraph $H$
+satisfies $|E(H)| \le \sum_{v \in H} k(v)$.
+\end{cited}
+
+\begin{ponder}
+\item Prove \ref{cycle}(a) yourself: colour around the cycle and see where you get stuck.
+\item Why is the condition in \ref{hakimi} obviously necessary?
+\item Using \ref{at} and the Note, show that an even cycle is 2-choosable.
+\end{ponder}
+
+% ======================================================================================
+\chapter{The finished case: $C_3 \T C_n$}
+
+\section{Spare room and shapes}
+
+Every cut in this book uses \ref{cn} in the same way. This section states that use precisely and proves
+it. Fix an orientation of a graph $H$ and write $P_H = \prod_{(u,v)} (x_u - x_v)$ for its graph polynomial.
+
+\begin{lemma}\label{degree}
+$P_H$ is a nonzero homogeneous polynomial of degree $|E(H)|$.
+\end{lemma}
+
+\begin{proof}
+Each factor $x_u - x_v$ is nonzero and homogeneous of degree 1. A product of nonzero polynomials is nonzero,
+and a product of homogeneous polynomials is homogeneous of degree equal to the sum of the degrees. There is
+one factor per edge.
+\end{proof}
+
+\begin{definition}[spare room, shape]
+Let $H$ have $N$ vertices. Its \emph{spare room} is $d(H) = 2N - |E(H)|$. A \emph{shape} for $H$ is a map
+$\mu : V(H) \to \{0, 1, 2\}$ with $\sum_v \mu(v) = d(H)$; we say $\mu$ \emph{spends} $\mu(v)$ units at $v$. The
+\emph{coefficient} of the shape is $c_\mu = \big[\prod_v x_v^{\,2-\mu(v)}\big]\,P_H$.
+\end{definition}
+
+The units are not a gift: if $d(H) > 0$, the monomial $\prod_v x_v^2$ has degree $2N > \deg P_H$, so its
+coefficient is $0$ and exponents must be lowered by exactly $d(H)$ in total. The choice is \emph{where}.
+
+\begin{lemma}[shape lemma]\label{shapelemma}
+Let $\mu$ be a shape for $H$ with $c_\mu \ne 0$. Let each vertex have a list $L(v)$ of 3 colours, and choose
+any subsets $L'(v) \subseteq L(v)$ with $|L'(v)| = 3 - \mu(v)$. Then $H$ has a proper colouring $c$ with
+$c(v) \in L'(v)$ for every $v$.
+\end{lemma}
+
+\begin{proof}
+\begin{steps}
+\item Put $t_v = 2 - \mu(v) \ge 0$. Then $\sum_v t_v = 2N - d(H) = |E(H)| = \deg P_H$ by \ref{degree}.
+\item Map the colours injectively into $\mathbb{C}$; then $L'(v)$ becomes a set $S_v \subseteq \mathbb{C}$ with
+$|S_v| = 3 - \mu(v) = t_v + 1 > t_v$.
+\item The coefficient of $\prod_v x_v^{t_v}$ is $c_\mu \ne 0$, so by \ref{cn} some $s \in \prod_v S_v$ has $P_H(s) \ne 0$.
+\item $P_H(s) \ne 0$ means $s_u \ne s_v$ on every arc, so $c(v) = s_v$ is a proper colouring with
+$c(v) \in L'(v)$. \qedhere
+\end{steps}
+\end{proof}
+
+\begin{note}
+This is what spending means. One unit at $v$ ($\mu(v) = 1$): choose $L'(v) = L(v) \setminus \{\beta\}$, so the
+colouring \textcolor{forbc}{\textbf{forbids}} $\beta$ at $v$. Two units ($\mu(v) = 2$): choose $L'(v) = \{\alpha\}$, so the
+colouring \textcolor{pinc}{\textbf{pins}} $v$ to $\alpha$. The lemma promises \emph{some} colouring obeying these choices
+and nothing more; the rest of every cut argument must therefore work against \emph{every} such colouring.
+\end{note}
+
+\begin{corollary}[adjacent pins]\label{adjpins}
+If $\mu(u) = \mu(v) = 2$ for adjacent $u, v$, then $c_\mu = 0$.
+\end{corollary}
+
+\begin{proof}
+If $c_\mu \ne 0$, give every vertex the list $\{1,2,3\}$ and take $L'(u) = L'(v) = \{1\}$. \ref{shapelemma} gives a
+proper colouring with $c(u) = c(v) = 1$, impossible for adjacent vertices.
+\end{proof}
+
+\begin{lemma}[counting the spare room]\label{spareroom}
+Let $m, n \ge 3$ and $\ell \ge 2$.
+\begin{enumerate}[label=(\alph*),nosep]
+\item The torus $C_m \T C_n$ has spare room $0$.
+\item The strip $C_m \T P_\ell$ (columns are cycles, rows are paths) has spare room $m$.
+\item $C_5 \T C_n$ ($n \ge 5$) with a $3 \times 2$ block of vertices removed has spare room $5$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) $N = mn$ and every vertex has degree 4, so $|E| = 2N$.
+
+(b) $N = m\ell$. The $\ell$ columns are copies of $C_m$: $m\ell$ edges. Each of the $\ell - 1$ pairs of consecutive
+columns is joined by $m$ row edges: $m(\ell - 1)$ edges. Total $2m\ell - m = 2N - m$.
+
+(c) The block's 6 vertices have degree sum $24$. The block contains $7$ edges (2 vertical in each of its 2 columns,
+3 horizontal), so $24 - 14 = 10$ edges leave it. Removing the block deletes $17$ edges, leaving $5n - 6$
+vertices and $10n - 17 = 2(5n - 6) - 5$ edges.
+\end{proof}
+
+So the odd torus has no room at all, and \ref{lspg} says its only candidate coefficient is $0$. A strip of a
+torus with $m$ rows has exactly $m$ units, which we spend on its two end columns, next to the deleted part.
+
+\section{The strip lemma for triangles}
+
+\begin{lemma}[odd strip lemma, $m = 3$]\label{strip3}
+Let $\ell \ge 3$ be odd. In $C_3 \T P_\ell$ put weight 2 on one vertex of one end column and weight 1 on a
+vertex in a \emph{different row} of the other end column. Then $c_\mu = \pm 3^{(\ell-1)/2} \ne 0$.
+\end{lemma}
+
+\begin{proof}
+\textbf{Set-up.} Write the vertices as $(i, c)$, with row $i \in \Z_3$ and column $c \in \{1, \dots, \ell\}$, so
+$N = 3\ell$. Orient each column edge from $(i, c)$ to $(i+1, c)$ and each row edge from $(i, c)$ to $(i, c+1)$.
+(Another orientation multiplies $c_\mu$ by $\pm 1$, which does not affect whether it is zero.) Then
+\[ P = \prod_{c=1}^{\ell} \prod_{i \in \Z_3} (x_{i,c} - x_{i+1,c}) \cdot \prod_{c=1}^{\ell-1} \prod_{i \in \Z_3} (x_{i,c} - x_{i,c+1}). \]
+Let $\omega$ be a primitive cube root of unity, so $\omega^3 = 1$ and $1 + \omega + \omega^2 = 0$. Exponents of $\omega$ are
+read mod 3. Let the shape put weight $2$ at row $r$ of one end column and weight $1$ at row $r' \ne r$ of the
+other, and let $k \in \{1, 2\}$ be the weight on column $\ell$, so column $1$ carries weight $3 - k$.
+
+\smallskip
+\textbf{Part 1: from the coefficient to a sum.}
+\begin{steps}
+\item \emph{Why multiply by $\prod x_v^{\mu(v)}$.} With sets of size 3, \ref{coef} can only read the coefficient
+of $\prod_v x_v^2$ (it needs $|A_v| = t_v + 1$, so $t_v = 2$). Put $Q = P \cdot \prod_v x_v^{\mu(v)}$. Multiplying by a
+fixed monomial sends distinct monomials to distinct monomials, and sends $\prod_v x_v^{2-\mu(v)}$ to
+$\prod_v x_v^2$. Hence
+\[ c_\mu = \big[\textstyle\prod_v x_v^{2-\mu(v)}\big] P = \big[\textstyle\prod_v x_v^{2}\big] Q. \]
+The degree condition of \ref{coef} holds: $\deg Q = |E| + \sum_v \mu(v) = (2N - 3) + 3 = 2N = \sum_v 2$, by
+\ref{degree} and \ref{spareroom}(b).
+\item \emph{Why the cube roots of unity.} \ref{coef} holds for \emph{any} sets of size 3, and the coefficient does
+not depend on the choice, so we choose $A_v = \{1, \omega, \omega^2\}$ for every $v$. Then
+$\varphi_v(z) = (z - 1)(z - \omega)(z - \omega^2) = z^3 - 1$ and $\varphi_v'(a) = 3a^2$. Since $a^3 = 1$, $a^2 = 1/a$, so
+\[ \frac{1}{\varphi_v'(a)} = \frac{a}{3}. \]
+\item \emph{The sum.} By \ref{coef}, with $Q(a) = P(a) \prod_v a_v^{\mu(v)}$:
+\[ c_\mu = \sum_{a} Q(a) \prod_v \frac{a_v}{3} = 3^{-3\ell} \sum_{a} P(a) \prod_v a_v^{\,1 + \mu(v)}, \tag{$\ast$} \]
+where $a$ runs over all assignments $V \to \{1, \omega, \omega^2\}$.
+\end{steps}
+
+\textbf{Part 2: evaluating the sum.} We think of $a$ as a colouring with the three colours $1, \omega, \omega^2$.
+\begin{steps}[start=4]
+\item \emph{Only proper colourings count.} $P(a)$ is a product over edges of $a_u - a_v$, so $P(a) = 0$ unless
+neighbours get different values. In particular each column triangle uses all three colours, so
+$i \mapsto (\text{exponent of } a_{i,c})$ is a bijection $\Z_3 \to \Z_3$. The six maps $i \mapsto \alpha + \varepsilon i$ with
+$\alpha \in \Z_3$, $\varepsilon = \pm 1$ are distinct bijections, and there are only $3! = 6$ bijections, so these are all of
+them. Hence every column of a nonzero term has the form
+\[ a_{i,c} = \omega^{\alpha_c + \varepsilon_c i} \qquad (\alpha_c \in \Z_3,\ \varepsilon_c = \pm 1). \]
+\item \emph{One column's three edges.} Using $\omega^{x} - \omega^{y} = \omega^{x}(1 - \omega^{y - x})$:
+\[ \prod_{i} \big(\omega^{\alpha + \varepsilon i} - \omega^{\alpha + \varepsilon(i+1)}\big)
+ = \omega^{3\alpha + \varepsilon(0 + 1 + 2)} (1 - \omega^{\varepsilon})^3 = (1 - \omega^{\varepsilon})^3, \]
+since $3\alpha \equiv 0$ and $0 + 1 + 2 = 3 \equiv 0$. Now
+$(1 - \omega)^2 = 1 - 2\omega + \omega^2 = (1 + \omega + \omega^2) - 3\omega = -3\omega$, so
+$(1 - \omega)^3 = -3\omega(1 - \omega) = -3(\omega - \omega^2)$. Put $g = 3(\omega - \omega^2)$. Then $(1 - \omega)^3 = -g$, and
+taking complex conjugates ($\bar\omega = \omega^2$, $\bar g = -g$) gives $(1 - \omega^2)^3 = g$. In one formula:
+\[ \text{column factor} = (1 - \omega^{\varepsilon})^3 = -\varepsilon g. \]
+\item \emph{The three row edges between columns $c$ and $c+1$.} Write $\alpha = \alpha_c$, $\beta = \alpha_{c+1}$.
+
+\emph{If $\varepsilon_{c+1} = -\varepsilon_c$}, rows $i$ of the two columns have equal colours when
+$\alpha + \varepsilon i \equiv \beta - \varepsilon i$, that is $2\varepsilon i \equiv \beta - \alpha$. Since $2$ and $\varepsilon$ are invertible mod 3,
+this has a solution $i$, so one factor is $0$. Hence in every nonzero term \emph{all columns have the same}
+$\varepsilon$.
+
+\emph{If $\varepsilon_{c+1} = \varepsilon_c = \varepsilon$}, put $\delta = \beta - \alpha$. Then
+\[ \prod_{i} \big(\omega^{\alpha + \varepsilon i} - \omega^{\beta + \varepsilon i}\big) = \omega^{3\alpha + 3\varepsilon}(1 - \omega^{\delta})^3 = (1 - \omega^\delta)^3
+ = \begin{cases} 0 & \delta = 0, \\ -g & \delta = 1, \\ g & \delta = 2, \end{cases} \]
+by the previous step. We write this as $g\,\chi(\delta)$ with $\chi(0) = 0$, $\chi(1) = -1$, $\chi(2) = 1$. It does not
+depend on $\varepsilon$.
+\item \emph{The vertex weights.} Split $\prod_v a_v^{1+\mu(v)} = \prod_v a_v \cdot \prod_v a_v^{\mu(v)}$. Each column contains
+$1, \omega, \omega^2$ once, with product $\omega^3 = 1$, so $\prod_v a_v = 1$. Only the two weighted vertices remain:
+\[ \prod_v a_v^{\mu(v)} = \omega^{\sum_v \mu(v)(\alpha_{\text{col}(v)} + \varepsilon\,\text{row}(v))}
+ = \omega^{(3-k)\alpha_1 + k\alpha_\ell + \varepsilon s} = \omega^{k(\alpha_\ell - \alpha_1) + \varepsilon s}, \]
+where $s = \sum_v \mu(v)\,\text{row}(v) \bmod 3$, and $(3 - k)\alpha_1 \equiv -k\alpha_1$.
+\item \emph{Summing.} By Steps 4 to 7, a nonzero term is fixed by $\varepsilon$ and $\alpha_1, \dots, \alpha_\ell$, and equals
+\[ \underbrace{(-\varepsilon g)^{\ell}}_{\text{columns}} \cdot \underbrace{\prod_{c=1}^{\ell-1} g\,\chi(\delta_c)}_{\text{rows}}
+ \cdot\, \omega^{k(\delta_1 + \dots + \delta_{\ell-1}) + \varepsilon s}, \qquad \delta_c = \alpha_{c+1} - \alpha_c, \]
+using $\alpha_\ell - \alpha_1 = \delta_1 + \dots + \delta_{\ell-1}$. The map $(\alpha_1, \dots, \alpha_\ell) \mapsto (\alpha_1, \delta_1, \dots, \delta_{\ell-1})$
+is a bijection of $\Z_3^{\ell}$, and the term does not involve $\alpha_1$ (3 choices). So the sum factorises:
+\[ c_\mu = 3^{-3\ell}\, g^{2\ell-1} \cdot \Big(\sum_{\varepsilon = \pm 1} (-\varepsilon)^{\ell} \omega^{\varepsilon s}\Big) \cdot 3 \cdot \Big(\sum_{\delta \in \Z_3} \chi(\delta)\,\omega^{k\delta}\Big)^{\ell-1}. \]
+Since $\ell$ is odd, $(-\varepsilon)^\ell = -\varepsilon$, so the first bracket is $-\omega^{s} + \omega^{-s} = \omega^{2s} - \omega^s$. The second
+bracket is $0 - \omega^{k} + \omega^{2k} = \omega^{2k} - \omega^k$. Therefore
+\[ c_\mu = 3^{1-3\ell}\, g^{2\ell-1}\, (\omega^{2s} - \omega^{s})\, (\omega^{2k} - \omega^{k})^{\ell-1}. \]
+\item \emph{Nonzero, and the value.} $g \ne 0$, and $\omega^{2t} - \omega^t = \omega^t(\omega^t - 1)$ is $0$ exactly when $t \equiv 0$.
+Here $k \in \{1, 2\}$, and $s = 2r + r' \equiv r' - r \not\equiv 0$ because the rows differ. So $c_\mu \ne 0$. For the
+value, $|\omega - \omega^2| = \sqrt3$, so $|g| = 3\sqrt3$ and both brackets have modulus $\sqrt3$:
+\[ |c_\mu| = 3^{1-3\ell}\,(3\sqrt3)^{2\ell-1}\,\sqrt3\,(\sqrt3)^{\ell-1}
+ = 3^{\,1 - 3\ell + \frac32(2\ell - 1) + \frac12 + \frac{\ell-1}{2}} = 3^{(\ell-1)/2}. \]
+$c_\mu$ is a coefficient of a polynomial with integer coefficients, so it is an integer:
+$c_\mu = \pm 3^{(\ell-1)/2}$. \qedhere
+\end{steps}
+\end{proof}
+
+\begin{note}
+Every formula above is checked by exact arithmetic. The script is
+\texttt{strip3\_closed\_form.py} in \texttt{odd-torus/ws-W7}. It checks the column and row factors for all
+$\alpha, \beta, \varepsilon$; the sum $(\ast)$ against the closed form for all 12 shapes at $\ell = 3, 5, 7$; and, for
+$\ell = 3$, $(\ast)$ against the coefficient read directly from the expanded polynomial.
+\end{note}
+
+\section{The prism lemma}
+
+The two deleted columns form a \emph{prism}: triangles $u_0u_1u_2$ and $v_0v_1v_2$ joined by the edges $u_tv_t$.
+
+\begin{computed}[two-column lemma; \texttt{ws-W9/prism\_sizes.c}]\label{prism}
+Give $u_0$ a list of size 3 and every other prism vertex a list of size 2 or 3. If the prism has no
+colouring, then $|B_1| = |B_2| = 2$ and $B_1 = B_2$, where $B_t$ is the list of $v_t$.
+\end{computed}
+
+\begin{note}
+Proof by checking every list assignment up to renaming colours (236{,}160{,}170 cases, 8{,}335 not colourable,
+all with $B_1 = B_2$). Amrutanshu has a hand proof of the sharper statement that failure happens exactly
+in two patterns, (Z) and (W); this was also confirmed exhaustively. Merging the hand proof is a to-do.
+\end{note}
+
+\section{The theorem}
+
+\begin{theorem}[Theorem A]\label{thmA}
+$C_3 \T C_n$ is 3-choosable for every $n \ge 3$. Hence $\chi_\ell(C_3 \T C_n) = 3$.
+\end{theorem}
+
+\begin{proof}
+Even $n$: \ref{lspg}. $n = 3$: \ref{galvin}. Let $n \ge 5$ be odd and $|L(v)| = 3$ for all $v$.
+
+\textbf{Case 1: some row list changes.} There are $r, j$ and $\alpha \in L(r, j) \setminus L(r, j+1)$. Name
+columns $C_0 = j, C_1, C_2, C_3$; let $r', r''$ be the other two rows.
+\begin{steps}
+\item Choose $\beta$: if $|L(r', C_2) \cap L(r'', C_2)| = 2$, let $\beta$ be the colour of
+$L(r', C_2) \setminus L(r'', C_2)$; otherwise any colour.
+\item Delete $C_1, C_2$. The rest is a strip of odd length $n - 2 \ge 3$. Pin $(r, C_0)$ to $\alpha$ and forbid
+$\beta$ at $(r', C_3)$. By \ref{strip3} the strip has such a colouring $\psi$.
+\item The prism $C_1 \cup C_2$ gets lists $A_t = L(t, C_1) \setminus \{\psi(t, C_0)\}$ and
+$B_t = L(t, C_2) \setminus \{\psi(t, C_3)\}$. $A_r$ keeps 3 colours since $\alpha \notin L(r, C_1)$.
+\item If the prism fails, \ref{prism} gives $B_{r'} = B_{r''} = E$, a 2-set. Then $L(r', C_2) = E \cup
+\{\psi(r', C_3)\}$ and $L(r'', C_2) = E \cup \{\psi(r'', C_3)\}$, with the two extra colours different (their
+vertices are adjacent in $C_3$). So $\psi(r', C_3)$ is the colour of $L(r', C_2) \setminus L(r'', C_2)$, which is
+$\beta$. But $\beta$ was forbidden there. Contradiction.
+\end{steps}
+
+\textbf{Case 2: no row list changes.} Then every row $r$ has a constant list $A_r$. By \ref{galvin}, colour
+$C_3 \T C_3$ from these row lists; call its columns $X, Y, Z$. They are pairwise compatible (different in
+every row). Colour the columns of $C_3 \T C_n$ as $X, Y, Z, Y, Z, \dots, Y, Z$: since $n$ is odd the last
+column is $Z$, which is compatible with $X$.
+\end{proof}
+
+\begin{cited}[Amrutanshu, kernel method; checked by us]\label{kernel}
+For odd $k$, $C_3 \T C_{3k}$ has a kernel-perfect orientation with all out-degrees 2. Hence it is
+3-choosable and even 3-paintable.
+\end{cited}
+
+\begin{ponder}
+\item Where exactly does the proof of \ref{thmA} use that $n$ is odd? Where does it use $n \ge 5$?
+\item Why can the polynomial method not prove \ref{thmA} on its own, by \ref{lspg}?
+\item In Case 1, why is it enough to forbid a \emph{single} colour $\beta$?
+\end{ponder}
+
+% ======================================================================================
+\chapter{General lemmas for every odd $m$}
+
+From now on $m, n$ are odd and $m \ge 5$. These lemmas are proved by hand and hold for every palette.
+
+\section{Special shapes of lists}
+
+\begin{corollary}[constant rows or columns]\label{rowconst}
+If every row has a constant list, or every column has a constant list, $C_m \T C_n$ is $L$-colourable.
+\end{corollary}
+
+\begin{proof}
+Rows constant, $L(i, j) = A_i$: $C_m \T C_3 \cong C_3 \T C_m$ is 3-choosable by \ref{thmA}; colour it from the
+row lists to get pairwise compatible columns $X, Y, Z$, and use $X, Y, Z, Y, Z, \dots$ as in Case 2.
+Columns constant: the same with rows and columns exchanged.
+\end{proof}
+
+\begin{lemma}[one free row]\label{freerow}
+If all rows except one have the same constant list $A$, $C_m \T C_n$ is $L$-colourable.
+\end{lemma}
+
+\begin{proof}
+Let the free row be $i_0$. The other rows form a path of $m - 1$ rows (an even number, at least 4).
+\begin{steps}
+\item Choose a proper colouring $p$ of this path with values in $\Z_3$ whose two ends are equal:
+$0,1,2,0$ followed by $1,0,1,0,\dots$.
+\item Choose $\sigma_j \in \{+1, -1\}$ with $\sum_j \sigma_j \equiv 0 \pmod 3$ (take $k$ values $+1$ with
+$2k \equiv n$, $k \in \{0,1,2\}$). Let $t_0 = 0$, $t_{j+1} = t_j + \sigma_j$, fix a bijection $\pi : \Z_3 \to A$,
+and colour $(i, j)$ with $\pi(p(i) + t_j)$.
+\item Columns are proper because $p$ is; rows are proper because $\sigma_j \ne 0$. Both neighbours of $(i_0, j)$
+get the same colour $a_j$, so row $i_0$ has lists $L(i_0, j) \setminus \{a_j\}$ of size at least 2.
+\item By \ref{cycle}(a) row $i_0$ can be coloured unless all these lists are one 2-set $B$. Then
+$L(i_0, j) = B \cup \{a_j\}$, and the $a_j$ take at least two values, all outside $B$. Replace $\pi$ by
+$\tau \circ \pi$ for a 3-cycle $\tau$ of $A$: if row $i_0$ still failed, every $\tau(a_j)$ would lie in $B \cap A$,
+forcing $|A \setminus B| \le 1$, which contradicts the two values. \qedhere
+\end{steps}
+\end{proof}
+
+\section{Merging colours}
+
+\begin{lemma}[merging, Lemma M]\label{merge}
+Suppose colours $c$ and $d$ never appear together in one list. Replace $d$ by $c$ in every list, giving
+$L'$ (still lists of size 3). If $G$ is $L'$-colourable, then $G$ is $L$-colourable.
+\end{lemma}
+
+\begin{proof}
+Take an $L'$-colouring. A vertex coloured $c$ had exactly one of $c, d$ in $L(v)$; give it that one. If two
+neighbours now had the same colour, they had the same colour in $L'$ too, which is impossible.
+\end{proof}
+
+\begin{corollary}\label{saturated}
+If $C_m \T C_n$ is not 3-choosable, it has a bad list assignment in which every pair of colours appears
+together in some list. Such an assignment uses at most $k$ colours, where $\binom{k}{2} \le 3mn$. For
+$C_5 \T C_5$ this gives at most 12 colours.
+\end{corollary}
+
+\section{Projection and the sea}
+
+\begin{definition}[colour graph]
+The \emph{colour graph} $K(L)$ has the colours as vertices; two colours are joined if they lie in a common
+list. Every list is a triangle of $K(L)$.
+\end{definition}
+
+\begin{lemma}[projection]\label{projection}
+If $K(L)$ is 3-colourable, $C_m \T C_n$ is $L$-colourable.
+\end{lemma}
+
+\begin{proof}
+Let $\pi$ be a proper 3-colouring of $K(L)$ with values in $\Z_3$; it is one-to-one on every list. Let $\psi$
+be a proper 3-colouring of the torus with values in $\Z_3$ (\ref{sabidussi}). Give $v$ the unique $c \in L(v)$
+with $\pi(c) = \psi(v)$. Neighbours have different $\psi$, hence different $\pi$-values, hence different colours.
+\end{proof}
+
+\begin{lemma}[sea lemma]\label{sea}
+Let $X$ be a set of 3 colours. Call $v$ a \emph{defect} if $L(v) \ne X$, and let $O(v) = L(v) \setminus X$
+(never empty for a defect). Suppose there is a set $T$ of defects such that
+\begin{enumerate}[label=(\alph*),nosep]
+\item the defects not in $T$ can be properly coloured using only their colours $O(v)$;
+\item $T$ has at most one vertex in each column;
+\item every $v \in T$ has exactly one colour outside $X$, so $L(v) \cap X$ misses exactly one colour $\phi_v$ of $X$;
+\item it is not the case that $T$ meets every column, lies in a single row, and has all $\phi_v$ equal.
+\end{enumerate}
+Then $C_m \T C_n$ is $L$-colourable. (The same holds with ``column'' and ``row'' exchanged in (b) and (d).)
+\end{lemma}
+
+\begin{proof}
+Identify $X$ with $\Z_3$. Use a \emph{sum colouring} $\psi(i, j) = f(i) + g(j)$, where $f$ is a proper colouring
+of $C_m$ and $g$ a proper colouring of $C_n$; it is a proper 3-colouring of the torus.
+\begin{steps}
+\item Vertices with list $X$ get $\psi(v)$. Defects not in $T$ get their colour from (a): they never clash with
+$X$-coloured vertices, and not with each other.
+\item A vertex $v = (i, j) \in T$ gets $\psi(v)$, which needs $\psi(v) \ne \phi_v$, that is, $g(j) \ne \phi_v - f(i)$. By (b)
+each column loses at most one value for $g$.
+\item So $g$ must colour the odd cycle $C_n$ from lists of size 2 or 3. By \ref{cycle} this works unless every column
+has a $T$-vertex and the values $\phi_v - f(i_v)$ are all equal.
+\item If $T$ uses two rows $i_1 \ne i_2$, change $f$: proper colourings of $C_m$ realise both nonzero values of
+$f(i_1) - f(i_2)$ (all three if the rows are not adjacent), so the values can be made unequal. If $T$ uses a single
+row, equality means all $\phi_v$ are equal, which (d) excludes. \qedhere
+\end{steps}
+\end{proof}
+
+\begin{note}
+\ref{projection} and \ref{sea} combine: replace ``list equal to $X$'' by ``list mapped one-to-one onto $\Z_3$ by a
+fixed $\pi$''. The proofs are the same.
+\end{note}
+
+\begin{ponder}
+\item In \ref{merge}, what goes wrong if $c$ and $d$ share a list?
+\item Explain how the idea of \ref{projection} contains the case ``all lists equal''.
+\item Find an assignment where \ref{sea} applies but \ref{projection} does not, and one where the reverse holds.
+\item Why is hypothesis (b) of \ref{sea} needed?
+\end{ponder}
+
+% ======================================================================================
+\chapter{The case $m = 5$: what is proved}
+
+\section{Results by computation}
+
+\begin{computed}[edge deletion; \texttt{ws-W4}]\label{edgedel}
+For $m \in \{5, 7\}$ and every odd $n$: $C_m \T C_n$ minus any edge is 3-choosable. Consequently, in a bad list
+assignment of $C_5 \T C_n$, every edge has overlapping lists, and every colour of every list also appears in a
+neighbour's list.
+\end{computed}
+
+\begin{computed}[strip lemma, $m = 5$; \texttt{ws-W7/prove\_strip5.py}]\label{strip5}
+For 74 shapes (a pin on one row of one end, three single units elsewhere), the strip coefficient of
+$C_5 \T P_\ell$ is nonzero for every odd $\ell \ge 3$.
+\end{computed}
+
+\begin{note}
+Method: the coefficients for odd $\ell$ satisfy an exact linear recurrence of order 6 (from the minimal
+polynomial of a $30 \times 30$ transfer matrix). For each shape the largest root has a nonzero weight and
+dominates from $\ell = 3$ on, with certified error bounds.
+\end{note}
+
+\begin{computed}[Theorem B; \texttt{ws-W8/alln\_q4.py}]\label{thmB}
+For every odd $n$, $C_5 \T C_n$ is $L$-colourable whenever all lists are drawn from a palette of 4 colours.
+\end{computed}
+
+\begin{note}
+Outline: every 4-colour two-column window was judged exhaustively; ``every cut fails'' becomes a closed walk
+in a finite graph (262{,}144 states); every part of that graph carrying an odd closed walk consists of a special
+shape handled by \ref{rowconst} or \ref{freerow}.
+\end{note}
+
+\begin{computed}[no small counterexample; \texttt{ws-W2/certify.py}]\label{c5c5}
+$C_5 \T C_5$ has no bad list assignment from a palette of 4 colours (certified SAT result).
+\end{computed}
+
+\section{The hole cut}
+
+Instead of deleting whole columns, delete a $3 \times 2$ \emph{block}: rows $t-1, t, t+1$ and columns $j, j+1$.
+Name the block vertices and the 10 \emph{border} vertices as in the picture.
+
+\begin{center}
+\begin{tikzpicture}[v/.style={circle,draw,minimum size=17pt,inner sep=0pt,font=\scriptsize},b/.style={v,fill=gray!15}]
+  \node[v,fill=cac!15] (aL) at (1,0) {aL}; \node[v,fill=cac!15] (bL) at (1,-1) {bL}; \node[v,fill=cac!15] (cL) at (1,-2) {cL};
+  \node[v,fill=cac!15] (aR) at (2,0) {aR}; \node[v,fill=cac!15] (bR) at (2,-1) {bR}; \node[v,fill=cac!15] (cR) at (2,-2) {cR};
+  \node[b] (p1) at (0,0) {p1}; \node[b] (p2) at (0,-1) {p2}; \node[b] (p3) at (0,-2) {p3};
+  \node[b] (s1) at (3,0) {s1}; \node[b] (s2) at (3,-1) {s2}; \node[b] (s3) at (3,-2) {s3};
+  \node[b] (q2) at (1,1) {q2}; \node[b] (r2) at (2,1) {r2};
+  \node[b] (q1) at (1,-3) {q1}; \node[b] (r1) at (2,-3) {r1};
+  \draw (aL)--(bL)--(cL); \draw (aR)--(bR)--(cR); \draw (aL)--(aR); \draw (bL)--(bR); \draw (cL)--(cR);
+  \draw (p1)--(aL); \draw (p2)--(bL); \draw (p3)--(cL); \draw (s1)--(aR); \draw (s2)--(bR); \draw (s3)--(cR);
+  \draw (q2)--(aL); \draw (r2)--(aR); \draw (q1)--(cL); \draw (r1)--(cR);
+  \draw[gray] (p1)--(p2)--(p3); \draw[gray] (s1)--(s2)--(s3); \draw[gray] (q1)--(r1); \draw[gray] (q2)--(r2);
+  \node[font=\scriptsize,align=left] at (6.2,-1) {q1, r1: row $t+2$; \ q2, r2: row $t+3 = t-2$.\\ q1 and q2 are adjacent (the column wraps\\ around), and so are r1 and r2.};
+\end{tikzpicture}
+\end{center}
+
+By \ref{spareroom}(c) the rest of the torus has exactly 5 units of spare room. Since $n \ge 5$, the 10 edges
+leaving the block go to 10 distinct border vertices, each with exactly one neighbour in the block; the 5 units
+are spent on the border, and by \ref{adjpins} no two adjacent border vertices are both pinned.
+
+\begin{computed}[hole coefficients; \texttt{ws-W14/hole\_coeff.py}, \texttt{hole\_prove.py}]\label{holecoef}
+For 1{,}256 of the 1{,}388 ways of placing 5 units on the border (no two adjacent pins), the coefficient for
+$C_5 \T C_n$ minus the block is nonzero for every odd $n \ge 5$.
+\end{computed}
+
+\begin{note}
+Checked two ways: on the full torus the same code gives $\operatorname{tr}(T^n) = 0$ for odd $n$ and a nonzero
+value for even $n$, as \ref{lspg} predicts; and 1{,}800 random list assignments matching nonzero coefficients
+were all colourable.
+\end{note}
+
+\begin{lemma}[block-fill criterion]\label{blockfill}
+After the border is coloured, suppose block vertex $u$ has lost $\ell_u$ of its colours. The block can be
+filled if, for every set $S$ of block vertices,
+\[ \sum_{u \in S} \ell_u \;\le\; 2|S| - e(S), \]
+where $e(S)$ is the number of block edges with both ends in $S$.
+\end{lemma}
+
+\begin{proof}
+The block is bipartite. By \ref{hakimi} the condition gives an orientation with
+$\text{outdeg}(u) \le 2 - \ell_u = |L'(u)| - 1$. By the Note after \ref{at}, this orientation satisfies \ref{at}.
+\end{proof}
+
+\begin{lemma}[merging inside a hole]\label{holemerge}
+Let the adversary choose border colours without respecting the edges between border vertices. If two
+colours never share one of the 16 lists of a hole, merging them can only turn a working strategy into a
+working strategy for the original. Hence a failing hole stays failing after merging, and every failing hole
+comes from one using at most 10 colours.
+\end{lemma}
+
+\begin{proof}
+As in \ref{merge}: strategies, adversary moves and fills transfer through the merge, and a forbidden colour
+cannot be dodged by its partner because the two never share a list. For the bound, $\binom{k}{2} \le 16 \cdot 3$.
+\end{proof}
+
+\begin{computed}[isolated block; \texttt{ws-W14/block\_types\_allowed.c}]\label{isoblock}
+If a $3 \times 2$ block has all six lists equal to $X$ and all ten border lists different from $X$, then
+$C_5 \T C_n$ is $L$-colourable (every odd $n \ge 5$, every palette).
+\end{computed}
+
+\begin{note}
+Only ``which colours of $X$ a border list contains'' matters for the fill, so the check is independent of the
+palette: all $7^{10}$ border types (11{,}790{,}389 up to symmetry) have a strategy using only placements from
+\ref{holecoef}.
+\end{note}
+
+\section{Seams}
+
+\begin{definition}[piecewise row-constant]
+An assignment is \emph{piecewise row-constant} if the columns split into consecutive blocks, each of at least
+3 columns, such that inside block $i$ row $r$ has a constant list $A^i_r$. A \emph{seam} is the boundary between
+two blocks.
+\end{definition}
+
+\begin{lemma}[seam lemma, light overlap]\label{seam}
+Let $L$ be piecewise row-constant and suppose that at every seam between blocks $i$ and $i+1$,
+$\sum_r |A^i_r \cap A^{i+1}_r| \le 8$. Then $C_5 \T C_n$ is $L$-colourable.
+\end{lemma}
+
+\begin{proof}
+\begin{steps}
+\item For each block, colour $C_5 \T C_3$ from its row lists (\ref{thmA}). Its columns $X^i, Y^i, Z^i$ are pairwise
+compatible, and row $r$ uses each colour of $A^i_r$ exactly once.
+\item At a seam, pair a column $P$ of block $i$ with a column $Q$ of block $i+1$ (9 pairs). A common colour
+$c \in A^i_r \cap A^{i+1}_r$ is at row $r$ of exactly one $P$ and one $Q$, so it spoils exactly one pair. At most 8 pairs
+are spoiled, so some pair $(P, Q)$ is compatible.
+\item Inside a block of $\ell \ge 3$ columns, use a sequence of its three columns with neighbours different: a walk
+of $\ell - 1 \ge 2$ steps on a triangle, which can start and end at any prescribed corners.
+\item Each seam uses its compatible pair and each block joins its two ends, so every edge is proper. \qedhere
+\end{steps}
+\end{proof}
+
+\begin{ponder}
+\item Count again: why does deleting the block remove exactly 17 edges?
+\item In \ref{blockfill}, take $S$ to be the whole block. What does the condition say?
+\item Where does the proof of \ref{seam} use that blocks have at least 3 columns?
+\item In \ref{isoblock}, why does a border list different from $X$ always contain a colour outside $X$?
+\end{ponder}
+
+% ======================================================================================
+\chapter{The case $m = 5$: the remaining gap}
+
+\section{The reduction}
+
+Call a hole \emph{failing} if no strategy from \ref{holecoef} works against every adversary. If some hole does
+not fail, the torus is coloured. So it is enough to understand assignments in which \emph{every} hole fails.
+
+\begin{definition}[local sea, local seam]
+A hole is a \emph{local sea} if its 16 lists satisfy the hypotheses of \ref{sea} (with the Note), read inside the
+hole. It is a \emph{local seam} if, inside the hole, every row is constant on each side of one column boundary.
+\end{definition}
+
+\begin{verified}[\texttt{ws-W14/i2\_test.py}]\label{I2}
+Every failing hole is a local sea or a local seam. (646 failing holes tested: 119 sea only, 98 seam only, 429
+both, 0 neither.)
+\end{verified}
+
+\begin{openq}[gluing]\label{glue}
+If every hole of $C_5 \T C_n$ is a local sea or a local seam, then the whole assignment satisfies \ref{sea} (with
+the Note), or is piecewise row-constant, or is one of the shapes of \ref{rowconst}.
+\end{openq}
+
+\begin{openq}[seam lemma, heavy overlap]\label{heavy}
+\ref{seam} without the overlap condition.
+\end{openq}
+
+\begin{verified}[\texttt{ws-W16/seam\_test.py}]\label{heavyev}
+For two blocks with heavy overlap (390 tests with overlap at least 9), suitable column triples with a compatible
+pair always exist.
+\end{verified}
+
+\begin{center}
+\fbox{\begin{minipage}{0.9\textwidth}
+\textbf{3-choosability of $C_5 \T C_n$ (odd $n$) would follow from:} a proof of \ref{I2} for every palette (by
+\ref{holemerge} it is enough to treat holes with at most 10 colours), plus \ref{glue}, plus \ref{heavy}. Everything
+else used is proved above.
+\end{minipage}}
+\end{center}
+
+\section{Plan for each gap}
+
+\begin{itemize}[itemsep=0.3em]
+\item \textbf{\ref{heavy}.} Given a column $P$ of block $i$, a compatible column $Q$ of block $i+1$ exists by
+\ref{cycle}. $Q$ extends to a triple when the flip constraints between neighbouring rows (rows sharing a leftover
+colour must swap it) are consistent around the 5-cycle; they are whenever two neighbouring rows share no leftover
+colour. Remaining: the fully constrained case, and closing up around all blocks.
+\item \textbf{\ref{glue}.} Neighbouring holes share most vertices and failing holes have at most 4 defects (in 502 of
+509 tests), so their sets $X$ agree; every column lies inside one hole, so the ``one $T$-vertex per column'' rule is
+checked locally. Remaining: long chains of defects, and regions where seas meet seams.
+\item \textbf{\ref{I2}.} By \ref{holemerge} only holes with at most 10 colours matter, and \ref{blockfill} turns the fill
+into counting losses. Remaining: a case analysis by how much each border list shares with its block neighbour's list
+(one colour: one forbid neutralises it; two colours: pin it to its third colour; all three: it cannot be neutralised).
+\end{itemize}
+
+\begin{ponder}
+\item Explain why ``every hole fails'' is the only case left, given \ref{holecoef}.
+\item Why does \ref{holemerge} need the adversary to ignore the edges between border vertices?
+\item Give an example of a failing hole that is a seam but not a sea. (See Chapter 6.)
+\end{ponder}
+
+% ======================================================================================
+\chapter{What did not work, and why}
+
+These are dead ends we checked; they explain the shape of the reduction.
+
+\begin{enumerate}[itemsep=0.4em]
+\item \textbf{Two-column cuts with one shape.} Amrutanshu's shape (pin, then forbid at the far side outside two rows
+$p, q$ with $2r \not\equiv p + q$) fails on 6{,}904 of the $4^{10}$ four-colour windows. All 74 shapes, cuts in both
+directions and \ref{freerow} were needed for \ref{thmB}.
+\item \textbf{Bad windows are not ``mostly constant'' in a simple count.} The guess ``at least 7 of 10 lists are equal''
+is false (3 counterexamples). Every bad window found has at least 3 rows whose two lists are equal.
+\item \textbf{No short list of prism failures for 5-cycles.} Unlike \ref{prism}, failures of the $C_5 \T K_2$ fill come in many
+shapes.
+\item \textbf{Three-column cuts and double pins.} Better on generic lists, but they also fail on nearly constant lists.
+\item \textbf{Nearly constant lists beat every local cut.} This is why \ref{sea}, \ref{seam} and \ref{isoblock} exist: such
+lists must be coloured by a global pattern.
+\item \textbf{A failing hole need not be a sea.} The seam below fails as a hole (each row read left to right):
+\end{enumerate}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{lcccc}
+\toprule
+row & column $j-1$ & $j$ & $j+1$ & $j+2$\\
+\midrule
+$t+3$ & & 013 & 014 & \\
+$t-1$ & 013 & 013 & 014 & 014\\
+$t$ & 123 & 123 & 012 & 012\\
+$t+1$ & 134 & 134 & 013 & 013\\
+$t+2$ & & 134 & 013 & \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{ponder}
+\item In the table, check that every row is constant on each side of the boundary between $j$ and $j+1$.
+\item Why does a hole placed exactly on a seam give the adversary full control of the border?
+\end{ponder}
+
+% ======================================================================================
+\chapter{Summary and plan}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{4.2cm}p{9.5cm}}
+\toprule
+$m$ or $n$ even & \ref{lspg} (known)\\
+$C_3 \T C_n$ & \ref{thmA} (proved; one finite lemma by exhaustive check)\\
+$C_5 \T C_n$, palette 4 & \ref{thmB} (computer-assisted)\\
+$C_5 \T C_n$, any palette & reduced to \ref{I2}, \ref{glue} and \ref{heavy}\\
+all odd $m$ & lemmas of Chapter 4 hold for all odd $m$; strip and hole coefficients only for $m = 5$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Order of work.}
+\begin{enumerate}[nosep]
+\item This week: submit \ref{thmA} (merge the hand proof of \ref{prism}; literature check).
+\item Next: \ref{heavy} (closest to done), then \ref{glue}, then \ref{I2}.
+\item After $m = 5$: a strip lemma uniform in $m$; decide by mid-December whether to do $m = 7$ by computer.
+\end{enumerate}
+
+% ======================================================================================
+\appendix
+\chapter{Where every computation lives}\label{app:scripts}
+
+All paths are inside \texttt{\textasciitilde/work/gt/odd-torus/}.
+
+\begin{center}\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{p{4.6cm}p{5.4cm}p{4cm}}
+\toprule
+Result & Script & Output\\
+\midrule
+\ref{strip3} (closed form check) & \texttt{ws-W1/strip\_coeff.py}, \texttt{compare.py} & 0 mismatches in 500\\
+\ref{prism} & \texttt{ws-W9/prism\_sizes.c}, \texttt{prism.c} & 0 exceptions\\
+\ref{freerow} (construction) & \texttt{ws-W9/freerow\_check.py} & 0 failures in 20{,}000\\
+\ref{edgedel} & \texttt{ws-W4/} & see \texttt{REPORT.md}\\
+\ref{strip5} & \texttt{ws-W7/prove\_strip5.py} & 148 cases\\
+\ref{thmB} & \texttt{ws-W8/alln\_q4.py}, \texttt{validate\_shapes.py} & 81 components; 40 of 40 agree\\
+\ref{c5c5} & \texttt{ws-W2/certify.py} & UNSAT, certified\\
+\ref{holecoef} & \texttt{ws-W14/hole\_coeff.py}, \texttt{hole\_prove.py}, \texttt{hole\_check.py} & 1{,}256 placements\\
+\ref{isoblock} & \texttt{ws-W14/block\_types\_allowed.c} & 0 without strategy\\
+\ref{sea} (construction) & \texttt{ws-W15/sea\_check.py} & 3{,}810 of 3{,}810\\
+\ref{I2} & \texttt{ws-W14/i2\_test.py} & 0 neither\\
+\ref{heavyev} & \texttt{ws-W16/seam\_test.py} & 0 failures in 390\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{thebibliography}{LSPG}
+\bibitem[Alon]{Alon} N.~Alon, Combinatorial Nullstellensatz, \emph{Combin. Probab. Comput.} 8 (1999), 7-29.
+\bibitem[AT]{AT} N.~Alon and M.~Tarsi, Colorings and orientations of graphs, \emph{Combinatorica} 12 (1992), 125-134.
+\bibitem[Bor]{Bor} O.~V.~Borodin, Criteria of chromaticity of a degree prescription (in Russian), \emph{Abstracts of IV
+All-Union Conf. on Theoretical Cybernetics} (1977), 127-128.
+\bibitem[CWZ]{CWZ} L.~Cai, W.~Wang and X.~Zhu, Choosability of toroidal graphs without short cycles, \emph{J. Graph
+Theory} 65 (2010), 1-15.
+\bibitem[ERT]{ERT} P.~Erd\H{o}s, A.~L.~Rubin and H.~Taylor, Choosability in graphs, \emph{Congr. Numer.} 26 (1979),
+125-157.
+\bibitem[Gal]{Gal} F.~Galvin, The list chromatic index of a bipartite multigraph, \emph{J. Combin. Theory Ser. B} 63
+(1995), 153-158.
+\bibitem[Hak]{Hak} S.~L.~Hakimi, On the degrees of the vertices of a directed graph, \emph{J. Franklin Inst.} 279 (1965),
+290-308.
+\bibitem[KP]{KP} R.~N.~Karasev and F.~V.~Petrov, Partitions of nonzero elements of a finite field into pairs,
+\emph{Israel J. Math.} 192 (2012), 143-156.
+\bibitem[Lason]{Lason} M.~Laso\'n, A generalization of Combinatorial Nullstellensatz, \emph{Electron. J. Combin.} 17
+(2010), \#N32.
+\bibitem[LSPG]{LSPG} Z.~Li, Z.~Shao, F.~Petrov and A.~Gordeev, The Alon--Tarsi number of a toroidal grid,
+\emph{European J. Combin.} 111 (2023), 103697.
+\bibitem[Sab]{Sab} G.~Sabidussi, Graphs with given group and given graph-theoretical properties, \emph{Canad. J. Math.}
+9 (1957), 515-525.
+\end{thebibliography}
+
+\end{document}

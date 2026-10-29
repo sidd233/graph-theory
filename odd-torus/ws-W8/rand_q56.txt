@@ -1,0 +1,3 @@
+palette 5: 20000 random windows, 0 bad
+palette 5: 20000 random windows, 0 bad
+palette 6: 20000 random windows, 0 bad

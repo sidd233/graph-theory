@@ -1,0 +1,563 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{tikz}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage[hidelinks]{hyperref}
+
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{citedtheorem}[theorem]{Cited Theorem}
+\newtheorem{maintheorem}{Theorem}
+\renewcommand{\themaintheorem}{\Alph{maintheorem}}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{computation}[theorem]{Computation}
+\newtheorem{problem}[theorem]{Open Problem}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\T}{\mathbin{\square}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\why}[1]{\unskip\ \textit{[#1]}}
+\newenvironment{steps}{\begin{enumerate}[label=(\arabic*),leftmargin=2.2em,itemsep=0.35em]}{\end{enumerate}}
+
+\title{The Toroidal Grid $C_3 \T C_n$ Is 3-Choosable\\for Every $n$}
+\author{Amrutanshu \and Siddharth Narayan Mishra}
+\date{Draft, 28 October 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Cai, Wang and Zhu conjectured that every toroidal grid $C_m \T C_n$ is 3-choosable. Li, Shao,
+Petrov and Gordeev proved this when $m$ or $n$ is even, and showed that the Alon--Tarsi number
+of $C_m \T C_n$ is $4$ when $m$ and $n$ are both odd, so that the Alon--Tarsi method cannot
+reach the remaining case. We prove that $C_3 \T C_n$ is 3-choosable for every odd $n$. Hence
+$\chi_\ell(C_3 \T C_n) = 3$ for every $n \ge 3$. The proof cuts the torus open along two columns,
+colours the remaining strip with the Combinatorial Nullstellensatz while pinning one colour and
+forbidding one other, and then fills the two columns by hand; the forbidden colour is chosen in
+advance so that the fill cannot fail. We also record a second, kernel-method proof for the
+family $n = 3k$, $k$ odd, and what is known so far for $C_m \T C_n$ with $m, n \ge 5$ odd.
+\end{abstract}
+
+\begin{center}
+\fbox{\begin{minipage}{0.93\textwidth}\small
+\textbf{Status of this draft.} Every step of the proof of Theorem~A is either proved in full
+here or is a finite statement checked by exhaustive computation over all list assignments up to
+renaming of colours (Lemma~\ref{lem:prism}). The scripts are listed in
+Section~\ref{sec:verification}. Still to do before submission: (i) a hand proof of
+Lemma~\ref{lem:prism} (Amrutanshu's prism lemma has one, by Hall's theorem, to be merged);
+(ii) a full literature check of the papers citing [LSPG] and of the dynamic survey [S], to
+confirm that the odd case of $C_3 \T C_n$ is not already settled.
+\end{minipage}}
+\end{center}
+
+%=====================================================================================
+\section{Introduction}
+
+All graphs are finite and simple. A \emph{list assignment} $L$ of a graph $G$ gives each vertex
+$v$ a set $L(v)$ of colours. An \emph{$L$-colouring} is a proper colouring $c$ with $c(v) \in L(v)$
+for every $v$. The graph $G$ is \emph{$k$-choosable} if it has an $L$-colouring whenever
+$|L(v)| \ge k$ for all $v$, and the \emph{choice number} $\chi_\ell(G)$ is the least such $k$.
+
+For $m, n \ge 3$ the \emph{toroidal grid} $C_m \T C_n$ has vertex set $\Z_m \times \Z_n$, and
+$(i, j)$ is adjacent to $(i \pm 1, j)$ and to $(i, j \pm 1)$. We call $i$ the \emph{row} and $j$
+the \emph{column}. Column $j$ induces a cycle of length $m$; row $i$ induces a cycle of length
+$n$. When $m = 3$ every column is a triangle, so $\chi_\ell(C_3 \T C_n) \ge 3$.
+
+\begin{citedtheorem}[{Li, Shao, Petrov and Gordeev [LSPG]}]\label{thm:lspg}
+If $m$ or $n$ is even then $C_m \T C_n$ is 3-choosable. If $m$ and $n$ are both odd then the
+Alon--Tarsi number of $C_m \T C_n$ equals $4$.
+\end{citedtheorem}
+
+So for odd $m, n$ the conjecture of Cai, Wang and Zhu [CWZ] is open, and the polynomial method
+on its own cannot settle it. The smallest case $C_3 \T C_3 = K_3 \T K_3$ is the line graph of
+$K_{3,3}$, and Galvin's theorem [G] shows that it is 3-choosable.
+
+\begin{maintheorem}\label{thm:main}
+For every odd $n \ge 3$ the toroidal grid $C_3 \T C_n$ is 3-choosable. Consequently
+$\chi_\ell(C_3 \T C_n) = 3$ for every $n \ge 3$.
+\end{maintheorem}
+
+The second sentence follows from the first, from Cited Theorem~\ref{thm:lspg} for even $n$, and
+from the triangles. The case $n = 3$ is Galvin's theorem. For odd $n \ge 5$ the proof is in
+Section~\ref{sec:proof}. It uses two tools: an \emph{odd strip lemma} (Section~\ref{sec:strip}),
+proved with the Combinatorial Nullstellensatz, and a \emph{two-column lemma} for the triangular
+prism (Section~\ref{sec:prism}).
+
+%=====================================================================================
+\section{Tools from the polynomial method}
+
+For a graph $G$ with an orientation of its edges, the \emph{graph polynomial} is
+$P_G = \prod_{(u,v)} (x_u - x_v)$, the product over all arcs.
+
+\begin{citedtheorem}[Combinatorial Nullstellensatz, Alon {[A]}]\label{thm:cn}
+Let $P \in \mathbb{F}[x_1, \dots, x_N]$ have degree $\sum_i t_i$, and suppose the coefficient of
+$\prod_i x_i^{t_i}$ in $P$ is nonzero. If $S_1, \dots, S_N \subseteq \mathbb{F}$ with
+$|S_i| > t_i$, then some $s \in S_1 \times \dots \times S_N$ has $P(s) \ne 0$.
+\end{citedtheorem}
+
+Applied to $P_G$ with $|L(v)| \ge t_v + 1$ (colours viewed as complex numbers), a point where
+$P_G \ne 0$ is an $L$-colouring.
+
+\begin{citedtheorem}[Coefficient formula, Lasoń {[La]}, Karasev and Petrov {[KP]}]\label{thm:coef}
+Let $P$ have degree $\sum_i t_i$ and let $A_i \subseteq \mathbb{F}$ with $|A_i| = t_i + 1$. Put
+$\varphi_i(z) = \prod_{b \in A_i} (z - b)$. Then
+\[
+[x_1^{t_1} \cdots x_N^{t_N}]\, P \;=\; \sum_{a \in A_1 \times \dots \times A_N}
+\frac{P(a)}{\varphi_1'(a_1) \cdots \varphi_N'(a_N)} .
+\]
+\end{citedtheorem}
+
+Throughout, $\omega = e^{2\pi i/3}$ and
+\[
+g \;=\; 3(\omega - \omega^2) \;=\; 3 i \sqrt3, \qquad g^2 = -27 .
+\]
+A direct expansion gives $(1-\omega)^3 = -3\omega + 3\omega^2 = -g$ and
+$(1-\omega^2)^3 = 3\omega - 3\omega^2 = g$. Define $\chi : \Z_3 \to \{0, \pm 1\}$ by
+$\chi(0) = 0$, $\chi(1) = -1$, $\chi(2) = 1$. Then
+\begin{equation}\label{eq:chi}
+(1 - \omega^d)^3 = g\,\chi(d) \qquad (d \in \Z_3).
+\end{equation}
+
+%=====================================================================================
+\section{The odd strip lemma}\label{sec:strip}
+
+For $\ell \ge 2$ let $H_\ell = C_3 \T P_\ell$, with vertex set $\Z_3 \times \{1, \dots, \ell\}$:
+each column is a triangle and row $i$ is the path $(i,1), \dots, (i,\ell)$. It has $3\ell$
+vertices, $3\ell$ column edges and $3(\ell - 1)$ row edges, so $6\ell - 3$ edges.
+
+An \emph{end weight} is a map $\mu : V(H_\ell) \to \{0, 1, 2\}$, zero outside columns $1$ and
+$\ell$, with $\sum_v \mu(v) = 3$. Put
+\[
+k = \sum_{i} \mu(i, \ell), \qquad s = \sum_{v} \mu(v)\, \mathrm{row}(v) \bmod 3 .
+\]
+
+\begin{lemma}[Odd strip lemma]\label{lem:strip}
+Let $\ell \ge 3$ be odd and let $\mu$ be an end weight with $k \in \{1, 2\}$ and $s \not\equiv 0
+\pmod 3$. Then $H_\ell$ has an $L$-colouring for every list assignment with
+$|L(v)| \ge 3 - \mu(v)$ for all $v$.
+\end{lemma}
+
+So one may \emph{pin} a vertex of weight $2$ (list of size $1$) and \emph{forbid} one colour at a
+vertex of weight $1$ (list of size $2$).
+
+\begin{proof}
+Orient each column edge $(i, c) \to (i+1, c)$ and each row edge $(i, c) \to (i, c+1)$, and let
+$P$ be the graph polynomial. Put $t_v = 2 - \mu(v) \ge 0$. Then $\sum_v t_v = 6\ell - 3 = \deg P$,
+so by Cited Theorem~\ref{thm:cn} it suffices to show that
+$c_\mu := [\prod_v x_v^{t_v}]\, P \ne 0$.
+
+\begin{steps}
+\item \emph{Reduction to cube roots.} Let $Q = P \cdot \prod_v x_v^{\mu(v)}$. Then
+$\deg Q = 6\ell$ and $c_\mu = [\prod_v x_v^2]\, Q$. Apply Cited Theorem~\ref{thm:coef} to $Q$
+with every $t_v = 2$ and every $A_v = \{1, \omega, \omega^2\}$. Here $\varphi(z) = z^3 - 1$ and
+$\varphi'(a) = 3a^2 = 3a^{-1}$ for $a^3 = 1$. Hence
+\[
+c_\mu = 3^{-3\ell} \sum_{\phi} P(\phi) \prod_v \phi(v)^{1 + \mu(v)},
+\]
+summed over all maps $\phi : V(H_\ell) \to \{1, \omega, \omega^2\}$.
+
+\item \emph{Column states.} $P(\phi) = 0$ unless $\phi$ is proper, and in particular unless
+$\phi$ is injective on every column. The bijections $\Z_3 \to \Z_3$ are exactly the six maps
+$i \mapsto a + \varepsilon i$ with $a \in \Z_3$, $\varepsilon = \pm 1$. So the contributing
+$\phi$ have the form $\phi(i, c) = \omega^{a_c + \varepsilon_c i}$.
+
+\item \emph{Column edges.} For one column,
+$\prod_{i \in \Z_3} (\omega^{a + \varepsilon i} - \omega^{a + \varepsilon (i+1)})
+= \omega^{3a + 3\varepsilon}(1 - \omega^\varepsilon)^3 = (1 - \omega^{\varepsilon})^3
+= -\varepsilon g$.
+
+\item \emph{Row edges.} Take columns $c, c+1$ with states $(a, \varepsilon)$ and
+$(b, \varepsilon')$. If $\varepsilon' = -\varepsilon$, the colours of $(i, c)$ and $(i, c+1)$
+agree when $a + \varepsilon i \equiv b - \varepsilon i$, that is, for $i \equiv 2\varepsilon (b -
+a)$. So some row edge has equal ends and the product is $0$. If $\varepsilon' = \varepsilon$,
+the product over the three row edges is
+$\prod_i \omega^{a + \varepsilon i}(1 - \omega^{b - a}) = (1 - \omega^{b-a})^3
+= g\,\chi(b - a)$ by \eqref{eq:chi}. Hence $\varepsilon_c = \varepsilon$ is constant, and with
+$d_c = a_{c+1} - a_c$,
+\[
+P(\phi) = (-\varepsilon g)^{\ell} \, g^{\ell - 1} \prod_{c=1}^{\ell - 1} \chi(d_c).
+\]
+
+\item \emph{Vertex weights.} In column $c$, $\sum_i (a_c + \varepsilon i) = 3a_c + 3\varepsilon
+\equiv 0$, and $\sum_i (a_c + \varepsilon i)\mu(i,c) = a_c M_c + \varepsilon R_c$ with
+$M_c = \sum_i \mu(i,c)$ and $R_c = \sum_i i\,\mu(i,c)$. Now $M_1 = 3 - k$, $M_\ell = k$, the other
+$M_c$ vanish, and $R_1 + R_\ell \equiv s$. Since $3a_1 \equiv 0$,
+\[
+\prod_v \phi(v)^{1 + \mu(v)} = \omega^{k (a_\ell - a_1) + \varepsilon s}.
+\]
+
+\item \emph{Summation.} The map $(a_1, \dots, a_\ell) \mapsto (a_1, d_1, \dots, d_{\ell-1})$ is a
+bijection and $a_\ell - a_1 = \sum_c d_c$. So
+\[
+c_\mu = 3^{-3\ell}\, g^{2\ell - 1} \Big(\sum_{\varepsilon = \pm 1} (-\varepsilon)^{\ell}
+\omega^{\varepsilon s}\Big) \cdot 3 \Big(\sum_{d \in \Z_3} \chi(d)\,\omega^{kd}\Big)^{\ell - 1}.
+\]
+For odd $\ell$ the first bracket is $\omega^{-s} - \omega^{s} = \omega^{2s} - \omega^{s}$, which is
+nonzero because $s \not\equiv 0$. The second bracket is $\mu_k := \omega^{2k} - \omega^{k}$,
+which is nonzero because $k \not\equiv 0 \pmod 3$. Since $g \ne 0$, $c_\mu \ne 0$. \qedhere
+\end{steps}
+\end{proof}
+
+\begin{remark}
+Simplifying with $g^2 = -27$ gives $c_\mu = \tfrac{g}{9}\, \mu_k^{\ell - 1}(\omega^{2s} -
+\omega^{s}) = \pm 3^{(\ell-1)/2}$ for odd $\ell$, $k \in \{1,2\}$, $s \not\equiv 0$. This closed
+form (for every $\ell \ge 2$ and every end weight) was checked against three independent exact
+computations for $\ell$ from $2$ to $11$, with no mismatch (script \texttt{ws-W1}). The lemma and
+the computation first appear in Amrutanshu's notes; the proof above is the one we re-derived.
+\end{remark}
+
+%=====================================================================================
+\section{The two-column lemma}\label{sec:prism}
+
+The \emph{prism} $\Pi = K_3 \T K_2$ has two triangles $u_0u_1u_2$ and $v_0v_1v_2$ and the three
+edges $u_tv_t$.
+
+\begin{lemma}[Two-column lemma]\label{lem:prism}
+Let $A_0, A_1, A_2, B_0, B_1, B_2$ be lists for $u_0, u_1, u_2, v_0, v_1, v_2$ with $|A_0| = 3$
+and every other list of size $2$ or $3$. If $\Pi$ has no colouring from these lists, then
+$|B_1| = |B_2| = 2$ and $B_1 = B_2$.
+\end{lemma}
+
+\begin{proof}[Proof (exhaustive computation)]
+Colourability does not change when colours are renamed. Read the lists in the order $A_0, A_1,
+A_2, B_0, B_1, B_2$ and rename colours in order of first appearance. Afterwards $A_0 = \{0, 1,
+2\}$, and each later list consists of some colours already used together with an initial segment
+$u, u+1, \dots$ of the unused ones, where $u$ is the number of colours used so far. The program
+\texttt{prism\_sizes.c} enumerates all $236\,160\,170$ assignments of this normal form, decides
+colourability of each by complete search, and finds $8\,335$ that are not colourable. All of them
+have $|B_1| = |B_2| = 2$ and $B_1 = B_2$.
+\end{proof}
+
+\begin{remark}[Amrutanshu's prism lemma]
+For sizes exactly $(3,2,2,2,2,2)$ the non-colourable assignments are exactly those of the two
+forms (Z) $B_0 = B_1 = B_2$, and (W) $A_1 = A_2 = D$, $A_0 = D \cup \{\zeta\}$, $B_1 = B_2 = E$,
+$B_0 \setminus E = \{\zeta\}$. In (W), $u_1, u_2$ use up $D$ and force $u_0 = \zeta$, while
+$v_1, v_2$ use up $E$ and force $v_0 = \zeta$. Amrutanshu proves this by hand with Hall's
+theorem; \texttt{prism.c} confirms it on all $397\,546$ normal-form assignments ($986$ not
+colourable, no exception). Both (Z) and (W) have $B_1 = B_2$, which is all the proof uses.
+\end{remark}
+
+%=====================================================================================
+\section{Proof of Theorem A}\label{sec:proof}
+
+Let $n \ge 5$ be odd and let $L$ be a list assignment of $T = C_3 \T C_n$ with $|L(v)| = 3$ for
+every $v$ (larger lists can be shrunk). We consider two cases.
+
+\subsection*{Case 1: some row list is not contained in the next one}
+
+Suppose there are $r \in \Z_3$, $j \in \Z_n$ and a colour
+\[
+\alpha \in L(r, j) \setminus L(r, j+1).
+\]
+Write $C_i$ for column $j + i$, and let $r', r''$ be the two rows other than $r$.
+
+\begin{steps}
+\item \emph{Choice of $\beta$.} If $|L(r', C_2) \cap L(r'', C_2)| = 2$, let $\beta$ be the unique
+colour of $L(r', C_2) \setminus L(r'', C_2)$. Otherwise let $\beta$ be any colour.
+
+\item \emph{The strip.} Delete columns $C_1$ and $C_2$. Since $n \ge 5$, what remains is a copy
+of $H_{n-2}$ with columns $C_3, C_4, \dots, C_{n-1}, C_0$ in this order, and $n - 2 \ge 3$ is odd.
+Let $\mu(r, C_0) = 2$, $\mu(r', C_3) = 1$, and $\mu = 0$ elsewhere. The last column is $C_0$, so
+$k = 2$, and $s \equiv 2r + r' \equiv r' - r \not\equiv 0$.
+
+\item \emph{Colour the strip.} Give $(r, C_0)$ the list $\{\alpha\}$, give $(r', C_3)$ the list
+$L(r', C_3) \setminus \{\beta\}$, and keep every other list. These satisfy $|L(v)| \ge 3 -
+\mu(v)$, so Lemma~\ref{lem:strip} gives an $L$-colouring $\psi$ of the strip with
+$\psi(r, C_0) = \alpha$ and $\psi(r', C_3) \ne \beta$.
+
+\item \emph{The lists left for $C_1 \cup C_2$.} The subgraph on $C_1 \cup C_2$ is a prism with
+$u_t = (t, C_1)$ and $v_t = (t, C_2)$. A vertex of $C_1$ has exactly one neighbour outside
+$C_1 \cup C_2$, namely its row neighbour in $C_0$; a vertex of $C_2$ has exactly one, its row
+neighbour in $C_3$. (These are different columns since $n \ge 5$.) So $\psi$ extends to $T$ if and
+only if the prism is colourable from
+\[
+A_t = L(t, C_1) \setminus \{\psi(t, C_0)\}, \qquad B_t = L(t, C_2) \setminus \{\psi(t, C_3)\}.
+\]
+All these lists have size $2$ or $3$, and $A_r = L(r, C_1)$ has size $3$ because
+$\psi(r, C_0) = \alpha \notin L(r, C_1)$.
+
+\item \emph{The fill cannot fail.} Suppose it does. By Lemma~\ref{lem:prism} (with $u_0 = (r,
+C_1)$ and $\{u_1, u_2\} = \{(r', C_1), (r'', C_1)\}$), $B_{r'} = B_{r''} = E$ for a 2-set $E$.
+Then $y' := \psi(r', C_3) \in L(r', C_2)$ and $y'' := \psi(r'', C_3) \in L(r'', C_2)$, so
+$L(r', C_2) = E \cup \{y'\}$ and $L(r'', C_2) = E \cup \{y''\}$, with $y', y'' \notin E$. Also
+$y' \ne y''$, since $(r', C_3)$ and $(r'', C_3)$ are adjacent. Hence $L(r', C_2) \cap L(r'',
+C_2) = E$ has size $2$, and $y'$ is the unique colour of $L(r', C_2) \setminus L(r'', C_2)$. By
+step (1) this colour is $\beta$, so $\psi(r', C_3) = \beta$, contradicting step (3).
+\end{steps}
+
+So $\psi$ extends to an $L$-colouring of $T$.
+
+\subsection*{Case 2: every row list is contained in the next one}
+
+Then $L(r, j) \subseteq L(r, j+1)$ for all $r$ and $j$. All lists have size $3$, so $L(r, j) =
+L(r, j+1)$, and each row has a constant list $A_r$. By Galvin's theorem, $C_3 \T C_3 =
+L(K_{3,3})$ is 3-choosable, so it has a colouring in which every vertex of row $r$ gets a colour
+from $A_r$. Let $X, Y, Z : \Z_3 \to$ colours be its three columns. Each is a proper colouring of a
+triangle with $X(r), Y(r), Z(r) \in A_r$, and $X(r), Y(r), Z(r)$ are pairwise distinct, since row
+$r$ of $C_3 \T C_3$ is a triangle. Colour column $j$ of $T$ by $X$ if $j = 0$, by $Y$ if $j$ is
+odd and by $Z$ if $j \ge 2$ is even. Consecutive columns get $(X, Y)$, $(Y, Z)$ or $(Z, Y)$, and
+the pair $(n-1, 0)$ gets $(Z, X)$ because $n - 1$ is even. All these pairs are compatible, so the
+colouring is proper.
+
+The two cases cover every list assignment, which proves Theorem~A. \qed
+
+\begin{remark}[Credit and history]
+The route (edge deletion, the strip lemma, the prism lemma, and a two-case proof) is due to
+Amrutanshu. His first version split cases on $F(j) = \bigcap_r L(r, j)$ and needed a
+propagation lemma, $L(r, j) \setminus F(j) \subseteq L(r, j+1)$ for bad assignments, to reach
+Case~2. Case~1 above only needs $\alpha \in L(r, j) \setminus L(r, j+1)$, so splitting on that
+directly makes the propagation lemma (and with it the edge-deletion theorem) unnecessary. This
+simplification is in Amrutanshu's work plan of 26 October. We checked it by hand and, before
+Lemma~\ref{lem:prism} was verified exhaustively, by testing the whole extension step on every
+list assignment of $C_1 \cup C_2$ over palettes of $5$ and $6$ colours ($200\,000$ and
+$6\,400\,000$ cases, no failure; with the choice of $\beta$ removed, $14\,592$ failures over $5$
+colours).
+\end{remark}
+
+%=====================================================================================
+\section{A second proof for $n = 3k$, $k$ odd: the kernel method}\label{sec:kernel}
+
+For $n = 3k$ there is a proof of a different kind, by Amrutanshu, which we checked line by
+line. Colour $C_3 \T C_{3k}$ by $\varphi(i,j) = (i + j) \bmod 3$ and orient column edges towards
+the smaller colour and row edges towards the larger colour. Every vertex then has out-degree
+exactly $2$. A minimal-counterexample argument shows that this orientation is
+\emph{kernel-perfect} when $k$ is odd, and the kernel lemma of Bondy, Boppana and Siegel gives
+3-choosability. Oddness of $k$ is used once, to walk around the columns in steps of $2$.
+
+Our computations (workstream W5) agree: this orientation is kernel-perfect exactly when
+$k \not\equiv 2 \pmod 4$. For $k \equiv 2 \pmod 4$ the orientation contains an induced directed
+cycle of odd length $3n/2$. For $n = 5, 7, 11, 13$ no orientation of $C_3 \T C_n$ with all
+out-degrees $2$ is kernel-perfect, so the kernel method is limited to $3 \mid n$. The kernel lemma
+also holds for paintability, so this proof gives the stronger statement that $C_3 \T C_{3k}$ is
+3-paintable for odd $k$. The proof of Theorem~A does not give paintability, because $\beta$ is
+chosen from the lists in advance.
+
+%=====================================================================================
+\section{Towards $C_m \T C_n$ with $m, n \ge 5$ odd}\label{sec:general}
+
+\subsection{What carries over}
+
+\begin{corollary}\label{cor:rowconst}
+Let $m, n \ge 3$ be odd.
+\begin{enumerate}[label=(\alph*),nosep]
+\item $C_m \T C_3$ is 3-choosable.
+\item If $L$ is a 3-list assignment of $C_m \T C_n$ that is constant along every row, or constant
+along every column, then $C_m \T C_n$ is $L$-colourable.
+\end{enumerate}
+\end{corollary}
+
+\begin{proof}
+(a) $C_m \T C_3 \cong C_3 \T C_m$, and Theorem~A applies. (b) Say $L(i, j) = A_i$. By (a),
+$C_m \T C_3$ has a colouring with colours from $A_i$ in row $i$; its three columns $X, Y, Z$ are
+proper colourings of the $m$-cycle, pairwise compatible. Colour the columns of $C_m \T C_n$ by
+$X, Y, Z, Y, Z, \dots, Y, Z$ as in Case~2. Columns are symmetric.
+\end{proof}
+
+\begin{theorem}[Edge deletion for $m = 5, 7$; computer-assisted, W4]\label{thm:edge}
+Let $m \in \{5, 7\}$ and $n \ge 3$ odd. For every edge $e$ of $G = C_m \T C_n$ and every vertex $w$
+not on the cycle of $G$ (column or row) through $e$, the coefficient of
+$x_w \prod_{v \ne w} x_v^2$ in $P_{G - e}$ is nonzero. Hence if some edge $uv$ has $L(u) \cap L(v)
+= \emptyset$, then $G$ is $L$-colourable.
+\end{theorem}
+
+The proof uses the $30 \times 30$ (for $m = 5$) column transfer matrix: it is diagonalisable,
+a unique pair $\pm i\lambda_1$ ($\lambda_1 \approx 5.6232$) dominates, the dominant amplitudes are
+exactly nonzero, and the finitely many small $n$ are computed exactly. The case $m = 3$ is
+Amrutanshu's. So in a bad 3-list assignment, every edge has overlapping lists.
+
+\begin{computation}[W2]\label{comp:c5c5}
+There is no list assignment of $C_5 \T C_5$ with lists of size $3$ from a palette of $4$ colours
+that has no colouring. (Counterexample-guided search; the final master problem is certified
+unsatisfiable by an independent solver, and every learned clause and each of its $4\,800$
+symmetry images is re-verified. The same holds for $C_3 \T C_5$, as it must by Theorem~A.)
+\end{computation}
+
+\subsection{The obstacle: two-column extension for 5-cycles}
+
+The proof of Theorem~A generalises step by step except one. Pick $\alpha \in L(r, j) \setminus
+L(r, j+1)$, delete columns $j+1, j+2$, and colour the strip $C_m \T P_{n-2}$. The strip has $mk$
+vertices and $2mk - m$ edges ($k = n - 2$), so the Nullstellensatz leaves $m$ units of freedom at
+its ends: $2$ to pin $(r, j)$ to $\alpha$, and $1$ to forbid a colour $\beta_t$ at each row $t$ of
+column $j + 3$ outside a pair $\{p, q\}$.
+
+\emph{Strip coefficients.} Amrutanshu observed, for $m \in \{3,5,7,9\}$ and $k \le 9$, that the
+coefficient of this shape vanishes exactly when $k$ is odd and $2r \equiv p + q \pmod m$. The
+zeros are forced: the row reflection fixing $r$ swaps $p$ and $q$, fixes the shape, and reverses
+the $mk$ column edges, an odd number. We confirmed the rule exactly for $m = 5$ and every strip
+length from $2$ to $27$ ($2\,600$ cases, no exception).
+
+\emph{The extension.} What remains is to fill $C_m \T K_2$ (the two deleted columns). For $m = 3$
+this is Lemma~\ref{lem:prism}. For $m = 5$ we model a \emph{window}: lists of size $3$ on the two
+deleted columns, the pin at row $0$, and an adversary who chooses any proper colouring of the
+$5$-cycles in columns $j$ and $j+3$ (with $(0, j)$ coloured $\alpha$). A \emph{shape} is an end
+weight with $c_S \ne 0$; it lets us forbid one colour at chosen rows. A window is \emph{good} if
+some shape and some forbidden colours make the fill succeed against every adversary.
+
+\begin{computation}[W8, $m = 5$, palette of $4$ colours]\label{comp:windows}
+\begin{enumerate}[label=(\alph*),nosep]
+\item The plan's shape (forbid at the rows of column $j+3$ outside $\{p, q\}$, $2r \not\equiv p+q$)
+fails on $6\,904$ of the $4^{10} = 1\,048\,576$ windows. Random windows from $5$ or $6$ colours
+($60\,000$) never fail.
+\item There are $74$ end weights with the pin at row $0$, all other weights $0$ or $1$, and
+$c_S \ne 0$ for \emph{every} odd strip length from $3$ to $27$; $66$ of them forbid colours on the
+$\alpha$ side. Allowing all $74$ leaves $400$ bad windows, and $184$ once $\alpha$ is taken to be
+the actual colour (with $4$ colours it is forced).
+\item A cut can be made forwards (delete $j+1, j+2$) or backwards (delete $j, j-1$, using
+$\alpha' \in L(r, j+1) \setminus L(r, j)$), at any row $r$ and column $j$ with $L(r, j) \ne L(r,
+j+1)$. For $n \in \{5, 7\}$, every 3-list assignment of $C_5 \T C_n$ from $4$ colours in which
+\emph{every} cut is bad is row-constant, column-constant, or has four rows with one common
+constant list: there are exactly $600$ (for $n = 5$) and $2\,520$ (for $n = 7$) assignments of
+the last kind, and no others. (For $n = 9$ we have only checked that such assignments exist.)
+\end{enumerate}
+\end{computation}
+
+The last kind is coloured directly.
+
+\begin{lemma}[One free row]\label{lem:freerow}
+Let $m \ge 5$ be odd and $n \ge 3$. If $L$ is a 3-list assignment of $C_m \T C_n$ and there are a
+row $i_0$ and a set $A$ with $L(i, j) = A$ for all $i \ne i_0$ and all $j$, then $C_m \T C_n$ is
+$L$-colourable.
+\end{lemma}
+
+\begin{proof}
+The rows other than $i_0$ form a path $R = (i_0 + 1, \dots, i_0 - 1)$ of $m - 1 \ge 4$ rows, an even
+number. Choose a proper colouring $p : R \to \Z_3$ of this path whose two ends get the same value:
+$0, 1, 2, 0$ followed by $1, 0, 1, 0, \dots$ for longer paths. Let $\rho(x) = x + 1$ on $\Z_3$.
+Choose $\sigma_0, \dots, \sigma_{n-1} \in \{\rho, \rho^{-1}\}$ with $\sigma_0 \cdots
+\sigma_{n-1} = \mathrm{id}$; this needs $k$ copies of $\rho$ with $2k \equiv n \pmod 3$, and $k \in
+\{0, 1, 2\}$ works. Fix a bijection $\pi_0 : \Z_3 \to A$, put $\pi_{j+1} = \pi_j \sigma_j$, and
+colour $(i, j)$ with $\pi_j(p(i))$ for $i \in R$. Columns are proper because $p$ is, and row edges
+are proper because $\sigma_j$ has no fixed point. The two neighbours of $(i_0, j)$ in column $j$
+get the same colour $a_j := \pi_j(p(\text{end}))$, so $(i_0, j)$ keeps at least $2$ colours of
+$L(i_0, j) \setminus \{a_j\}$, and row $i_0$ is a cycle with lists of size at least $2$.
+
+Such a cycle is colourable unless it is odd and all its lists are one 2-set $B$ [ERT]. Suppose
+this happens. Then $L(i_0, j) = B \cup \{a_j\}$ with $a_j \notin B$ for every $j$, and since
+$a_{j+1} \ne a_j$, the colours $a_j$ take at least two values in $A \setminus B$. Now replace every
+$\pi_j$ by $\tau \pi_j$ for a 3-cycle $\tau$ of $A$. This is again a valid colouring of the rows in
+$R$, with $a_j$ replaced by $\tau(a_j) \ne a_j$. If row $i_0$ fails again, then $\tau(a_j) \in
+L(i_0, j) \setminus \{a_j\} = B$ for all $j$. So $\tau$ maps two distinct colours of $A \setminus B$
+into $A \cap B$, and $|A \cap B| \ge 2$, which forces $B \subseteq A$ and $|A \setminus B| = 1$, a
+contradiction.
+\end{proof}
+
+\begin{theorem}[Odd strip lemma for $m = 5$; computer-assisted, W7]\label{thm:strip5}
+For each of the $74$ end weights $\mu$ of Computation~\ref{comp:windows}(b), in either
+orientation of the strip, the coefficient $c_\mu(\ell)$ of $C_5 \T P_\ell$ is nonzero for
+\emph{every} odd $\ell \ge 3$. Hence the strip can be coloured with the pin and the forbidden
+colours of any of these shapes, at every odd length.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+$c_\mu(\ell) = u^{\mathsf T} T^{\ell - 2} v$ with the $30 \times 30$ transfer matrix $T$ of
+Theorem~\ref{thm:edge}, whose minimal polynomial is $x\, h_1(x^2)\, h_2(x^2)$ with $h_1 = y^2 +
+10y + 5$ and $h_2 = y^4 + 35y^3 + 110y^2 + 100y + 25$, both irreducible over $\mathbb{Q}$ with
+only negative real roots. So $s_j = c_\mu(2j+1)$ satisfies the recurrence $h_1 h_2$ for $j \ge 1$,
+and its minimal recurrence over $\mathbb{Q}$ is $h_1$, $h_2$ or $h_1h_2$ (found exactly from
+$s_1, \dots, s_{13}$; this suffices since $13 - 6 \ge 6$). It is $h_2$ for $96$ and $h_1$ for $52$
+of the $148$ cases. Minimality over $\mathbb{Q}$ is minimality over $\mathbb{C}$, so every root has
+a nonzero amplitude. The root of largest modulus is unique, and certified ball arithmetic shows
+that its term outweighs all others already at $j = 1$, hence for all $j \ge 1$. The predicted
+recurrence was also confirmed on exact values up to $\ell = 41$. (Script
+\texttt{ws-W7/prove\_strip5.py}.)
+\end{proof}
+
+This settles item A1 of the work plan for $m = 5$ (the midpoint rule's nonvanishing for all odd
+lengths) and more. Putting the pieces together:
+
+\begin{theorem}[Reduction for $m = 5$]\label{thm:red5}
+Let $n \ge 5$ be odd and $L$ a 3-list assignment of $C_5 \T C_n$. Then $C_5 \T C_n$ is
+$L$-colourable if $L$ is row-constant, column-constant, has one free row, or has a good cut.
+\end{theorem}
+
+\begin{proof}
+The first two cases are Corollary~\ref{cor:rowconst}(b), the third is Lemma~\ref{lem:freerow}.
+A good cut at a trigger $(r, j)$ uses a shape whose strip coefficient is nonzero at length
+$n - 2$ (Theorem~\ref{thm:strip5}); the strip colouring it produces is one of the adversary's
+options, and goodness says the two deleted columns can then be filled.
+\end{proof}
+
+So the whole of $C_5 \T C_n$ rests on one statement.
+
+\begin{problem}[Window statement]\label{prob:ext}
+Every 3-list assignment of $C_5 \T C_n$ ($n$ odd) in which every cut is bad is row-constant,
+column-constant, or has one free row.
+\end{problem}
+
+By Computation~\ref{comp:windows}(c) this holds for all assignments from $4$ colours and
+$n \in \{5, 7\}$, so Theorem~\ref{thm:red5} proves those cases. With more colours the window
+picture is richer: changing a single list of a bad $4$-colour window to a 3-subset of $6$ colours
+gives $992$ further bad windows (with $\alpha$ fresh), for example
+$L_1 = (\{0,1,3\}^3, \{0,3,4\}, \{0,1,3\})$, $L_2 = (\{0,1,3\}^3, \{0,2,3\}, \{0,1,3\})$. Evaluated for each
+admissible $\alpha$ separately ($4\,728$ bad pairs of window and $\alpha$), these windows still
+produce no new obstruction: for $n = 5$ the assignments in which every cut is bad are again only
+column-constant ($24$) or one free row ($39\,120$, counting cyclic shifts). This covers only the
+windows within one changed list of a bad $4$-colour window. An exhaustive check of all
+$6.7 \times 10^8$ window types with at most $5$ colours is about $370$ CPU-hours (a day on an 18-core machine); a proof for all
+palettes needs an argument, not enumeration.
+
+%=====================================================================================
+\section{Verification}\label{sec:verification}
+
+All paths are relative to \texttt{odd-torus/}.
+
+\begin{center}\small
+\begin{tabular}{@{}p{0.36\textwidth}p{0.3\textwidth}p{0.26\textwidth}@{}}
+\toprule
+Claim & Script & Output\\
+\midrule
+Strip coefficient closed form, $\ell$ from 2 to 11 & \texttt{ws-W1/strip\_coeff.py}, \texttt{direct\_expand.py}, \texttt{compare.py} & 0 mismatches in 500\\
+Lemma~\ref{lem:prism} & \texttt{ws-W9/prism\_sizes.c} & 8\,335 non-colourable, 0 exceptions\\
+Prism lemma (Z)/(W) & \texttt{ws-W9/prism.c} & 986 non-colourable, 0 mismatches\\
+Case~1 extension, palettes 5, 6 & \texttt{ws-W9/ext3.c} & 0 failures\\
+Control (no $\beta$) & \texttt{ws-W9/ext3\_nododge.c} & 14\,592 failures\\
+Theorem~\ref{thm:edge} & \texttt{ws-W4/} & see \texttt{ws-W4/REPORT.md}\\
+Computation~\ref{comp:c5c5} & \texttt{ws-W2/certify.py} & \texttt{certify\_t55q4\_nosym.txt}\\
+Midpoint rule, $m = 5$ & \texttt{ws-W9/midpoint.py} & 0 mismatches in 2\,600\\
+Windows, plan shape, $m = 5$ & \texttt{ws-W8/window5.c} & 6\,904 bad of 1\,048\,576\\
+Windows, all 74 shapes & \texttt{ws-W8/window5g.c}, \texttt{shapes5.py} & 400; 184 with real $\alpha$\\
+Window code cross-check & \texttt{ws-W8/validate\_window.py} & agrees on 6 windows\\
+Lemma~\ref{lem:freerow} construction & \texttt{ws-W9/freerow\_check.py} & 0 failures in 20\,000\\
+Theorem~\ref{thm:strip5} & \texttt{ws-W7/prove\_strip5.py} & 148 cases proved\\
+Bad windows, 5--6 colours & \texttt{ws-W8/nbhd.py}, \texttt{window5}, \texttt{window5g} & 992 (one list changed)\\
+Every cut bad, 5--6 colours, $n = 5$ & \texttt{ws-W8/global\_alpha.py} & only column-constant, one free row\\
+Every cut bad, $n = 5, 7$ & \texttt{ws-W8/global\_q4\_all\_n.py} & 600 and 2\,520, all one free row\\
+Kernel orientation counts & \texttt{ws-W5/} & see \texttt{ws-W5}\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%=====================================================================================
+\begin{thebibliography}{LSPG}
+\bibitem[A]{A} N.~Alon, Combinatorial Nullstellensatz, \emph{Combin. Probab. Comput.} 8 (1999),
+7--29.
+\bibitem[CWZ]{CWZ} L.~Cai, W.~Wang and X.~Zhu, Choosability of toroidal graphs without short
+cycles, \emph{J. Graph Theory} 65 (2010), 1--15.
+\bibitem[ERT]{ERT} P.~Erd\H{o}s, A.~L.~Rubin and H.~Taylor, Choosability in graphs,
+\emph{Congr. Numer.} 26 (1979), 125--157.
+\bibitem[G]{G} F.~Galvin, The list chromatic index of a bipartite multigraph, \emph{J. Combin.
+Theory Ser. B} 63 (1995), 153--158.
+\bibitem[KP]{KP} R.~N.~Karasev and F.~V.~Petrov, Partitions of nonzero elements of a finite field
+into pairs, \emph{Israel J. Math.} 192 (2012), 143--156.
+\bibitem[La]{La} M.~Laso\'n, A generalization of Combinatorial Nullstellensatz,
+\emph{Electron. J. Combin.} 17 (2010), \#N32.
+\bibitem[LSPG]{LSPG} Z.~Li, Z.~Shao, F.~Petrov and A.~Gordeev, The Alon--Tarsi number of a
+toroidal grid, \emph{European J. Combin.} 111 (2023), 103697.
+\bibitem[S]{S} List-colouring and chromatic-choosability: a dynamic survey, arXiv:2606.31702.
+\end{thebibliography}
+
+\end{document}

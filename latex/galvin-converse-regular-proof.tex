@@ -1,0 +1,343 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+
+\theoremstyle{plain}
+\newtheorem*{theorem}{Theorem}
+\newtheorem{fact}{Fact}
+\newtheorem{claim}{Step}
+\theoremstyle{definition}
+\newtheorem*{definition}{Definition}
+
+\newcommand{\LG}{L(G)}
+\newcommand{\st}[1]{E(#1)}
+\newcommand{\dout}{d^{+}}
+\newcommand{\din}{d^{-}}
+\newcommand{\half}{h}
+\newcommand{\why}[1]{\unskip\ \textit{[#1]}}
+\newenvironment{steps}{\begin{enumerate}[label=(\arabic*),leftmargin=2.2em,itemsep=0.35em]}{\end{enumerate}}
+
+\title{For Regular Graphs, Galvin's Kernel Method\\Works Only on Bipartite Graphs}
+\author{Siddharth Narayan Mishra}
+\date{October 2026}
+
+\begin{document}
+\maketitle
+
+\begin{theorem}
+Let $k\ge 1$ and let $G=(V,E)$ be a simple $k$-regular graph. The line graph $\LG$ has a
+kernel-perfect orientation with every out-degree at most $k-1$ if and only if $G$ is bipartite.
+\end{theorem}
+
+``If'' is Galvin's theorem~\cite{galvin}. We prove ``only if''.
+
+\textbf{Conventions.} A \emph{kernel} of a digraph is an independent set $K$ such that every
+vertex outside $K$ has an out-neighbour in $K$. $D[S]$ is the induced subdigraph on $S$.
+$\st{u}$ is the set of edges at $u$ and $N(u)$ the set of neighbours of $u$. A directed cycle
+$(x_1,\dots,x_\ell)$ has $\ell\ge 2$ distinct vertices and arcs $x_i\to x_{i+1}$, indices modulo
+$\ell$; directed walks may repeat vertices. Throughout, $\half=\tfrac{k-1}{2}$.
+
+%=================================================================================================
+\section*{Four facts about digraphs}
+%=================================================================================================
+
+\begin{fact}\label{f:tournament}
+Let $T$ be a tournament on $t\ge 1$ vertices in which every induced subdigraph on a nonempty
+set has a kernel. Then its vertices can be listed $x_0,\dots,x_{t-1}$ so that, for $i\ne j$,
+$x_i\to x_j$ iff $i>j$.
+\end{fact}
+
+\begin{proof}
+Induction on $t$; $t=1$ is trivial. Let $t\ge 2$.
+\begin{steps}
+  \item $T$ has a kernel $K$. Any two vertices of $T$ are joined by an arc, so independence gives
+    $|K|\le 1$. If $K=\varnothing$, a vertex has no out-neighbour in $K$; so $K=\{s\}$.
+  \item By absorption every $x\ne s$ has $x\to s$. Put $x_0=s$.
+  \item Every induced subdigraph of $T-s$ is an induced subdigraph of $T$, so the induction
+    hypothesis lists $T-s$ as $x_1,\dots,x_{t-1}$ with $x_i\to x_j$ iff $i>j$.
+  \item For $i\ge 1$, $x_i\to x_0$ by (2), and $x_0\to x_i$ is not an arc since $T$ is a
+    tournament. This agrees with the rule. \qedhere
+\end{steps}
+\end{proof}
+
+\begin{fact}\label{f:oddcycle}
+Let $\ell\ge 3$ be odd and let $F$ be the digraph on distinct $s_1,\dots,s_\ell$ whose arcs are
+exactly $s_i\to s_{i+1}$ (indices modulo $\ell$). Then $F$ has no kernel.
+\end{fact}
+
+\begin{proof}
+Suppose $K$ is a kernel; let $\kappa_i=1$ if $s_i\in K$ and $\kappa_i=0$ otherwise.
+\begin{steps}
+  \item The only out-neighbour of $s_i$ is $s_{i+1}$. So $s_i\notin K$ implies $s_{i+1}\in K$
+    \why{absorption}, and $s_i\in K$ implies $s_{i+1}\notin K$ \why{independence}.
+  \item Hence $\kappa_{i+1}=1-\kappa_i\equiv\kappa_i+1\pmod 2$ for every $i$.
+  \item Applying (2) $\ell$ times, $\kappa_1=\kappa_{1+\ell}\equiv\kappa_1+\ell$, so $\ell$ is
+    even. Contradiction. \qedhere
+\end{steps}
+\end{proof}
+
+\begin{fact}\label{f:oddwalk}
+If a digraph has a closed directed walk of odd length, it has a directed cycle of odd length,
+and that length is at least $3$.
+\end{fact}
+
+\begin{proof}
+An odd $\ell\ge 2$ is at least $3$. For the first part, strong induction on the odd length $L$
+of a closed directed walk $(w_0,\dots,w_L)$.
+\begin{steps}
+  \item $L\ne 1$, since there are no loops. So $L\ge 3$.
+  \item If $w_0,\dots,w_{L-1}$ are distinct, they form a directed cycle of length $L$.
+  \item Otherwise $w_i=w_j$ for some $0\le i<j\le L-1$. Then $(w_i,\dots,w_j)$ and
+    $(w_0,\dots,w_i,w_{j+1},\dots,w_L)$ are closed directed walks (the second uses the arc
+    $w_i=w_j\to w_{j+1}$), of lengths $j-i$ and $L-(j-i)$, both in $[1,L-1]$.
+  \item Their lengths add up to the odd number $L$, so one is odd and shorter than $L$; apply the
+    induction hypothesis to it. \qedhere
+\end{steps}
+\end{proof}
+
+\begin{fact}\label{f:balanced}
+Let $D$ be a digraph with $\dout(x)=\din(x)$ for every vertex $x$, and let $x\to y$ be an arc.
+Then $D$ has a directed walk from $y$ to $x$.
+\end{fact}
+
+\begin{proof}
+\begin{steps}
+  \item Let $R$ be the set of vertices reachable from $y$ by a directed walk. Then $y\in R$, and
+    no arc goes from $R$ to outside $R$.
+  \item Let $a$ be the number of arcs inside $R$ and $b$ the number of arcs from outside $R$ into
+    $R$.
+  \item $\sum_{z\in R}\dout(z)=a$ by (1), and $\sum_{z\in R}\din(z)=a+b$. These sums are equal,
+    so $b=0$.
+  \item The arc $x\to y$ enters $R$, so it is not counted in $b=0$. Hence $x\in R$. \qedhere
+\end{steps}
+\end{proof}
+
+We also use the standard fact that a graph with no odd cycle is bipartite.
+
+%=================================================================================================
+\section*{Proof of ``only if''}
+%=================================================================================================
+
+Fix a simple $k$-regular graph $G=(V,E)$ with $n$ vertices, and an orientation $D$ of $\LG$ that
+is kernel-perfect and has $\dout_D(e)\le k-1$ for every $e\in E$. We show that $G$ is
+bipartite. Letters $e,f$ denote edges of $G$ (vertices of $D$); letters $u,v,w,a,x,y,z$ denote
+vertices of $G$.
+
+Since $G$ is simple, two distinct edges share at most one end: an edge sharing both ends $u,v$
+with $e$ equals $\{u,v\}=e$. This is the only use of simplicity, and it is used in
+Steps~\ref{s:rank} and~\ref{s:tight}.
+
+%-------------------------------------------------------------------------------------------------
+\subsection*{Step 1: every vertex ranks its edges}
+
+\begin{claim}\label{s:rank}
+For $u\in V$ and $e\in\st{u}$ put $r_u(e)=|\{f\in\st{u}: e\to f\}|$, and for $v\in N(u)$ write
+$r_u(v)=r_u(uv)$. Then:
+\begin{enumerate}[label=(\alph*)]
+  \item $e\mapsto r_u(e)$ is a bijection $\st{u}\to\{0,\dots,k-1\}$, equivalently
+    $v\mapsto r_u(v)$ is a bijection $N(u)\to\{0,\dots,k-1\}$;
+  \item for distinct $e,f\in\st{u}$: $e\to f$ iff $r_u(e)>r_u(f)$;
+  \item for every edge $uv$: $\dout_D(uv)=r_u(v)+r_v(u)$.
+\end{enumerate}
+\end{claim}
+
+\begin{proof}
+\begin{steps}
+  \item $|\st{u}|=k\ge 1$ \why{$k$-regular}. Any two edges of $\st{u}$ share the end $u$, so they
+    are adjacent in $\LG$, and $D$ has exactly one arc between them. So $D[\st{u}]$ is a
+    tournament.
+  \item Every induced subdigraph of $D[\st{u}]$ is an induced subdigraph of $D$, so it has a
+    kernel \why{$D$ kernel-perfect}.
+  \item By Fact~\ref{f:tournament}, list $\st{u}$ as $f_0,\dots,f_{k-1}$ with $f_i\to f_j$ iff
+    $i>j$. Then $f_i$ points to exactly $f_0,\dots,f_{i-1}$ inside $\st{u}$, so $r_u(f_i)=i$.
+    This gives (a), and (b) follows: $f_i\to f_j$ iff $i>j$ iff $r_u(f_i)>r_u(f_j)$.
+  \item For (c), let $e=uv$. The neighbours of $e$ in $\LG$ are the edges of
+    $(\st{u}\setminus\{e\})\cup(\st{v}\setminus\{e\})$. These two sets are disjoint: an edge in
+    both would share the two ends $u,v$ with $e$ \why{simplicity}.
+  \item The out-neighbours of $e$ in $\st{u}\setminus\{e\}$ number $r_u(e)=r_u(v)$, and those in
+    $\st{v}\setminus\{e\}$ number $r_v(e)=r_v(u)$ \why{definition of $r$}. By (4),
+    $\dout_D(e)=r_u(v)+r_v(u)$. \qedhere
+\end{steps}
+\end{proof}
+
+%-------------------------------------------------------------------------------------------------
+\subsection*{Step 2: the out-degree budget is used exactly}
+
+\begin{claim}\label{s:tight}
+For every edge $uv$, $r_u(v)+r_v(u)=k-1$.
+\end{claim}
+
+\begin{proof}
+\begin{steps}
+  \item Every edge $\{e,f\}$ of $\LG$ has exactly one common end $w$ \why{simplicity}, and
+    $\{e,f\}$ is then a two-element subset of $\st{w}$. Conversely every two-element subset of
+    $\st{w}$ is an edge of $\LG$. So the edges of $\LG$ correspond bijectively to pairs
+    ($w$, two-element subset of $\st{w}$).
+  \item Hence $\LG$ has $n\binom{k}{2}=\tfrac{nk}{2}(k-1)=|E|(k-1)$ edges, using $nk=2|E|$
+    \why{handshake, $k$-regular}.
+  \item $D$ is an orientation of $\LG$, so $\sum_{e\in E}\dout_D(e)=|E|(k-1)$.
+  \item This is a sum of $|E|$ terms, each at most $k-1$ \why{hypothesis}. So every term equals
+    $k-1$.
+  \item By Step~\ref{s:rank}(c), $r_u(v)+r_v(u)=\dout_D(uv)=k-1$. \qedhere
+\end{steps}
+\end{proof}
+
+This is the only use of regularity.
+
+%-------------------------------------------------------------------------------------------------
+\subsection*{Step 3: there is no odd ring}
+
+\begin{definition}
+A \emph{ring} is a cycle $(a_1,\dots,a_\ell)$ of $G$ ($\ell\ge 3$, distinct vertices, indices
+modulo $\ell$) such that $r_{a_i}(a_{i+1})<r_{a_i}(a_{i-1})$ for every $i$.
+\end{definition}
+
+\begin{claim}\label{s:ring}
+$G$ has no ring of odd length.
+\end{claim}
+
+\begin{proof}
+Let $(a_1,\dots,a_\ell)$ be a ring with $\ell$ odd. Put $e_i=a_ia_{i+1}$ and
+$S=\{e_1,\dots,e_\ell\}$.
+\begin{steps}
+  \item $a_p=a_q$ iff $p\equiv q\pmod\ell$. Since $e_i=\{a_i,a_{i+1}\}$ and
+    $e_j=\{a_j,a_{j+1}\}$, a common end of $e_i$ and $e_j$ ($i\not\equiv j$) means $j\equiv i+1$
+    or $j\equiv i-1$, and conversely those pairs share $a_{i+1}$, respectively $a_i$.
+  \item The $e_i$ are distinct: $e_i=e_j$ with $i\not\equiv j$ would, by the same comparison,
+    force both $j\equiv i-1$ and $j\equiv i+1$, so $\ell\mid 2$, contradicting $\ell\ge 3$. So
+    $|S|=\ell$.
+  \item By (1), in $\LG[S]$ the only adjacent pairs are $\{e_{i-1},e_i\}$, $i=1,\dots,\ell$, and
+    each such pair occurs for exactly one $i$ (as $\ell\ge 3$). The common end of $e_{i-1}$ and
+    $e_i$ is $a_i$.
+  \item At $a_i$: $r_{a_i}(e_i)=r_{a_i}(a_{i+1})<r_{a_i}(a_{i-1})=r_{a_i}(e_{i-1})$
+    \why{ring}. So the arc of $D$ between them is $e_{i-1}\to e_i$ \why{Step~\ref{s:rank}(b)}.
+  \item By (3) and (4), the arcs of $D[S]$ are exactly $e_1\to e_2\to\dots\to e_\ell\to e_1$.
+  \item By Fact~\ref{f:oddcycle}, $D[S]$ has no kernel. This contradicts kernel-perfectness of
+    $D$. \qedhere
+\end{steps}
+\end{proof}
+
+%-------------------------------------------------------------------------------------------------
+\subsection*{Step 4: a balanced digraph on $V$}
+
+Let $O$ be the digraph on $V$ with an arc $u\to v$ whenever $uv\in E$ and $r_u(v)\le\half$.
+(It has no loops; an edge may receive arcs in both directions.)
+
+\begin{claim}\label{s:O}
+\begin{enumerate}[label=(\alph*)]
+  \item Every arc $u\to v$ of $O$ has $uv\in E$.
+  \item For every edge $uv$, at least one of $u\to v$, $v\to u$ is an arc of $O$.
+  \item If $u\to v$ is an arc of $O$, then $r_v(u)\ge\half$.
+  \item $\dout_O(u)=\din_O(u)$ for every $u\in V$.
+\end{enumerate}
+\end{claim}
+
+\begin{proof}
+(a) By definition.
+
+(b) If neither, then $r_u(v)>\half$ and $r_v(u)>\half$, so $r_u(v)+r_v(u)>k-1$, contradicting
+Step~\ref{s:tight}.
+
+(c) $r_v(u)=k-1-r_u(v)\ge k-1-\half=\half$ \why{Step~\ref{s:tight}, and $r_u(v)\le\half$}.
+
+(d) Let $R=\{0,\dots,k-1\}$, $R_{\le}=\{r\in R:r\le\half\}$, $R_{\ge}=\{r\in R:r\ge\half\}$.
+\begin{steps}
+  \item $u\to v$ iff $v\in N(u)$ and $r_u(v)\le\half$. Since $v\mapsto r_u(v)$ is a bijection
+    $N(u)\to R$ \why{Step~\ref{s:rank}(a)}, $\dout_O(u)=|R_{\le}|$.
+  \item $v\to u$ iff $v\in N(u)$ and $r_v(u)\le\half$, iff $v\in N(u)$ and
+    $k-1-r_u(v)\le\half$ \why{Step~\ref{s:tight}}, iff $v\in N(u)$ and $r_u(v)\ge\half$. By the
+    same bijection, $\din_O(u)=|R_{\ge}|$.
+  \item $\phi(r)=k-1-r$ is an involution of $R$, and $r\le\half$ iff $\phi(r)\ge\half$. So $\phi$
+    maps $R_{\le}$ bijectively onto $R_{\ge}$, and $|R_{\le}|=|R_{\ge}|$. \qedhere
+\end{steps}
+\end{proof}
+
+%-------------------------------------------------------------------------------------------------
+\subsection*{Step 5: directed cycles of $O$ are rings}
+
+\begin{claim}\label{s:dicycle}
+Every directed cycle $(a_1,\dots,a_\ell)$ of $O$ with $\ell\ge 3$ is a cycle of $G$ and a ring.
+\end{claim}
+
+\begin{proof}
+\begin{steps}
+  \item The $a_i$ are distinct, $\ell\ge 3$, and $a_ia_{i+1}\in E$ \why{Step~\ref{s:O}(a)}. So
+    $(a_1,\dots,a_\ell)$ is a cycle of $G$.
+  \item Fix $i$. The arc $a_i\to a_{i+1}$ gives $r_{a_i}(a_{i+1})\le\half$ \why{definition of
+    $O$}. The arc $a_{i-1}\to a_i$ gives $r_{a_i}(a_{i-1})\ge\half$ \why{Step~\ref{s:O}(c)}.
+  \item $a_{i+1}\ne a_{i-1}$ (distinct vertices, $\ell\ge 3$), so
+    $r_{a_i}(a_{i+1})\ne r_{a_i}(a_{i-1})$ \why{Step~\ref{s:rank}(a)}.
+  \item By (2) and (3), $r_{a_i}(a_{i+1})<r_{a_i}(a_{i-1})$. This holds for every $i$, so the
+    cycle is a ring. \qedhere
+\end{steps}
+\end{proof}
+
+%-------------------------------------------------------------------------------------------------
+\subsection*{Step 6: $O$ has no odd closed directed walk}
+
+\begin{claim}\label{s:noodd}
+Every closed directed walk of $O$ has even length.
+\end{claim}
+
+\begin{proof}
+If one had odd length, $O$ would have a directed cycle of odd length $\ell\ge 3$
+\why{Fact~\ref{f:oddwalk}}, which is a ring of $G$ of odd length \why{Step~\ref{s:dicycle}},
+contradicting Step~\ref{s:ring}.
+\end{proof}
+
+%-------------------------------------------------------------------------------------------------
+\subsection*{Step 7: every arc of $O$ can be walked back, in an odd number of steps}
+
+\begin{claim}\label{s:return}
+If $x\to y$ is an arc of $O$, then $O$ has a directed walk from $y$ to $x$, and every such walk
+has odd length.
+\end{claim}
+
+\begin{proof}
+\begin{steps}
+  \item A walk $P$ from $y$ to $x$ exists \why{Step~\ref{s:O}(d) and Fact~\ref{f:balanced}}.
+  \item For any such $P$, the arc $x\to y$ followed by $P$ is a closed directed walk of length
+    $1+|P|$. It is even \why{Step~\ref{s:noodd}}, so $|P|$ is odd. \qedhere
+\end{steps}
+\end{proof}
+
+%-------------------------------------------------------------------------------------------------
+\subsection*{Step 8: every cycle of $G$ is even}
+
+\begin{claim}\label{s:even}
+Every cycle of $G$ has even length.
+\end{claim}
+
+\begin{proof}
+Let $(z_1,\dots,z_\ell)$ be a cycle of $G$, indices modulo $\ell$.
+\begin{steps}
+  \item For each $i$, $z_i\to z_{i+1}$ or $z_{i+1}\to z_i$ is an arc of $O$
+    \why{Step~\ref{s:O}(b)}.
+  \item If $z_i\to z_{i+1}$ is an arc, let $W_i=(z_i,z_{i+1})$, of length $1$.
+  \item Otherwise $z_{i+1}\to z_i$ is an arc, and Step~\ref{s:return} (with $x=z_{i+1}$,
+    $y=z_i$) gives a directed walk $W_i$ from $z_i$ to $z_{i+1}$ of odd length.
+  \item The concatenation $W=W_1W_2\cdots W_\ell$ is a closed directed walk of $O$ (from $z_1$
+    back to $z_{\ell+1}=z_1$) of length $|W_1|+\dots+|W_\ell|$.
+  \item A sum of $\ell$ odd integers is congruent to $\ell$ modulo $2$, so $|W|\equiv\ell$.
+  \item $|W|$ is even \why{Step~\ref{s:noodd}}. So $\ell$ is even. \qedhere
+\end{steps}
+\end{proof}
+
+%-------------------------------------------------------------------------------------------------
+\subsection*{Conclusion}
+
+By Step~\ref{s:even}, $G$ has no odd cycle, so $G$ is bipartite. \qed
+
+\begin{thebibliography}{9}
+\bibitem{galvin} F.~Galvin, The list chromatic index of a bipartite multigraph, \emph{Journal of
+  Combinatorial Theory, Series B} 63 (1995), pages 153 to 158.
+\end{thebibliography}
+
+\end{document}

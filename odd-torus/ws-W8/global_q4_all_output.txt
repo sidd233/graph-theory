@@ -1,0 +1,3 @@
+bad windows 184 ; columns that can occur next to a cut: 64
+evading assignments of C5 x C5 (palette 4): 600
+(non-constant rows, distinct lists on constant rows): Counter({(1, 1): 600})

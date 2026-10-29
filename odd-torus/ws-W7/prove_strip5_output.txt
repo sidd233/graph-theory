@@ -1,0 +1,3 @@
+shapes x orientations proved: 148 {'h2': 96, 'h1': 52}
+largest j0 needed: 1 (exact nonzero check covers 1 <= j < j0, i.e. l = 3 .. 1 )
+RESULT: c_S(l) != 0 for every odd l >= 3, for all 74 shapes in both orientations

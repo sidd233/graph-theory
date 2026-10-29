@@ -4,33 +4,37 @@ Graph theory research. **Read `PROBLEM.md` before starting research work in this
 
 ## The goal
 
-**Improve the bound on the list colouring problem, using 2-d kernels.**
+**Solve an open problem in graph theory** (set by Sid on 2026-10-07). The working direction,
+pushed by the supervisor, is the **List Edge Colouring Conjecture** (LECC),
+`ch'(G) = chi'(G)`, equivalently `chi_ell(L(G)) = chi(L(G))`, and the problems next to it.
+Galvin's solution of the Dinitz problem is the bipartite case. Candidate problems, tiered by
+how realistic they are, are in `open-problems/in-scope.md`. **Agreed target (meeting 9 October
+2026): the torus problem A4,** `chi_ell(C_{2m+1} □ C_{2n+1}) = 3`, work in `odd-torus/`. The
+remaining zero-sum graphs (A1) are optional. See `meetings/2026-10-09/notes.md`.
 
-Lemma 1 of *Proofs from THE BOOK*, chapter 33, gives `chi_ell(G) <= d+(v) + 1` whenever every
-induced subgraph of an orientation has a kernel. Strengthening the kernel to a **2-d kernel**,
-which is independent plus 2-dominating, should buy two units of out-degree per colour instead
-of one and give roughly `ceil(Delta+/2) + 1`. That halving is the target.
+**2-d kernels are a tool, not the goal.** Earlier sessions treated "improve the bound with 2-d
+kernels" as the goal, which was a misreading. That work is recorded in `PROBLEM.md` and notes
+`00` to `05` and `13` to `16`, and its results stand. The kernel method, 2-d kernels and
+Alon–Tarsi are all tools to be used where they help.
 
-The core of the problem is three requirements at once: graphs that **have** 2-d kernels, that
-**still have** them on every induced subdigraph so the induction repeats, and onto which the
-list colouring problem can actually be **mapped**. `PROBLEM.md` section 3 states them as (R1),
-(R2) and (R3), and section 4 states the two obstructions that have to be answered.
-
-Work on this project is aimed at that bound. If a direction does not serve it, say so plainly
-rather than presenting it as progress.
-
-**Not the goal:** the line graph conjecture `chi(H) = chi_ell(H)`, the one-sentence open
-question closing chapter 33. An earlier session mistook it for the goal and wrote that into
-this file, which misdirected several sessions. Notes `06` to `12` and
-`latex/kernel-orientations-of-line-graphs.tex` were produced under that misreading. Their
-results stand as mathematics but they are not progress on the goal.
+If a direction does not lead towards solving an open problem, say so plainly rather than
+presenting it as progress. Before claiming a result is new, check the literature that cites the
+closest prior work.
 
 ## Layout
 
   - `PROBLEM.md` is the alignment document and the first thing to read.
-  - `list-colouring/` is the current work: numbered notes `00` to `12`, `LOG.md` for the
-    reasoning behind each step, and the Python that produced every number. Notes `00` to `05`
-    are on the goal. Notes `06` to `12` are on the line graph conjecture and are off target.
+  - `open-problems/` holds the candidate open problems: `in-scope.md` (the LECC and its
+    neighbours) and `broader.md`.
+  - `lecc-small/` is the current work, on the LECC for Schauz's small zero-sum graphs (A1).
+    **Read `lecc-small/PLAN.md` first**: it has the status board, the next action and the
+    decision tree. Verified results are in `lecc-small/RESULTS.md`.
+  - `meetings/` holds one folder per weekly supervisor meeting (Fridays, 5:00 PM): what is
+    shown, and what was agreed.
+  - `list-colouring/` holds numbered notes `00` to `16`, `LOG.md` for the reasoning behind each
+    step, and the Python that produced every number. Notes `06` to `12` are on the LECC and
+    hold the kernel-method obstructions for it (star lemma, triangle theorem, even complete
+    graphs).
   - `census-tool/` is the 2-d kernel census, with `FINDINGS.md` separating proved,
     exhaustively verified, and conjectured.
   - `latex/` holds formal write-ups, `references/` the papers and books.

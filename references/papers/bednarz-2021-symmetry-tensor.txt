@@ -1,0 +1,584 @@
+ SS symmetry
+Article
+On (2-d)-Kernels in the Tensor Product of Graphs
+Paweł Bednarz
+
+                                           The Faculty of Mathematics and Applied Physics, Rzeszow University of Technology, Aleja Powstańców
+                                           Warszawy 12, 35-959 Rzeszów, Poland; pbednarz@prz.edu.pl
+
+
+                                           Abstract: In this paper, we study the existence, construction and number of (2-d)-kernels in the tensor
+                                           product of paths, cycles and complete graphs. The symmetric distribution of (2-d)-kernels in these
+                                           products helps us to characterize them. Among others, we show that the existence of (2-d)-kernels
+                                           in the tensor product does not require the existence of a (2-d)-kernel in their factors. Moreover, we
+                                           determine the number of (2-d)-kernels in the tensor product of certain factors using Padovan and
+                                           Perrin numbers.
+
+                                           Keywords: domination; independence; (2-d)-kernel number; tensor product
+
+                                           MSC: 05C69; 05C76
+
+
+
+
+                                           1. Introduction and Preliminary Results
+                                                 In general, we use the standard terminology and notation of graph theory; see [1].
+                                           Only undirected, simple graphs are considered. By Pn , Cn and Kn we mean a path, cycle
+                                           and complete graph on n vertices, respectively. Moreover, Kn,m is a complete bipartite
+                                 graph on n + m vertices. A vertex of degree one is called a leaf, and the set of all leaves of a
+         
+                                           graph G is denoted by L( G ).
+Citation: Bednarz, P. On                         Let G and H be two disjoint graphs. The tensor product of two graphs G and H is the
+(2-d)-Kernels in the Tensor                graph G × H such that V ( G × H ) = V ( G ) × V ( H ) and E( G × H ) = {( xi , y p )( x j , yq ); xi x j ∈
+Product of Graphs. Symmetry 2021, 13,      E( G ) and y p yq ∈ E( H )}. The tensor product is also called a direct product or a categorical
+230. https://doi.org/10.3390/
+                                           product; see [2] for the details.
+sym13020230
+                                                 We say that D ⊆ V ( G ) is a dominating set of G, if every vertex of G is either in D or is
+                                           adjacent to at least one vertex of D. A subset S of vertices is an independent set of G if no
+Academic Editors: Alice Miller and
+                                           two vertices of S are adjacent in G.
+Charles F. Dunkl
+                                                 A subset J is a kernel of G if J is independent and dominating. The topic of kernels
+Received: 8 December 2020
+                                           was introduced by von Neumann and Morgenstern in digraphs in the 1930s in the context
+Accepted: 27 January 2021
+Published: 30 January 2021
+                                           of game theory; see [3].
+                                                 Since then, kernels have been intensively studied in graph theory for their relations
+Publisher’s Note: MDPI stays neu-          to various problems, such as list colourings and perfectness. C. Berge made a great
+tral with regard to jurisdictional clai-   contribution to the theory of kernels in digraphs, being one of the pioneers studying the
+ms in published maps and institutio-       problem of the existence of kernels in digraphs and using a kernel for solving problems
+nal affiliations.                          in other areas of mathematics; see [4–6]. In the literature, we can find many types and
+                                           generalizations of kernels in digraphs, where the existence problems are studied, and some
+                                           interesting results can be found in [7–11].
+                                                 In an undirected graph, every maximal independent set is a kernel, so the existence
+Copyright: © 2021 by the author. Li-
+                                           problem in an undirected graph is trivial. The problem becomes more complicated when
+censee MDPI, Basel, Switzerland.
+                                           restrictions related to the domination or the independence are added. In that way, many
+This article is an open access article
+                                           interesting types of kernels in undirected graphs were introduced and studied (for example,
+distributed under the terms and con-
+                                           (k,l)-kernels [12–14], efficient dominating sets [15], secondary independent dominating
+ditions of the Creative Commons At-
+                                           sets [16,17], restrained independent dominating sets [18], strong (1,1,2)-kernels [19] and
+tribution (CC BY) license (https://
+creativecommons.org/licenses/by/
+                                           others). Among many types of kernels in undirected graphs, there are kernels related to
+4.0/).
+                                           multiple domination. The concept of multiple domination was introduced by J. F. Fink
+
+
+
+
+Symmetry 2021, 13, 230. https://doi.org/10.3390/sym13020230                                              https://www.mdpi.com/journal/symmetry
+Symmetry 2021, 13, 230                                                                                             2 of 9
+
+
+
+
+                         and M. S. Jacobson in [20]. Recall that for an integer p ≥ 1, a subset D ⊆ V ( G ) is called
+                         a p-dominating set of G if every vertex from V ( G ) \ D has at least p neighbours in D. If
+                         p = 1, then we get the classical definition of the dominating set. If p = 2, then we get the
+                         two-dominating set.
+                                Based on this definition in [21], A. Włoch introduced and studied the concept of a
+                         two-dominating kernel ((2-d)-kernel). A subset J ⊆ V ( G ) is a (2-d)-kernel of G if J is
+                         independent and two-dominating. The number of (2-d)-kernels in a graph G is denoted by
+                         σ ( G ). Let G be a graph with a (2-d)-kernel. The minimum (resp. maximum) cardinality of
+                         a (2-d)-kernel of G is called a lower (resp. upper) (2-d)-kernel number, and it is denoted
+                         by j( G ) (resp. J ( G )).
+                                Existence problems of (2-d)-kernels were next considered in [22–24]. Among others,
+                         in [24], it was proven that the problem of the existence of (2-d)-kernels is N P -complete for
+                         general graphs. This paper is a continuation of those considerations.
+                                Referring to the definition of the (2-d)-kernel and papers [21–24], Z. L. Nagy extended
+                         the concept of (2-d)-kernels to k-dominating kernels (named as k-dominating independent
+                         sets) by considering a k-dominating set instead of the two-dominating set, and that type of
+                         kernels was studied in [25–27].
+                                However, it is worth noting that the existence of k-dominating kernels requires a
+                         sufficiently large degree of vertices, significantly reducing the number of graphs with
+                         k-dominating kernels. Consequently, it is interesting to limit the requirements for the
+                         degrees of vertices if existing problems are considered.
+                                Graph products are useful tools for obtaining new classes of graphs that can be
+                         described based on factor properties. In kernel theory, the existence problems are very
+                         often studied in products of graphs; see for example [17,19]. For (2-d)-kernels in the
+                         Cartesian product, some results were obtained in [23].
+                                This paper considers the problem of the existence of (2-d)-kernels and their number
+                         in the tensor product of graphs. The problem of counting various sets (dominating,
+                         independent, kernels) in graphs and their relations to the numbers of the Fibonacci type
+                         were studied in [11,24,28]. Our results are as follows.
+                         •    We partially solve the problem of the existence of (2-d)-kernels in the tensor product,
+                              in particular giving the complete solutions for cases where factors are paths, cycles or
+                              complete graphs.
+                         •    We obtain new interpretations of the Padovan and Perrin numbers related to (2-d)-
+                              kernels in the tensor product of basic classes of graphs, i.e., paths, cycles and complete
+                              graphs.
+
+                         2. (2-d)-Kernels in the Tensor Product of Graphs
+                             In this section, we consider the problem of the existence and the number of (2-d)-
+                         kernels in the tensor product of two graphs. We will use the following results of the tensor
+                         product of two graphs, which has been obtained in [2,29].
+
+                         Theorem 1 ([29]). Let G and H be connected non-trivial graphs. If at least one of them has an
+                         odd cycle, then G × H is connected. If both G and H are bipartite, then G × H has exactly two
+                         connected components.
+
+                         Theorem 2 ([2]). Let G and H be graphs. If G is bipartite, then G × H is bipartite.
+
+                             The following theorems, concerning the problem of the existence of (2-d)-kernels in
+                         paths and bipartite graphs, were proven in [21]. We use them in the rest of the paper.
+
+                         Theorem 3 ([21]). The graph Pn has a (2-d)-kernel J if and only if n = 2p + 1, p ≥ 1, and this
+                         kernel is unique. If it holds, then | J | = p + 1.
+Symmetry 2021, 13, 230                                                                                                              3 of 9
+
+
+
+
+                         Theorem 4 ([21]). Let G = G (V1 , V2 ) be a bipartite graph. If for each two vertices x, y ∈ L( G ),
+                         dG ( x, y) ≡ 0(mod 2), then G has a (2-d)-kernel.
+
+                               The simple observation of bipartite graphs leads us to the following result.
+
+                         Corollary 1. Let G = G (V1 , V2 ) be a bipartite graph. If δ( G ) ≥ 2, then G has a (2-d)-kernel.
+
+                              We present results concerning the existence problems of (2-d)-kernels, as well as
+                         their number in the tensor product of paths, cycles and complete graphs. Note that tensor
+                         products of these graphs have a symmetric structure. This property is very useful in finding
+                         (2-d)-kernels in these products. Moreover, we can notice that the kernels themselves are
+                         distributed symmetrically in tensor products.
+                              It turns out that even in the simplest cases of the tensor product of graphs, the problem
+                         of the existence of (2-d)-kernels is not an easy one. Theorem 3 tells us that there are not
+                         any (2-d)-kernels in the path with an even number of vertices. When studying the tensor
+                         product of two paths, a similar result was found, namely the (2-d)-kernel exists if and only
+                         if both paths do not have even number of vertices simultaneously. We prove this in the
+                         following Theorem.
+
+                         Theorem 5. Let n, m ≥ 1 be integers. The graph Pn × Pm has a (2-d)-kernel if and only if at least
+                         one of the numbers n or m is odd.
+
+                         Proof. Let n, m ≥ 1 be integers.                        Suppose that V ( Pn ) = { x1 , x2 , . . . , xn },
+                         V ( Pm ) = {y1 , y2 , . . . , ym } with the numbering of vertices in the natural order. If n = 1,
+                         then the graph P1 × Pm is an edgeless graph, so V ( P1 × Pm ) is a (2-d)-kernel. Let n, m ≥ 2.
+                         Suppose that n, m are odd. If n, m = 3, then the graph P3 × P3 is disconnected and contains
+                         two connected components C4 and K1,4 . Graphs C4 and K1,4 have a (2-d)-kernel; thus,
+                         the graph P3 × P3 has a (2-d)-kernel. Let n ≥ 3, m > 3. Since Pn and Pm are bipartite, by
+                         Theorem 1, the graph Pn × Pm has two connected components G1 , G2 . By the definition of
+                         the graph Pn × Pm , it follows that L( G1 ) 6= ∅, G2 is bipartite and δ( G2 ) ≥ 2. By Corollary
+                         1, it follows that G2 has a (2-d)-kernel. We will show that G1 has a (2-d)-kernel. By the defi-
+                         nition of the tensor product, it follows that L( G1 ) = {( x1 , y1 ), ( x1 , ym ), ( xn , y1 ), ( xn , ym )}.
+                         By the definition of the graph Pn × Pm and the assumption that n, m are odd, it follows that
+                         the distance between vertices from L( G1 ) is even. Moreover, by Theorem 2, it follows that
+                         the graph G1 is bipartite, and by Theorem 4, we obtain that G1 has a (2-d)-kernel. Suppose
+                         that n is odd and m is even. If n ≥ 3, m = 2, then the graph Pn × P2 is disconnected and
+                         contains two connected components isomorphic to a path Pn . Since n is odd, by Theorem 3,
+                         it follows that the graph Pn has a (2-d)-kernel. Hence, the graph Pn × P2 has a (2-d)-kernel.
+                         Let n ≥ 3, m > 2. By Theorem 1, it follows that the graph Pn × Pm is disconnected and
+                         contains two connected components H1 , H2 . Moreover, by the definition of the tensor
+                         product, we obtain that the graph H1 ∼          = H2 and L( H1 ) 6= ∅. Then, proving analogously
+                         as for G1 , we obtain that H1 , H2 have a (2-d)-kernel. Hence, the graph Pn × Pm has a
+                         (2-d)-kernel.
+                                We prove now that the tensor product Pn × Pm has no (2-d)-kernels if n, m are even.
+                         If n = 2 and m = 2k, k ≥ 1, then the graph P2 × P2k is disconnected and contains two
+                         connected components isomorphic to a path P2k . By Theorem 3, it follows that the graph
+                         P2k does not have a (2-d)-kernel. Let n, m > 2. Then, by Theorem 1, it follows that the
+                         graph Pn × Pm is disconnected and contains two connected components A1 , A2 . Moreover,
+                         by the definition of the tensor product, we obtain that A1 ∼             = A2 and L( A1 ) 6= ∅. Assume,
+                         to the contrary, that Pn × Pm has a (2-d)-kernel J. Thus, the graph Ai , i = 1, 2 has a (2-d)-
+                         kernel Ji . Let us consider the graph A1 . Without loss of generality, assume that L( A1 ) =
+                         {( x1 , y1 ), ( xn , ym )}. Hence, vertices ( x1 , y1 ), ( xn , ym ) ∈ J1 and ( x2 , y2 ), ( xn−1 , ym−1 ) ∈
+                                                                                                                                    / J1 .
+                         Since NPn × Pm (( x1 , y2t−1 )) = {( x2 , y2t ), ( x2 , y2t−2 )}, t = 2, 3, . . . , m2 and ( x2 , y2t ) ∈
+                                                                                                                                 / J, we
+                         have ( x1 , y2t−1 ) ∈ J1 . Analogously we show that ( x2j−1 , y2s−1 ) ∈ J1 , j = 2, 3, . . . , n2 ,
+                         s = 1, 2, . . . , m2 . This means that ( xn−1 , ym−1 ) ∈ J1 . Since the vertex ( xn , yn ) ∈ J1 is adjacent
+Symmetry 2021, 13, 230                                                                                                                    4 of 9
+
+
+
+
+                         to the vertex ( xn−1 , ym−1 ) ∈ J1 , we obtain a contradiction with the independence of J1 ,
+                         which ends the proof.
+
+                              Based on the proof of Theorem 5, the following corollary is obtained. It concerns the
+                         number of (2-d)-kernels in the tensor product of paths, as well as the lower and upper
+                         (2-d)-kernel numbers.
+
+                         Corollary 2. Let n, m ≥ 2 be integers. If the graph Pn × Pm has a (2-d)-kernel, then:
+                                                
+                                                  1 if m is even and n is odd,
+                         (i)    σ ( Pn × Pm ) =
+                                                  2 if both n and m are odd,
+                                                  m · n2  
+                                                     
+                                                                              if m is even and n is odd,
+                         (ii)   j( Pn × Pm ) =
+                                                  min m · n2 , n · m2
+                                                                      
+                                                                              if both n and m are odd,
+                                                  m · n2  
+                                                      
+                                                                               if m is even and n is odd,
+                         (iii)  J ( Pn × Pm ) =               n
+                                                                      m
+                                                  max m · 2 , n · 2            if both n and m are odd.
+
+                         Proof. Let n, m ≥ 2 be integers. Suppose that V ( Pn ) = { x1 , x2 , . . . , xn }, V ( Pm ) = {y1 , y2 ,
+                         . . . , ym } with the numbering of vertices in the natural order.
+                                  (i) Consider the case where n is odd and m is even. If n ≥ 3, m = 2, then σ ( Pn × P2 ) =
+                         σ ( Pn )σ ( Pn ) = 1. Let n ≥ 3, m > 2. Then, the graph Pn × Pm is disconnected and contains
+                         two isomorphic connected components H1 , H2 . Hence, σ ( Pn × Pm ) = σ ( H1 )σ ( H2 ) =
+                         σ2 ( H1 ). Proving analogously        as in the first paragraph
+                                                                                      n       of the proof of Theorem 5, we
+                         conclude that J = ( x2s−1 , y2t−1 ); s = 1, 2, . . . , 2 , t = 1, 2, . . . , m2 is the unique (2-d)-
+                                                  
+
+                         kernel of the graph H1 . Thus, σ ( Pn × Pm ) = 1.
+                                  Suppose that n and m are odd. If n = m = 3, then σ ( P3 × P3 ) = σ (C4 )σ (K1,4 ) = 2.
+                         Let n ≥ 3, m > 3. Then, the graph Pn × Pm is disconnected and contains two connected
+                         components G1 , G2 . Hence, σ( Pn × Pm ) = σ ( G1 )σ ( G2 ). Assume that L( G1 ) 6= ∅, G2
+                         is bipartite     and δ( G2 ) ≥ 2. Proving
+                                                                   analogously         as in Theorem 5, we conclude that
+                         J = ( x2s−1 , y2t−1 ); s = 1, 2, . . . , n2 , t = 1, 2, . . . , m2
+                                  
+                                                                                              is the unique (2-d)-kernel of the
+                         graph G1 . Thus, σ ( G1 ) = 1. We will show that the graph G2 has exactly two (2-d)-kernels.
+                         Let J2 be a (2-d)-kernel of the graph G2 . We consider the following cases.
+                         1.      ( x1 , y2 ) ∈/ J2 .
+                                 Then, ( x2 , y2k−1 ) ∈ J2 , k = 1, 2, . . . , m2 . Otherwise, ( x1 , y2i ), i = 1, 2, .. . , m2 are
+                                                                                                                                    
+
+                                 not two-dominated by J2 . This means that                        / J2 , i = 1, 2, . .. , m2 . Then,
+                                                                                    ( x3 , y2i ) ∈                         n
+                                  m analogous reasoning, we obtain J2 = ( x2a , y2b−1 ); a = 1, 2, . . . , 2 , b = 1, 2, . . . ,
+                                 by
+                                    2     is the unique (2-d)-kernel of the graph G2 not containing the vertex ( x1 , y2 ).
+                         2.      ( x1 , y2 ) ∈ J2 .                                                                                         n
+                                 Proving analogously m    as in case 1, we   obtain that  J2 =    ( x 2a − 1 , y 2b ) ; a  = 1, 2, . . . ,  2 ,
+                                 b = 1, 2, . . . , 2     is the unique (2-d)-kernel of the graph G2 containing the vertex
+                                 ( x1 , y2 ).
+                                Consequently, σ ( G2 ) = 2, and finally, σ( Pn × Pm ) = 2.
+                                From the construction  of (2-d)-kernels of the graph Pn × Pm , it followsthat j( Pn × Pm ) =
+                         J ( Pn × Pm ) = m · n2 , forn odd                                                       n         m
+                                             
+                                                            n and m    and also, j( Pn × Pm ) = min m · 2 , n · 2
+                                                                     meven,
+                         and J ( Pn × Pm ) = max m · 2 , n · 2 , for both n and m odd, which proves (ii) and
+                         (iii).
+
+                               By analysing all other cases of the tensor product of paths, cycles and complete graphs,
+                         it turns out that all of them have a (2-d)-kernel, regardless of the number of vertices.
+
+                         Theorem 6. Let n, m be integers. Then, the graphs
+                         (i)        Pn × Cm , for n ≥ 1, m ≥ 3,
+                         (ii)       Cn × Cm , for n, m ≥ 3,
+                         (iii)      Pn × Km , for n ≥ 1, m ≥ 3,
+                         (iv)       Cn × Km , for n, m ≥ 3,
+                         (v)        Kn × Km , for n ≥ 1, m ≥ 3,
+Symmetry 2021, 13, 230                                                                                                              5 of 9
+
+
+
+
+                         have a (2-d)-kernel.
+
+                         Proof. Consider the following cases.
+                         (i)       Let n ≥ 1, m ≥ 3 be integers. We will show that the graph Pn × Cm has a (2-d)-
+                                   kernel. Suppose that V ( Pn ) = { x1 , x2 , . . . , xn }, V (Cm ) = {y1 , y2 , . . . , ym } with the
+                                   numbering of vertices in the natural order. If n = 1, then the graph P1 × Cm is
+                                   an edgeless graph, so V ( P1 × Cm ) is a (2-d)-kernel. Let n = 2. If m is odd, then
+                                   P2 × Cm ∼  = C2m , so it has a (2-d)-kernel. If m is even, then P2 × Cm = Cm ∪ Cm . Thus,
+                                   P2 × Cm , m ≥ 3 has a (2-d)-kernel. Let n ≥ 3. Suppose that Vi = { xi } × V (Cm ),
+                                                                                                      Sd n e
+                                   i = 1, 2, . . . , n. We will show that the set J = j=21 V2j−1 is a (2-d)-kernel of
+                                   the graph Pn × Cm . By the definition of the tensor product, it follows that Vi is
+                                   an independent set, for i = 1, 2, . . . , n. Moreover, the factor Pn ensures that J is
+                                   independent. We will show that J is two-dominating. Let ( x a , yb ) ∈ V ( Pn × Cm ) \ J,
+                                                                                                                         Sb n c
+                                   a = 1, 2, . . . , 2j, j = 1, 2, . . . , n2 , b = 1, 2, . . . , m. Then, ( x a , yb ) ∈ j=21 V2j . Since
+                                                                           
+
+                                   for all b = 1, 2, . . . , m, it holds that degCm (yb ) = 2, and each vertex from V2j ,
+                                   j = 1, 2, . . . , n2 is two-dominated by V2j−1 ⊆ J. This means that J is a (2-d)-kernel
+                                                     
+
+                                   of the graph Pn × Cm .
+                                                                                                                              Sb n c
+                         (ii)      Let n, m ≥ 3. Proving analogously as in Case (i), we can show that J = i=21 V2i−1
+                                   is a (2-d)-kernel of the graph Cn × Cm .
+                         (iii)     Let n ≥ 1, m ≥ 3. Proving analogously as in Case (i), we can show that J =
+                                   Sd n2 e
+                                     i =1 V2i −1 is a (2-d )-kernel of the graph Pn × Km .
+                         (iv)      Let n, m ≥ 3. Proving analogously as in Case (i), we can show that J = V (Cn ) ×
+                                   {y1 } is a (2-d)-kernel of the graph Cn × Km .
+                         (v)       Let n ≥ 1, m ≥ 3. Proving analogously as in Case (i), we can show that J =
+                                   V (Kn ) × {y1 } is a (2-d)-kernel of the graph Kn × Km .
+
+                                Let J ( G ) be a family of all (2-d)-kernels of a graph G. Then, σ ( G ) = |J ( G )|. For
+                         any vertex x ∈ V ( G ), let J x ( G ) = { J ∈ J ( G ); x ∈ J } and J− x ( G ) = { J ∈ J ( G ); x ∈      / J }.
+                         Thus, |J ( G )| = |J x ( G )| + |J− x ( G )|. Let σx ( G ) = |J x ( G )| and σ− x ( G ) = |J− x ( G )|. Then,
+                         σ ( G ) = σx ( G ) + σ− x ( G ).
+                                In many counting problems, the solution is given by the Padovan numbers S1 (n) and
+                         Perrin numbers S2 (n), which are the well-known numbers of the Fibonacci type. They
+                         are defined by the linear recurrence equation Si (n) = Si (n − 2) + Si (n − 3), i = 1, 2, with
+                         initial values S1 (0) = S1 (1) = S1 (2) = 1 and S2 (0) = 3, S2 (1) = 0, S2 (2) = 2. In [30], Z.
+                         Füredi observed that the total number of maximal independent sets of Pn and Cn is given
+                         by S1 (n + 1) and S2 (n), respectively.
+                                The next theorem shows the relation between the number of (2-d)-kernels in the tensor
+                         product Pn × Cm and the Padovan numbers.
+
+                         Theorem 7. Let n ≥ 1, m ≥ 3 be integers. Then:
+                                               
+                                                  S1 ( n + 1 )    if m is odd,
+                         (i)   σ ( Pn × Cm ) =
+                                                  (S1 (n + 1))2 if m is even,
+                               j( Pn × Cm ) = m · n3 ,
+                                                   
+                         (ii)
+                         (iii) J ( Pn × Cm ) = m · n2 .
+
+                         Proof. Let n ≥ 1, m ≥ 3 be integers. Assume that V ( Pn ) = { x1 , x2 , . . . , xn } and V (Cm ) =
+                         {y1 , y2 , . . . , ym } with the numbering of vertices in the natural order, and let Vi = { xi } ×
+                         V (Cm ), i = 1, 2, . . . , n.
+                               (i) Consider the following cases.
+                         1.      m is odd.
+                                 Then, the graph Pn × Cm is connected for each n ≥ 2. If n = 1, 2, then σ ( P1 × Cm ) =
+                                 1 = S1 (2) and σ ( P2 × Cm ) = 2 = S1 (3), respectively. If n = 3, then the family
+Symmetry 2021, 13, 230                                                                                                       6 of 9
+
+
+
+
+                                 J ( P3 × Cm ) of all (2-d)-kernels has the form J ( P3 × Cm ) = {V1 ∪ V3 , V2 }. This means
+                                 that σ ( P3 × Cm ) = 2 = S1 (4). Let n ≥ 4. We will show that σ ( Pn × Cm ) = S1 (n + 1).
+                                 Let J ⊂ V ( Pn × Cm ) be a (2-d)-kernel of the graph Pn × Cm . We have two possibilities.
+                                 1.1.   ( xn , y1 ) ∈ J.
+                                        Then, ( xn−1 , y2 ) ∈   / J. Since degPn ×Cm (( xn , y3 )) = 2 and vertices ( xn−1 , y2 ),
+                                        ( xn , y3 ) are adjacent, the vertex ( xn , y3 ) has to belong to a (2-d)-kernel J. Oth-
+                                        erwise, ( xn , y3 ) is not two-dominated by J. Since m is odd, by analogous
+                                        reasoning, we obtain ( xn , yk ) ∈ J, k = 1, 2, . . . , m. Thus, Vn ⊂ J. Then,
+                                        Vn−1 ∩ J = ∅, and moreover, every vertex from Vn−1 is two-dominated by
+                                        J. Hence, J = J ∗ ∪ Vn , where J ∗ is any (2-d)-kernel of the graph Pn−2 × Cm .
+                                        Thus, σ( xn ,y1 ) ( Pn × Cm ) = σ ( Pn−2 × Cm ).
+                                 1.2.   ( x n , y1 ) ∈
+                                                     / J.
+                                        Then, ( xn−1 , y2 ), ( xn−1 , ym ) ∈ J. Proving analogously as in Case 1.1, we obtain
+                                        that Vn−1 ⊂ J and Vn ∩ J = ∅ = Vn−2 ∩ J. Then, every vertex from Vn−2 ∪ Vn
+                                        is two-dominated by J. Hence, J = J ∗∗ ∪ Vn−1 , where J ∗∗ is any (2-d)-kernel of
+                                        the graph Pn−3 × Cm . Thus, σ−( xn ,y1 ) ( Pn × Cm ) = σ ( Pn−3 × Cm ).
+                                Consequently, σ ( Pn × Cm ) = σ ( Pn−2 × Cm ) + σ( Pn−3 × Cm ), n ≥ 4. By the initial
+                                conditions, it follows that σ ( Pn × Cm ) = S1 (n + 1), for n ≥ 1.
+                         2. m is even.
+                                Then, by Theorem 1, it follows that the graph Pn × Cm , n ≥ 2 is disconnected
+                                and contains two isomorphic connected components G1 , G2 . Thus, σ( Pn × Cm ) =
+                                σ ( G1 )σ ( G2 ) = (σ ( G1 ))2 . Let Vi1 = { xi } × {y2t−1 ; t = 1, 2, . . . , m2 }, Vi2 = { xi } ×
+                                {y2t ; t = 1, 2, . . . , m2 }, for i = 1, 2, . . . , n. Without loss of generality, assume that
+                                ( x1 , y1 ) ∈ V ( G1 ). If n = 1, 2, then σ( P1 × Cm ) = 1 = (S1 (2))2 and σ( P2 × Cm ) = 4 =
+                                (S1 (3))2 , respectively. If n = 3, then the family J ( P3 × Cm ) of all (2-d)-kernels has the
+                                form J ( P3 × Cm ) = {V11 ∪ V31 , V22 }. This means that σ( P3 × Cm ) = 22 = (S1 (4))2 . Let
+                                n ≥ 4. Proving analogously as in Case 1, we obtain that σ ( G1 ) = S1 (n + 1). Hence,
+                                σ ( Pn × Cm ) = (S1 (n + 1))2 , for n ≥ 1.
+                                                                                                                              n
+                                From the    construction     of ( 2-d ) -kernels
+                                                                              n of  the graph Pn × Cm , it follows
+                                                                                                             n     that m ·  3 ≤
+                                         n
+                                           
+                         | J | ≤ m · 2 . Hence, j( Pn × Cm ) = m · 3 and J ( Pn × Cm ) = m · 2 , which proves (ii)
+                         and (iii).
+
+                             Proving analogously as in Theorem 7, we can give similar equalities for the tensor
+                         product of a path and a complete graph.
+
+                         Theorem 8. Let n, m ≥ 3 be integers. Then:
+                         (i)        σ ( Pn × Km ) = S1 (n +
+                                                            1),
+                         (ii)       j( Pn × Km ) = m · n3 ,
+                         (iii)      J ( Pn × Km ) = m · n2 .
+
+                              Now, we give the relation between the Padovan and Perrin numbers, which will be
+                         useful to prove the next theorem concerning parameters σ, j, J in the tensor product of
+                         specific cycles.
+
+                         Lemma 1. For n ≥ 5,
+
+                                                    S2 (n) = S1 (n − 2) + S1 (n − 4) + 2S1 (n − 5).                            (1)
+
+                         Proof (induction on n). If n = 5, 6, 7, then the result holds by the definitions of the Padovan
+                         and Perrin numbers. Let n ≥ 8, and suppose that (1) is true for all k < n. We will show that
+                         S2 (n) = S1 (n − 2) + S1 (n − 4) + 2S1 (n − 5). By the definition of Perrin numbers and the
+                         induction hypothesis, we have S2 (n) = S2 (n − 2) + S2 (n − 3) = S1 (n − 4) + S1 (n − 6) +
+                         2S1 (n − 7) + S1 (n − 5) + S1 (n − 7) + 2S1 (n − 8) = S1 (n − 2) + S1 (n − 4) + 2S1 (n − 5),
+                         which ends the proof.
+Symmetry 2021, 13, 230                                                                                                                 7 of 9
+
+
+
+
+                              The next theorem presents the relation between the number of (2-d)-kernels in the
+                         tensor product Cn × C3 and the Perrin numbers.
+
+                         Theorem 9. Let n ≥ 3 be an integer. Then:
+                         (i)        σ (Cn × C3 ) = 3 + S2 (n),
+                         (ii)       j(Cn × C3 ) = n,  
+                         (iii)      J (Cn × C3 ) = 3 · n2 .
+
+                         Proof. Let n ≥ 3 be an integer. Assume that V (C3 ) = {y1 , y2 , y3 } and V (Cn ) = { x1 ,
+                         x2 , . . . , xn } with the numbering of vertices in the natural order. Let Xi = { xi } × V (C3 ),
+                         i = 1, 2, . . . , n and Yj = V (Cn ) × {y j }, j = 1, 2, 3.
+                         (i) Let n = 3, 4, 5, 6. It is easy to check that the set of (2-d)-kernels of Cn × C3 is
+                         { X1 , X2 , X3 , Y1 , Y2 , Y3 }, { X1 ∪ X3 , X2 ∪ X4 , Y1 , Y2 , Y3 }, { X1 ∪ X3 , X1 ∪ X4 , X2 ∪ X4 , X2 ∪ X5 ,
+                         X3 ∪ X5 , Y1 , Y2 , Y3 }, { X1 ∪ X3 ∪ X5 , X1 ∪ X4 , X2 ∪ X4 ∪ X6 , X2 ∪ X5 , X3 ∪ X6 , Y1 , Y2 , Y3 } for
+                         n = 3, 4, 5, 6, respectively; hence, the proposition holds for these cases. Let n ≥ 7. We
+                         will show that σ (Cn × C3 ) = 3 + S2 (n). Let J ⊂ V (Cn × C3 ) be a (2-d)-kernel of the graph
+                         Cn × C3 . We have two possibilities.
+                         1.      ( xn , y1 ) ∈ J.
+                                 Then, ( xn−1 , y2 ), ( xn−1 , y3 ), ( x1 , y2 ), ( x1 , y3 ) ∈
+                                                                                              / J. Consider the vertex ( xn , y2 ). If
+                                 ( xn , y2 ) ∈ J, then ( xn , y3 ) ∈ J. Otherwise, ( xn , y3 ) cannot be two-dominated by
+                                 J. This means that Xn ⊂ J and Xn−1 ∩ J = ∅ = X1 ∩ J. Moreover, every vertex
+                                 from X1 ∪ Xn−1 is two-dominated by J. Hence, J = J ∗ ∪ Xn , where J ∗ is any (2-d)-
+                                 kernel of the graph Pn−3 × C3 . Thus, σ( Pn−3 × C3 ) is the number of (2-d)-kernels J
+                                 containing vertices ( xn , y1 ) and ( xn , y2 ). If ( xn , y2 ) ∈   / J, then ( xn−1 , y1 ), ( x1 , y1 ) ∈ J.
+                                 Otherwise, ( xn , y2 ) is not two-dominated by J. Then, ( xn , y3 ) ∈             / J, and moreover,
+                                 ( x n −2 y k ), ( x 2 , y k ) ∈
+                                                               / J, k = 2, 3. By analogous reasoning, we obtain Y1 ⊂ J and
+                                 Y2 ∩ J = ∅ = Y3 ∩ J. This means that Y1 is the unique (2-d)-kernel of the graph
+                                 Cn × C3 containing the vertex ( xn , y1 ) and not containing the vertex ( xn , y2 ). Hence,
+                                 σ( xn ,y1 ) (Cn × C3 ) = σ ( Pn−3 × C3 ) + 1.
+                         2.      ( x n , y1 ) ∈/ J.
+                                 Consider four cases.
+                                 2.1. ( xn−1 , y1 ), ( x1 , y1 ) ∈    / J.
+                                            It is obvious that Y2 , Y3 are the only (2-d)-kernels of the graph Cn × C3 .
+                                 2.2. ( xn−1 , y1 ) ∈ J and ( x1 , y1 ) ∈         / J.
+                                            We will show that ( xn , y1 ) is two-dominated by ( xn−1 , y2 ), ( xn−1 , y3 ) ∈ J.
+                                            Otherwise, at least one of the vertices ( x1 , y2 ), ( x1 , y3 ) belongs to a (2-d)-
+                                            kernel J. If ( x1 , y2 ) ∈ J, then ( x1 , y3 ) cannot be two-dominated by J. If
+                                            ( x1 , y2 ) ∈ J or ( x1 , y3 ) ∈ J, then ( x1 , y1 ) is not dominated by J. This means
+                                            that Xn ∩ J = ∅ = X1 ∩ J and Xn−1 ⊂ J. Then, X2 ⊂ J, otherwise vertices
+                                            from X1 are not two-dominated by J. Moreover, Xn−2 ∩ J = ∅ = X3 ∩ J,
+                                            and the vertices from X1 ∪ X3 ∪ Xn−2 ∪ Xn are two-dominated by J. Hence,
+                                             J = J ∗∗ ∪ X2 ∪ Xn−1 , where J ∗∗ is any (2-d)-kernel of the graph Pn−6 × C3 . This
+                                            means that σ ( Pn−6 × C3 ) is the number of (2-d)-kernels J containing ( xn−1 , y1 )
+                                            and not containing ( x1 , y1 ), ( xn , y1 ).
+                                 2.3. ( xn−1 , y1 ) ∈         / J and ( x1 , y1 ) ∈ J.
+                                            Proving analogously as in Subcase 2.2, we obtain that σ ( Pn−6 × C3 ) is the
+                                            number of (2-d)-kernels J containing ( x1 , y1 ) and not containing ( xn−1 , y1 ),
+                                            ( x n , y1 ).
+                                 2.4. ( xn−1 , y1 ), ( x1 , y1 ) ∈ J.
+                                            Then, Xn ∩ J = ∅, X1 ⊂ J and Xn−1 ⊂ J. Otherwise, J is not two-dominating.
+                                            This means that X2 ∩ J = ∅ = Xn−2 ∩ J. Moreover, every vertex from X2 ∪
+                                            Xn−2 ∪ Xn is two-dominated by J. Thus, J = Je ∪ X1 ∪ Xn−1 , where Je is any (2-
+                                            d)-kernel of the graph Pn−5 × C3 . This means that σ ( Pn−5 × C3 ) is the number
+                                            of (2-d)-kernels J containing ( xn−1 , y1 ), ( x1 , y1 ) and not containing ( xn , y1 ).
+Symmetry 2021, 13, 230                                                                                                       8 of 9
+
+
+
+
+                                 Hence, σ−( xn ,y1 ) (Cn × C3 ) = 2 + 2σ ( Pn−6 × C3 ) + σ ( Pn−5 × C3 ).
+                              Finally, from the above cases, we obtain that σ(Cn × C3 ) = 3 + σ( Pn−3 × C3 ) +
+                         2σ( Pn−6 × C3 ) + σ ( Pn−5 × C3 ).
+                              By Theorem 7, we have that σ (Cn × C3 ) = 3 + S1 (n − 2) + 2S1 (n − 5) + S1 (n −
+                         4). Moreover, by Lemma 1, it follows that σ (Cn × C3 ) = 3 + S2 (n), n ≥ 3. From             the
+                                                                                                               n
+                                                                                                                 
+                         construction of (2-d)-kernels of the graph
+                                                                  nC × C 3 , it follows that n ≤ | J | ≤ 3 · 2   . Hence,
+                         j(Cn × C3 ) = n and J (Cn × C3 ) = 3 · n2 , which proves (ii) and (iii).
+
+                              Using the same method as in Theorem 9, we are able to show similar equalities for the
+                         tensor product of a cycle and a complete graph.
+
+                         Theorem 10. Let n, m ≥ 3 be integers. Then:
+                         (i)        σ (Cn × Km ) = S2 (n) + m,
+                         (ii)       j(Cn × Km ) = n,  
+                         (iii)      J (Cn × Km ) = m · n2 .
+
+                                 Finally, let us consider the tensor product of two complete graphs.
+
+                         Theorem 11. Let n, m ≥ 3 be integers. Then:
+                         (i)        σ (Kn × Km ) = n + m,
+                         (ii)       j(Kn × Km ) = min{n, m},
+                         (iii)      J (Kn × Km ) = max{n, m}.
+
+                         Proof. Let n, m ≥ 3 be integers. Assume that V (Kn ) = { x1 , x2 , . . . , xn } and V (Km ) =
+                         {y1 , y2 , . . . , ym }. Let Xi = { xi } × V (Km ), i = 1, 2, . . . , n and Yj = V (Kn ) × {y j }, j =
+                         1, 2, . . . , m.
+                                (i) Let J ⊂ V (Kn × Km ) be a (2-d)-kernel of the graph Kn × Km . Without loss of
+                         generality, assume that ( xs , yt ) ∈ J, 1 ≤ s ≤ n, 1 ≤ t ≤ m. Then, ( xq , yt ) ∈ J, 1 ≤ q ≤ n,
+                         q 6= s or ( xs , yr ) ∈ J, 1 ≤ r ≤ m, r 6= t. Otherwise, J is not independent. If ( xq , yt ) ∈ J,
+                         then NKn ×Km (( xs , yt ) ∪ ( xq , yt )) = V (Kn × Km ) \ Yt . Thus, J = Yt . If ( xs , yr ) ∈ J, then, by
+                         analogous reasoning, we obtain J = Xs . This means that the family J (Kn × Km ) of all
+                         (2-d)-kernels has the form J (Kn × Km ) = { Xi ; i = 1, 2, . . . , n} ∪ {Yj ; j = 1, 2, . . . , m}. Thus,
+                         σ (Kn × Km ) = n + m. Moreover, | Xi | = m, i = 1, 2, . . . , n and |Yj | = n, j = 1, 2, . . . , m;
+                         hence, j(Kn × Km ) = min{n, m} and J (Kn × Km ) = max{n, m}, which proves (ii) and
+                         (iii).
+
+                         3. Concluding Remarks
+                              In this paper, we discussed the problem of the existence of (2-d)-kernels in the tensor
+                         product of two graphs, in particular paths, cycles and complete graphs. Moreover, special
+                         graph parameters were determined for these cases. It was shown that if both factors of the
+                         tensor product are either paths, cycles or complete graphs, then their tensor product has
+                         a (2-d)-kernel almost in all cases, except for the case of two paths with an even number
+                         of vertices. Moreover, the new interpretation of the Padovan and Perrin numbers related
+                         to the numbers of (2-d)-kernels in a certain tensor product of graphs was given. The
+                         obtained results are a starting point to studying and counting (2-d)-kernels in the tensor
+                         product where one of the factors is an arbitrary graph. It seems interesting to complement
+                         these results by obtaining sufficient conditions for the existence of (2-d)-kernels in tensor
+                         products G × Pn , G × Cn , G × Kn . The results presented in this paper should be valuable
+                         to obtain such conditions.
+                         Funding: This research received no external funding.
+                         Conflicts of Interest: The author declares no conflict of interest.
+Symmetry 2021, 13, 230                                                                                                                9 of 9
+
+
+
+
+References
+1.    Diestel, R. Graph Theory; Springer: Heidelberg, Germany; New York, NY, USA, 2005.
+2.    Hammack, R.; Imrich, W.; Klavžar, S. Handbook of Product Graphs, 2nd ed.; CRC Press, Inc.: Boca Raton, FL, USA, 2011.
+3.    Morgenstern, O.; Von Neumann, J. Theory of Games and Economic Behavior; Princeton University Press: Princeton, NJ, USA, 1944.
+4.    Berge, C. Graphs and Hypergraphs; North-Holland: Amsterdam, The Netherland, 1973.
+5.    Berge, C.; Duchet, P. Perfect graphs and kernels. Bull. Inst. Math. Acad. Sin. 1988, 16, 263–274.
+6.    Berge, C.; Duchet, P. Recent problems and results about kernels in directed graphs. Discret. Math. 1990, 86, 27–31. [CrossRef]
+7.    Galeana-Sánchez, H.; Hernández-Cruz, C.; Arumugam, S. On the existence of (k, l)-kernels in digraphs with a given circumference.
+      AKCE Int. J. Graphs Comb. 2013, 10, 15–28.
+8.    Galeana-Sánchez, H.; Ramírez, L. Monochromatic kernel-perfectness of special classes of digraphs. Discuss. Math. Graph Theory
+      2007, 27, 389–400. [CrossRef]
+9.    Galeana-Sánchez, H.; Sánchez-López, R. H-kernels in the D-join. Ars Comb. 2011, 98, 353–377.
+10.   Kucharska, M. On (k, l)-kernel perfectness of special classes of digraphs. Discuss. Math. Graph Theory 2005, 25, 103–119. [CrossRef]
+11.   Szumny, W.; Włoch, A.; Włoch, I. On the existence and on the number of (k, l)-kernels in the lexicographic product of graphs.
+      Discret. Math. 2008, 308, 4616–4624. [CrossRef]
+12.   Galeana-Sánchez, H.; Hernández-Cruz, C. On the existence of (k, l)-kernels in infinite digraphs: A survey. Discuss. Math. Graph
+      Theory 2014, 34, 431–466. [CrossRef]
+13.   Kucharska, M.; Kwaśnik, M. On (k, l)-kernels of special superdigraphs of Pm and Cm . Discuss. Math. Graph Theory 2001, 21,
+      95–109. [CrossRef]
+14.   Włoch, A.; Włoch, I. On (k,l)-kernels in the corona of digraphs. Int. J. Pure Appl. Math. 2009, 53, 571–582.
+15.   Bange, D.W.; Barkauskas, A.E.; Slater, P.J. Efficient dominating sets in graphs. Appl. Discret. Math. 1988, 189, 189–199.
+16.   Hedetniemi, S.M.; Hedetniemi, S.T.; Knisely, J.; Rall, D.F.; Haynes, T.W. Secondary domination in graphs. AKCE Int. J. Graphs
+      Comb. 2008, 5, 103–115.
+17.   Michalski, A.; Włoch, I. On the existence and the number of independent (1,2)-dominating sets in the G-join of graphs. Appl.
+      Math. Comput. 2020, 377, 125155. [CrossRef]
+18.   Domke, G.S.; Hattingh, J.H.; Hedetniemi, S.T.; Laskar, R.C.; Markus, L.R. Restrained domination in graphs. Discret. Math. 1999,
+      203, 61–69. [CrossRef]
+19.   Bednarz, U. Strong (1;1;2)-kernels in the corona of graphs and some realization problems. Iran. J. Sci. Technol. Trans. Sci. 2020, 44,
+      401–406. [CrossRef]
+20.   Fink, J.F.; Jacobson, M.S. n-domination in graphs. In Graph Theory with Applications to Algorithms and Computer Science; John Wiley
+      & Sons: New York, NY, USA, 1985; pp. 283–300.
+21.   Włoch, A. On 2-dominating kernels in graphs. Australas. J. Comb. 2012, 53, 273–284.
+22.   Bednarz, P.; Włoch, I. An algorithm determining (2-d)-kernels in trees. Util. Math. 2017, 102, 215–222.
+23.   Bednarz, P.; Włoch, I. On (2-d)-kernels in the Cartesian product of graphs. Ann. Univ. Mariae Curie-Sklodowska Sect. A 2016, 70,
+      1–8. [CrossRef]
+24.   Bednarz, P.; Hernández-Cruz, C.; Włoch, I. On the existence and the number of (2-d)-kernels in graphs. Ars Comb. 2015, 121,
+      341–351.
+25.   Gerbner, D.; Keszegh, B.; Methuku, A.; Patkós, B.; Vizer, M. An improvement on the maximum number of k-Dominating
+      Independent Sets. arXiv 2017, arXiv:1709.04720.
+26.   Nagy, Z.L. Generalizing Erdős, Moon and Moser’s result—The number of k-dominating independent sets. Electron. Notes Discret.
+      Math. 2017, 61, 909–915. [CrossRef]
+27.   Nagy, Z.L. On the Number of k-Dominating Independent Sets. J. Graph Theory 2017, 84, 566–580. [CrossRef]
+28.   Dosal-Trujillo, L.A.; Galeana-Sánchez, H. The Fibonacci numbers of certain subgraphs of circulant graphs. AKCE Int. J. Graphs
+      Comb. 2015, 12, 94–103. [CrossRef]
+29.   Weichsel, P.M. The Kronecker product of graphs. Proc. Am. Math. Soc. 1962, 13, 47–52. [CrossRef]
+30.   Füredi, Z. The number of maximal independent sets in connected graphs. J. Graph Theory 1987, 11, 463–470. [CrossRef]
+

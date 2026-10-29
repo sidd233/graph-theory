@@ -1,0 +1,279 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{booktabs}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\newcommand{\ch}{\operatorname{ch}}
+\newcommand{\dout}{d^{+}}
+
+\title{The List Edge Colouring Conjecture for Schauz's zero-sum graphs\\[2pt]
+\large Progress report and claims for verification}
+\author{Siddharth Mishra}
+\date{9 October 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent Schauz (2017) left open the List Edge Colouring Conjecture (LECC) for the regular
+graphs on at most 10 vertices on which his Alon--Tarsi computation vanishes. I reproduce his
+census and find that 52 of these graphs are not covered by any known theorem. I prove that for
+a simple $k$-regular graph $G$, the line graph $L(G)$ has a kernel-perfect orientation with
+maximum out-degree at most $k-1$ if and only if $G$ is bipartite, so Galvin's kernel method also
+fails on all 52. I then prove $\ch'(G) = \chi'(G)$ for 6 of the 52 graphs by a certified
+computer search. This note states each claim, gives the proofs, and explains how to check
+them.
+\end{abstract}
+
+\section{Claims and their status}
+
+\begin{center}
+\begin{tabular}{p{0.6cm}p{8.4cm}p{5.4cm}}
+\toprule
+& Claim & Status \\
+\midrule
+C1 & There are 3 zero-sum regular class-1 graphs on 8 vertices and 51 on 10 vertices. &
+Reproduces Schauz \cite{schauz} exactly. \\
+C2 & 52 of them are covered by no known theorem. & Bookkeeping; Section 2. \\
+C3 & Theorem~\ref{thm:main}: kernel method on regular $G$ works iff $G$ is bipartite. &
+Proved (Section 3). Not found in the literature (Section 5). \\
+C4 & $\ch'(G) = \chi'(G)$ for the 5 open cubic graphs. & Computer proof with independently
+checked certificates (Section 4). \\
+C5 & $\ch'(G) = \chi'(G)$ for the open 4-regular graph on 8 vertices. & Same. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Setting: zero-sum graphs and the open list}
+
+Let $G$ be $k$-regular and class 1, with lists of size $k$ on its edges. $L(G)$ has $|E|$
+vertices and $|E|(k-1)$ edges, so the only monomial of the graph polynomial of $L(G)$ with all
+exponents at most $k-1$ is $\prod_e x_e^{k-1}$. Its coefficient is a nonzero constant times
+\[
+  S(G) = \sum_{c} \prod_{v} \operatorname{sgn}\bigl(\pi_v(c)\bigr),
+\]
+the sum over proper $k$-edge-colourings $c$, where $\pi_v(c)$ is the permutation taking the
+edges at $v$ (in a fixed order) to their colours. $G$ is \emph{zero-sum} if $S(G) = 0$; then
+the Alon--Tarsi method cannot prove $\ch'(G) = k$ \emph{with any monomial}.
+
+\paragraph{C1.} Enumerating connected regular graphs with nauty and computing $S(G)$ by
+backtracking, I find 3 zero-sum graphs on 8 vertices and 51 on 10 vertices (by degree 3 to 7:
+5, 17, 18, 8, 3), as in \cite[\S4.1]{schauz}. I validated $S$ on $K_4$, $K_{3,3}$, $K_6$, $K_8$
+and against a direct Eulerian-subgraph computation.
+
+\paragraph{C2.} Of the 54, exactly 2 are covered by a known theorem (both bipartite; Galvin). None
+is planar, bipartite after deleting a vertex, free of odd cycles of length at least 5, complete,
+or in the class of McDonald and Puleo \cite{mp} (see Section 5). So 52 remain: on 8 vertices
+one each of degree 3, 4, 5; on 10 vertices 4, 17, 17, 8, 3 of degree 3, 4, 5, 6, 7.
+
+\section{The kernel method on regular graphs}
+
+\begin{theorem}\label{thm:main}
+Let $G$ be a simple $k$-regular graph, $k \ge 1$. Then $L(G)$ has a kernel-perfect orientation
+with $\dout \le k-1$ if and only if $G$ is bipartite.
+\end{theorem}
+
+\begin{corollary}
+If $G$ is regular and not bipartite, Lemma~1 of Bondy--Boppana--Siegel with lists of size
+$\Delta(G)$ cannot prove $\ch'(G) = \Delta(G)$. In particular it fails on all 52 open graphs.
+\end{corollary}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+``If'' is Galvin's theorem. For ``only if'', let $D$ be such an orientation.
+
+\emph{Step 1 (ranks).} The edges at a vertex $u$ form a clique of $L(G)$, which in a
+kernel-perfect digraph induces a transitive tournament. Let $r_u(v) \in \{0, \dots, k-1\}$ be the
+number of edges at $u$ that $uv$ points to. As $G$ is simple, every arc of $D$ lies in exactly
+one such clique, so $\dout(uv) = r_u(v) + r_v(u)$.
+
+\emph{Step 2 (tightness).} $\sum_{uv} \dout(uv) = |V| \binom{k}{2} = |E|(k-1)$, and each term is
+at most $k-1$. Hence $r_u(v) + r_v(u) = k-1$ for every edge.
+
+\emph{Step 3 (no odd ring).} Call an odd cycle $a_1 \dots a_m$ of $G$ an \emph{odd ring} if each
+$a_i$ ranks $a_{i+1}$ above $a_{i-1}$ (indices mod $m$). Its edges $e_i = a_i a_{i+1}$ then
+satisfy $e_{i-1} \to e_i$, and within the edge set of the cycle $e_i$ is adjacent only to
+$e_{i \pm 1}$. So they induce a directed odd cycle in $D$, which has no kernel. Hence $G$ has no
+odd ring.
+
+\emph{Step 4 (an orientation of $G$).} Let $y(u,v) = r_u(v) - \frac{k-1}{2}$. By Step 2,
+$y(v,u) = -y(u,v)$. Orient $u \to v$ in $O$ when $y(u,v) < 0$, and let $M_0 = \{uv : y(u,v) = 0\}$.
+If $k$ is even, $M_0 = \emptyset$. If $k$ is odd, $M_0$ is a perfect matching (one middle rank per
+vertex, symmetric by Step 2). Every vertex has $\lfloor k/2 \rfloor$ out-arcs and as many
+in-arcs, so $O$ is a balanced orientation of $G - M_0$.
+
+\emph{Step 5 (admissible cycles).} Along a cycle $a_1 \to \dots \to a_m \to a_1$, $a_i$ ranks
+$a_{i+1}$ above $a_{i-1}$ iff $y(a_{i-1}, a_i) + y(a_i, a_{i+1}) < 0$. Call the cycle
+\emph{admissible} if each edge is a forward arc of $O$ ($y < 0$) or lies in $M_0$ ($y = 0$).
+Consecutive edges are not both in the matching $M_0$, so every consecutive sum is negative, and
+an admissible odd cycle is an odd ring. By Step 3 there is none.
+
+\emph{Step 6.} In a balanced digraph every arc lies on a directed cycle, so each component of
+$(G - M_0, O)$ is strongly connected.
+
+\emph{Step 7 (components are bipartite).} Let $H$ be a component and suppose it has no directed
+closed walk of odd length. For each arc $x \to y$ choose a directed $y$--$x$ path $P_{yx}$; it has
+odd length. Traverse an odd cycle of $H$, replacing each backward arc $x \to y$ by $P_{yx}$. This
+gives a directed closed walk of odd length, a contradiction. So $H$ has an odd directed closed
+walk, hence an odd directed cycle, which is admissible, contradicting Step 5. Hence $H$ has no
+odd cycle at all.
+
+\emph{Step 8 ($k$ even).} $M_0 = \emptyset$ and $G$ is the union of bipartite components.
+
+\emph{Step 9 ($k$ odd).} Fix a 2-colouring $\mathrm{col}$ of each component. Let $\Gamma$ be the
+multigraph on the components with edge set $M_0$ (loops allowed), and label $f = vu \in M_0$ by
+$\lambda(f) = 1$ if $\mathrm{col}(v) = \mathrm{col}(u)$ and $0$ otherwise. $G$ is bipartite iff
+every cycle of $\Gamma$ has even label sum. Take a shortest cycle of $\Gamma$ with odd label sum.
+It visits distinct components $H_1, \dots, H_t$ via $f_i = v_i u_{i+1}$, with $u_i \ne v_i$ as
+$M_0$ is a matching. By Step 6 choose directed $O$-paths $P_i$ from $u_i$ to $v_i$ in $H_i$. Then
+$Z = P_1 f_1 \cdots P_t f_t$ is an admissible cycle of $G$, and since
+$|P_i| \equiv \mathrm{col}(u_i) + \mathrm{col}(v_i) \pmod 2$,
+\[
+  |Z| \equiv \sum_i \bigl(\mathrm{col}(v_i) + \mathrm{col}(u_{i+1}) + 1\bigr)
+      \equiv \sum_i \lambda(f_i) \equiv 1 \pmod 2,
+\]
+contradicting Step 5. So $G$ is bipartite.
+\end{proof}
+
+\begin{remark}
+The proof uses only the clique (star) structure, the count in Step 2, and the absence of kernels
+in directed odd cycles. It does not use class 1. Step 2 also shows that allowing pairs of
+opposite arcs (as in \cite{mp}) changes nothing for regular $G$. The hypotheses are needed:
+with $\Delta + 1$ colours the Petersen graph has a suitable orientation \cite[Thm.~4]{mcd}, and
+for non-regular graphs the kernel method succeeds beyond bipartite graphs \cite{mcd,mp}. As a
+check, a SAT encoding finds a suitable orientation for exactly the 29 bipartite graphs among
+1923 regular graphs on 6 to 14 vertices.
+\end{remark}
+
+\section{Computer proofs of $\ch'(G) = \chi'(G)$}
+
+Let $H = L(G)$ with $n$ vertices, and lists of size $k = \Delta(G)$. A list assignment is
+\emph{bad} if $H$ has no proper colouring from it. I show none exists, using these facts.
+
+\begin{description}[leftmargin=1.2em,font=\normalfont\bfseries]
+  \item[(P)] For each $v$, $H - v$ has a monomial with nonzero coefficient and exponents at most
+        $k-1$. Then every proper induced subgraph of $H$ is $k$-choosable.
+  \item[(C)] Under (P), in a bad $L$ every colour of $L(v)$ lies in the list of a neighbour of $v$
+        (else colour $H - v$ and then $v$).
+  \item[(B)] Hence each colour lies in at least two lists, so at most $nk/2$ colours occur.
+  \item[(S)] Colours may be renamed in order of first appearance along a fixed vertex order.
+  \item[(R)] Let $A$ be the set of vertices whose lists contain colour $c$. If $I \subseteq A$ is
+        independent and $H - I$ has a nonzero monomial $x^t$ with $t_w \le k-2$ on $A \setminus I$
+        and $t_w \le k-1$ elsewhere, then $L$ is colourable (colour $I$ with $c$, delete $c$
+        from $A \setminus I$, apply the Nullstellensatz). So in a bad $L$ no colour class $A$
+        satisfies $I \subseteq A \subseteq I \cup \{w : t_w \le k-2\}$. Each such $(I, t)$ is a
+        \emph{witness}.
+\end{description}
+
+A SAT solver (CaDiCaL) searches for an assignment satisfying ``lists of size $k$'', (B), (S),
+(C), the witness clauses, and the exclusion of every colouring found so far. Each proposal is
+tested by a second solver; if it is colourable, the colourings found are excluded and the loop
+repeats. UNSAT means $H$ is $k$-choosable. For degree 4, the witness clauses are added lazily,
+only when a proposal has a colour class matching a witness.
+
+\paragraph{Certification.} On UNSAT, the solver's unsat core identifies the witnesses used. I
+save them, their monomials $t$, and all excluded colourings. A separate checker, sharing no code
+with the search, verifies: (P) and each core witness, by building an orientation with
+out-degrees $t$ and checking $EE \ne EO$ by counting Eulerian subgraphs (no polynomial
+expansion); that $I$ is independent and the sets are as claimed; that each excluded colouring is
+proper; and that the CNF rebuilt from these data is UNSAT under a different solver (Glucose~4).
+The method also agrees with brute force over all list assignments on 79 random small graphs,
+and recovers known non-choosable cases such as $L(\text{Petersen})$ with 3 colours.
+
+\begin{center}
+\begin{tabular}{lcccl}
+\toprule
+$G$ (graph6) & $|V(G)|$ & $k$ & witnesses used / generated & independent check \\
+\midrule
+\texttt{GCY\^{}B\_} & 8 & 3 & 892 / 6972 & passed \\
+\texttt{I?\textasciigrave{}amQoM?} & 10 & 3 & 4636 / 73657 & passed \\
+\texttt{I?\textasciigrave{}bfAWF?} & 10 & 3 & 4473 / 75994 & passed \\
+\texttt{ICOedO[X?} & 10 & 3 & 5809 / 73302 & passed \\
+\texttt{I?bEHow[?} & 10 & 3 & 7723 / 70276 & passed \\
+\texttt{GEnbvG} & 8 & 4 & 2235 / 201177 & passed \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+These are all 5 open cubic graphs (C4) and the open 4-regular graph on 8 vertices (C5).
+
+\paragraph{How to check.} In \texttt{lecc-small/}: \texttt{core\_check.py} and
+\texttt{lazy\_choos.py} produce the certificates in \texttt{data/cores/} and
+\texttt{data/lazy/}; \texttt{env/bin/python verify\_core.py <certificate>.json} re-checks one.
+\texttt{tests/} holds the brute-force comparisons. \texttt{RESULTS.md} lists the script behind
+every number.
+
+\paragraph{Not yet done.} A DRAT proof of the final UNSAT checked by \texttt{drat-trim}; at
+present the final step is confirmed by a second solver only.
+
+\section{Novelty}
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Theorem~\ref{thm:main}.} Not in Borodin--Kostochka--Woodall \cite{bkw}, which
+        characterises kernel-perfect orientations of line graphs but not which graphs admit one
+        with $\dout \le \Delta - 1$. McDonald \cite{mcd} proves non-existence only for her
+        restricted Galvin orientations, for $K_n$ ($n \ge 4$) and one non-regular graph.
+        McDonald and Puleo \cite{mp} is consistent with it: no non-bipartite $k$-regular graph
+        with $k \ge 3$ lies in their class (a leaf block would contain a vertex of degree
+        strictly between 0 and $k$ inside the block, impossible for each allowed block type).
+        I also checked the papers citing \cite{bkw}. Not yet checked: Blumenthal's 2016 Auburn
+        thesis on Galvin's theorem and stable matchings, and Woodall's 2001 survey. I would be
+        grateful to know if the result is familiar.
+  \item \textbf{C4 and C5.} The graphs are listed as open in \cite{schauz}; none of the papers
+        citing it (nor \cite{jafari}) settles them, no known theorem covers them, and by
+        Section 2 and Theorem~\ref{thm:main} neither standard method can.
+  \item \textbf{Method.} SAT-based choosability search is not new: Kirchweger, Peitl, Seka and
+        Szeider \cite{kpss} treat vertex choosability with SAT and QBF. My search is in that
+        spirit, specialised to line graphs with Alon--Tarsi-reducible colour classes.
+\end{itemize}
+
+\section{Next steps}
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{The remaining 46 graphs.} The bottleneck is memory: computing all bounded
+        Alon--Tarsi coefficients of $L(G)$ needs over 7 GB at 20 vertices. I will instead find
+        each needed fact by searching for an orientation with prescribed out-degrees and
+        checking $EE \ne EO$ with a low-memory Eulerian count. This is sound (each fact found is
+        a valid certificate) though possibly incomplete. Order: the degree-5 graph on 8 vertices,
+        then the 10-vertex graphs by increasing degree.
+  \item \textbf{Formal certificates.} DRAT proofs for every final UNSAT.
+  \item \textbf{Literature.} Complete the novelty check of Theorem~\ref{thm:main}.
+  \item \textbf{Theory (if preferred).} Extend Theorem~\ref{thm:main} to multigraphs, to
+        non-regular graphs, and to lists of size $\Delta + 1$.
+  \item \textbf{Longer term.} The other cases Schauz left open (non-regular and odd-order graphs on
+        at most 10 vertices).
+\end{enumerate}
+
+\noindent\textbf{Question for you.} Which direction should I prioritise: (a) settle all 52 by
+computer, (b) develop Theorem~\ref{thm:main} into a short paper, or (c) move to
+$\chi_\ell(C_{2m+1} \,\square\, C_{2n+1}) = 3$? I am away the week of 16 October and will send
+an update by email.
+
+\begin{thebibliography}{9}
+\bibitem{bkw} O.~V. Borodin, A.~V. Kostochka, D.~R. Woodall, On kernel-perfect orientations of
+  line graphs, \emph{Discrete Math.} (1998).
+\bibitem{jafari} A.~Jafari, The list edge-coloring conjecture for new infinite families,
+  arXiv:2608.22895 (2026).
+\bibitem{kpss} M.~Kirchweger, T.~Peitl, D.~Seka, S.~Szeider, Graph choosability via SAT: beyond
+  the Nullstellensatz, \emph{AAAI} (2026).
+\bibitem{mcd} J.~McDonald, On Galvin orientations of line graphs and list-edge-colouring,
+  arXiv:1508.01820 (2015).
+\bibitem{mp} J.~McDonald, G.~J. Puleo, The list chromatic index of simple graphs whose odd
+  cycles intersect in at most one edge, \emph{Discrete Math.} (2017), arXiv:1507.05933.
+\bibitem{schauz} U.~Schauz, Orientations of 1-factorizations and the list chromatic index of
+  small graphs, arXiv:1705.00484 (2017); \emph{J. Discrete Algorithms} 52-53 (2018) 182-191.
+\end{thebibliography}
+
+\end{document}

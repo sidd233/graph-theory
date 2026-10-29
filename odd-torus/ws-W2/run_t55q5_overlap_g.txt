@@ -1,0 +1,23 @@
+=== torus 5 5 5 --overlap --colsym --gsym --shrink --glits --diverse 4 --orbit graph --time-limit 18000 --report 5 --ckpt ckpt/t55q5_overlap_g.json --log run_t55q5_overlap_g.txt
+started 2026-10-28 10:03:24 AM
+graph torus 5 5: N=25 |E|=50 q=5 k=3
+adding images of every cut under 199 symmetries
+  iters=5 cuts=20 avg_cut_len=11.95 t=0s
+  iters=10 cuts=40 avg_cut_len=11.93 t=0s
+  iters=15 cuts=60 avg_cut_len=11.70 t=0s
+  iters=20 cuts=80 avg_cut_len=11.81 t=1s
+  iters=25 cuts=100 avg_cut_len=12.15 t=1s
+  iters=30 cuts=120 avg_cut_len=12.08 t=1s
+  iters=35 cuts=140 avg_cut_len=12.25 t=1s
+  iters=40 cuts=160 avg_cut_len=12.34 t=2s
+  iters=45 cuts=180 avg_cut_len=12.41 t=2s
+  iters=50 cuts=200 avg_cut_len=12.46 t=2s
+  iters=55 cuts=220 avg_cut_len=12.48 t=3s
+  iters=60 cuts=240 avg_cut_len=12.53 t=4s
+  iters=65 cuts=260 avg_cut_len=12.56 t=7s
+  iters=70 cuts=280 avg_cut_len=12.58 t=10s
+  iters=75 cuts=300 avg_cut_len=12.57 t=21s
+  iters=80 cuts=320 avg_cut_len=12.59 t=56s
+  iters=85 cuts=340 avg_cut_len=12.61 t=129s
+  iters=90 cuts=360 avg_cut_len=12.61 t=296s
+  iters=95 cuts=380 avg_cut_len=12.65 t=647s

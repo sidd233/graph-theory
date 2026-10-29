@@ -1,0 +1,192 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=green!40!black]{hyperref}
+
+\setlength{\parskip}{0.45em}
+\setlength{\parindent}{0pt}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{known}[theorem]{Known result}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\T}{\mathbin{\square}}
+\newcommand{\Z}{\mathbb{Z}}
+
+\title{Spare room, shapes, and the triple-column reduction}
+\author{Siddharth Narayan Mishra and Amrutanshu}
+\date{28 October 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This note states precisely what ``spending points'' means when we cut the torus, proves that it is
+correct, and proves the triple-column reduction used for the seam case. Every graph is finite and
+simple; every list has 3 colours unless stated otherwise.
+\end{abstract}
+
+\section{The tool}
+
+Fix an orientation of a graph $H$. Its \emph{graph polynomial} is
+\[ P_H(x) = \prod_{(u,v) \text{ an arc}} (x_u - x_v). \]
+
+\begin{known}[Combinatorial Nullstellensatz, Alon \cite{Alon}]\label{cn}
+Let $P \in \mathbb{C}[x_1,\dots,x_N]$ have degree $\sum_i t_i$, with $t_i \ge 0$, and suppose the coefficient
+of $\prod_i x_i^{t_i}$ in $P$ is nonzero. If $S_1,\dots,S_N \subseteq \mathbb{C}$ satisfy $|S_i| > t_i$, then
+there is $s \in S_1 \times \dots \times S_N$ with $P(s) \ne 0$.
+\end{known}
+
+\begin{lemma}\label{deg}
+$P_H$ is a nonzero homogeneous polynomial of degree $|E(H)|$.
+\end{lemma}
+
+\begin{proof}
+Each factor $x_u - x_v$ is a nonzero homogeneous polynomial of degree 1, and a product of nonzero
+polynomials is nonzero. A product of homogeneous polynomials is homogeneous, of degree the sum of the
+degrees. There is one factor per edge.
+\end{proof}
+
+\section{Spare room and shapes}
+
+\begin{definition}
+The \emph{spare room} of a graph $H$ with $N$ vertices is $d(H) = 2N - |E(H)|$. A \emph{shape} for $H$ is a
+function $\mu : V(H) \to \{0, 1, 2\}$ with $\sum_v \mu(v) = d(H)$. Its \emph{coefficient} is
+\[ c_\mu = \Big[\prod_{v} x_v^{\,2 - \mu(v)}\Big]\, P_H . \]
+\end{definition}
+
+\begin{lemma}[shape lemma]\label{shape}
+Let $\mu$ be a shape for $H$ with $c_\mu \ne 0$. Let every vertex $v$ have a list $L(v)$ of 3 colours, and
+choose any subsets $L'(v) \subseteq L(v)$ with $|L'(v)| = 3 - \mu(v)$. Then $H$ has a proper colouring $c$
+with $c(v) \in L'(v)$ for every $v$.
+\end{lemma}
+
+\begin{proof}
+Put $t_v = 2 - \mu(v) \ge 0$. Then $\sum_v t_v = 2N - \sum_v \mu(v) = 2N - d(H) = |E(H)| = \deg P_H$, using
+Lemma~\ref{deg}. Choose an injective map from the set of all colours into $\mathbb{C}$ and regard each $L'(v)$
+as a subset $S_v \subseteq \mathbb{C}$; then $|S_v| = 3 - \mu(v) = t_v + 1 > t_v$. By Known result~\ref{cn} there is
+$s \in \prod_v S_v$ with $P_H(s) \ne 0$. Then $s_u \ne s_v$ for every arc $(u, v)$, so $c(v) = s_v$ is a proper
+colouring with $c(v) \in L'(v)$.
+\end{proof}
+
+\begin{remark}[pin and forbid]
+If $\mu(v) = 1$ we may take $L'(v) = L(v) \setminus \{\beta\}$ for any $\beta \in L(v)$: the colouring avoids
+$\beta$ at $v$ (\emph{forbid}). If $\mu(v) = 2$ we may take $L'(v) = \{\alpha\}$ for any $\alpha \in L(v)$: the
+colouring uses $\alpha$ at $v$ (\emph{pin}). If $\mu(v) = 0$ nothing changes. Lemma~\ref{shape} guarantees
+\emph{some} colouring with these properties; it gives no other control, which is why the rest of a cut
+argument must work against every such colouring.
+\end{remark}
+
+\begin{corollary}[adjacent pins are useless]\label{adjpin}
+If $\mu(u) = \mu(v) = 2$ for adjacent vertices $u, v$, then $c_\mu = 0$.
+\end{corollary}
+
+\begin{proof}
+Suppose $c_\mu \ne 0$. Give every vertex the list $\{1, 2, 3\}$ and choose $L'(u) = L'(v) = \{1\}$. Lemma~\ref{shape}
+gives a proper colouring with $c(u) = c(v) = 1$, which is impossible because $u$ and $v$ are adjacent.
+\end{proof}
+
+\section{Counting the spare room}
+
+\begin{lemma}\label{counts}
+Let $m, n \ge 3$ and $\ell \ge 2$.
+\begin{enumerate}[label=(\alph*)]
+\item The torus $C_m \T C_n$ has spare room $0$.
+\item The strip $C_m \T P_\ell$ has spare room $m$.
+\item Removing a $3 \times 2$ block (rows $t-1, t, t+1$, columns $j, j+1$) from $C_5 \T C_n$, $n \ge 5$, leaves a
+graph with spare room $5$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(a) $N = mn$ and every vertex has degree 4, so $|E| = 4N/2 = 2N$.
+
+(b) $N = m\ell$. Each of the $\ell$ columns is a copy of $C_m$, giving $m\ell$ edges. Between consecutive columns
+there are $m$ row edges, and there are $\ell - 1$ such pairs, giving $m(\ell - 1)$ edges. So
+$|E| = 2m\ell - m = 2N - m$.
+
+(c) The torus has $5n$ vertices and $10n$ edges. The block has 6 vertices, each of degree 4 in the torus, so
+the sum of their degrees is $24$. The block contains $7$ edges (two vertical edges in each of its 2 columns,
+and 3 horizontal edges), each counted twice in that sum. So $24 - 14 = 10$ edges leave the block. Removing
+the block deletes its $7 + 10 = 17$ incident edges. The remainder has $N = 5n - 6$ vertices and
+$10n - 17 = 2(5n - 6) - 5$ edges.
+\end{proof}
+
+\begin{remark}
+Since $n \ge 5$, the 10 edges leaving the block go to 10 distinct vertices (the \emph{border}), and each border
+vertex has exactly one neighbour in the block. The 5 units of spare room are spent on the border, with
+shapes whose coefficients are computed exactly (\texttt{ws-W14/hole\_coeff.py}; 1{,}256 placements nonzero for
+every odd $n \ge 5$, proved with \texttt{ws-W14/hole\_prove.py}).
+\end{remark}
+
+\section{The triple-column reduction}
+
+Throughout this section $L$ is a list assignment of $C_5 \T C_n$ with $n \ge 5$ odd. A \emph{column pattern}
+for column $j$ is a proper colouring $P$ of the 5-cycle (rows $\Z_5$) with $P_r \in L(r, j)$. Two patterns $P, Q$
+are \emph{compatible}, written $P \sim Q$, if $P_r \ne Q_r$ for every row $r$. A colouring of the torus is the
+same as one pattern per column with consecutive patterns compatible.
+
+\begin{known}[cycles; Erd\H{o}s, Rubin and Taylor \cite{ERT}]\label{cyc}
+An odd cycle whose lists all have size at least 2 can be coloured unless all its lists are the same 2-set.
+\end{known}
+
+\begin{lemma}[degenerate block]\label{degen}
+Let $E = \{e_1, e_2\}$, and let $x = (x_0, \dots, x_4)$ be a proper colouring of $C_5$ with no $x_r \in E$. Let
+$A_r = E \cup \{x_r\}$. Let $U, V$ be any proper colourings of $C_5$ (with any colours) such that $U_r \ne x_r$
+and $V_r \ne x_r$ for all $r$. Then there are proper colourings $c^1, c^2, c^3$ of $C_5$ with $c^k_r \in A_r$ and
+$U \sim c^1 \sim c^2 \sim c^3 \sim V$.
+\end{lemma}
+
+\begin{proof}
+Whether $U \sim c$ holds for $c$ with $c_r \in A_r$ depends only on whether $U_r$ equals $e_1$, equals $e_2$, or lies
+outside $A_r$ (the case $U_r = x_r$ is excluded), and on nothing else about the colours; the same holds for $V$.
+So it suffices to check every pair of type vectors in $\{e_1, e_2, \text{other}\}^5$ for which $U$ and $V$ are proper
+(no two cyclically adjacent rows both $e_1$ or both $e_2$), with patterns $c^k$ ranging over the 81 proper
+colourings of $C_5$ from the lists $A_r$. All 6{,}561 pairs admit such a path (\texttt{ws-W17/degenerate\_fold.py}).
+\end{proof}
+
+\begin{theorem}[triple-column reduction]\label{triple}
+Suppose $C_5 \T C_{n-2}$ is 3-choosable. If three consecutive columns $j, j+1, j+2$ of $C_5 \T C_n$ have identical
+lists, $L(r, j) = L(r, j+1) = L(r, j+2) =: A_r$ for all $r$, then $C_5 \T C_n$ is $L$-colourable.
+\end{theorem}
+
+\begin{proof}
+Delete columns $j+1$ and $j+2$ and join column $j$ to column $j+3$ by the row edges $(r, j)(r, j+3)$. The result
+is a copy of $C_5 \T C_{n-2}$ with the inherited lists; by assumption it has a colouring $\varphi$. Let $P$, $U$, $V$
+be the patterns of $\varphi$ on columns $j$, $j-1$, $j+3$. Since $\varphi$ is proper, $U \sim P$ and $V \sim P$. We keep
+$\varphi$ outside columns $j, j+1, j+2$ and choose new patterns $c^1, c^2, c^3$ for them, from the lists $A_r$, with
+$U \sim c^1 \sim c^2 \sim c^3 \sim V$. This gives a proper colouring, because every edge of $C_5 \T C_n$ outside these
+three columns is an edge of the smaller torus.
+
+\textbf{Case 1:} the lists $A_r \setminus \{P_r\}$ (each of size 2) are not all the same 2-set. By Known
+result~\ref{cyc} there is a proper colouring $W$ of $C_5$ with $W_r \in A_r \setminus \{P_r\}$, so $W \sim P$. Take
+$c^1 = P$, $c^2 = W$, $c^3 = P$. Then $U \sim P \sim W \sim P \sim V$.
+
+\textbf{Case 2:} $A_r \setminus \{P_r\} = E$ for all $r$, for one 2-set $E$. Then $A_r = E \cup \{P_r\}$ with $P_r \notin E$,
+and $P$ is proper. This is Lemma~\ref{degen} with $x = P$; it supplies $c^1, c^2, c^3$.
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{triple} turns the main theorem into an induction on odd $n$, with base case $n = 3$, which is
+Theorem A ($C_5 \T C_3 \cong C_3 \T C_5$). Every block of a piecewise row-constant assignment has at least three
+identical consecutive columns, so Theorem~\ref{triple} settles that case with no condition on overlaps.
+\end{remark}
+
+\begin{thebibliography}{ERT}
+\bibitem[Alon]{Alon} N.~Alon, Combinatorial Nullstellensatz, \emph{Combin. Probab. Comput.} 8 (1999), 7-29.
+\bibitem[ERT]{ERT} P.~Erd\H{o}s, A.~L.~Rubin and H.~Taylor, Choosability in graphs, \emph{Congr. Numer.} 26 (1979),
+125-157.
+\end{thebibliography}
+
+\end{document}

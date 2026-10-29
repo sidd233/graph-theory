@@ -1,0 +1,5 @@
+(P) 15 vertex-deleted subgraphs pass
+(R) 4473 core witnesses pass (of 75994 generated)
+(B) 3248 blocked colourings are proper
+(U) CNF with 112259 clauses is UNSAT (Glucose 4)
+CERTIFICATE OK

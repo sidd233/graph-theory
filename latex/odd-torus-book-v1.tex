@@ -1,0 +1,940 @@
+\documentclass[11pt,oneside,openany]{book}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[table]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,decorations.pathreplacing,shapes.geometric}
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
+
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+
+% ------------------------------------------------------------------ colours
+\definecolor{provedc}{RGB}{30,130,60}
+\definecolor{partialc}{RGB}{200,120,0}
+\definecolor{openc}{RGB}{190,30,45}
+\definecolor{ideac}{RGB}{30,80,170}
+\definecolor{pinc}{RGB}{200,30,30}
+\definecolor{forbc}{RGB}{120,40,160}
+\definecolor{cutc}{RGB}{235,235,235}
+
+% ------------------------------------------------------------------ boxes
+\newtcolorbox{plainwords}{breakable,colback=ideac!5,colframe=ideac!70!black,
+  fonttitle=\bfseries,title={In plain words}}
+\newtcolorbox{keyidea}[1][]{breakable,colback=ideac!8,colframe=ideac,
+  fonttitle=\bfseries,title={Key idea#1}}
+\newtcolorbox{proved}[1]{breakable,colback=provedc!6,colframe=provedc,
+  fonttitle=\bfseries,title={Proved: #1}}
+\newtcolorbox{partialbox}[1]{breakable,colback=partialc!7,colframe=partialc,
+  fonttitle=\bfseries,title={Partly done: #1}}
+\newtcolorbox{openitem}[1]{breakable,colback=openc!5,colframe=openc,
+  fonttitle=\bfseries,title={Open: #1}}
+\newtcolorbox{meeting}{breakable,colback=yellow!8,colframe=orange!70!black,
+  fonttitle=\bfseries,title={For the meeting}}
+\newtcolorbox{definitionbox}[1]{breakable,colback=gray!5,colframe=gray!60!black,
+  fonttitle=\bfseries,title={#1}}
+
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\newcommand{\T}{\mathbin{\square}}
+\newcommand{\Z}{\mathbb{Z}}
+
+\titleformat{\chapter}[display]{\bfseries\Huge\color{ideac!80!black}}
+  {\large\color{gray}Chapter \thechapter}{0.4em}{}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\leftmark}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\begin{document}
+
+% ================================================================== title
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+{\color{ideac!80!black}\Huge\bfseries List Colouring the Torus\par}
+\vspace{0.6cm}
+{\Large Odd cycle times odd cycle: where we are, how we got here,\\ and what is left\par}
+\vspace{1.5cm}
+\begin{tikzpicture}[scale=0.55]
+  \foreach \i in {0,...,4}{\foreach \j in {0,...,6}{
+     \pgfmathtruncatemacro{\c}{mod(\i+\j,3)}
+     \ifcase\c \def\fc{red!60}\or \def\fc{blue!50}\or \def\fc{green!50!black!60}\fi
+     \node[circle,draw,minimum size=9pt,inner sep=0pt,fill=\fc] (v\i\j) at (\j,-\i) {};
+  }}
+  \foreach \i in {0,...,4}{\foreach \j in {0,...,5}{\pgfmathtruncatemacro{\k}{\j+1}\draw (v\i\j)--(v\i\k);}}
+  \foreach \j in {0,...,6}{\foreach \i in {0,...,3}{\pgfmathtruncatemacro{\k}{\i+1}\draw (v\i\j)--(v\k\j);}}
+  \foreach \i in {0,...,4}{\draw[dashed,gray] (v\i0)--++(-0.7,0); \draw[dashed,gray] (v\i6)--++(0.7,0);}
+  \foreach \j in {0,...,6}{\draw[dashed,gray] (v0\j)--++(0,0.7); \draw[dashed,gray] (v4\j)--++(0,-0.7);}
+\end{tikzpicture}
+\vspace{1.5cm}
+
+{\large Prepared for the supervisor meeting, Wednesday 28 October 2026, 4:00 PM\par}
+\vspace{0.4cm}
+{\large Siddharth Narayan Mishra and Amrutanshu\par}
+\vfill
+{\small Every number in this book has a script in the repository \texttt{\textasciitilde/work/gt} that
+reproduces it. Appendix~\ref{app:verify} lists them.}
+\end{titlepage}
+
+\tableofcontents
+
+% ================================================================== reading guide
+\chapter*{How to read this book}
+\addcontentsline{toc}{chapter}{How to read this book}
+
+This book explains one research problem from the start. It assumes you know what a graph, a
+cycle and a proper colouring are, and nothing else.
+
+\begin{itemize}[itemsep=0.3em]
+\item Chapters 1 and 2 explain the problem and what other people already proved.
+\item Chapter 3 explains the tools, in plain words.
+\item Chapter 4 is our main finished result: the case where one of the cycles is a triangle.
+\item Chapters 5 to 7 are about the next case, $C_5 \T C_n$: what is proved, what is not, and
+what we tried this morning.
+\item Chapter 8 is the roadmap with dates. Chapter 9 prepares answers for the meeting.
+\end{itemize}
+
+Coloured boxes tell you the status of every claim:
+
+\begin{proved}{example}
+Green boxes contain things that are fully proved.
+\end{proved}
+\begin{partialbox}{example}
+Orange boxes contain things that are proved only in part, or proved with computer help that
+still needs a human-readable version.
+\end{partialbox}
+\begin{openitem}{example}
+Red boxes contain things that are not proved.
+\end{openitem}
+
+\begin{meeting}
+\textbf{The one-paragraph summary.} We want to show that every grid on a torus made of two odd
+cycles can be coloured from any lists of three colours. The usual polynomial method is known to
+fail here. We have a complete proof when one cycle is a triangle ($C_3 \T C_n$, all $n$). For
+five-cycles ($C_5 \T C_n$) we have proved every ingredient except one statement about small
+two-column pieces, which we call the \emph{window statement}. It is checked by computer for
+lists of size 3 drawn from a palette of four colours, and survived a targeted search with palettes of five and six colours. This
+morning we learned why it is hard: lists that are almost constant beat every local cutting
+argument, so the proof must treat them separately. The general odd case needs the same two
+ingredients for every odd length, and is still far away.
+\end{meeting}
+
+% ================================================================== chapter 1
+\chapter{The problem}
+
+\section{List colouring}
+
+In ordinary colouring, every vertex may use any colour. In \emph{list colouring} each vertex $v$
+gets its own list $L(v)$ of allowed colours, and we want a proper colouring where each vertex
+uses a colour from its own list. A graph is \emph{$k$-choosable} if this is always possible when
+every list has $k$ colours, no matter which colours the lists contain. The smallest such $k$ is
+the \emph{choice number} $\chi_\ell(G)$.
+
+\begin{center}
+\begin{tikzpicture}[v/.style={circle,draw,minimum size=18pt,inner sep=1pt,font=\small}]
+  \node[v,fill=red!30] (a) at (0,0) {$a$};
+  \node[v,fill=blue!30] (b) at (2.4,0) {$b$};
+  \node[v,fill=green!30] (c) at (1.2,1.8) {$c$};
+  \draw (a)--(b)--(c)--(a);
+  \node[below=2pt of a,font=\small] {$\{\textcolor{red}{\text{red}},\text{blue}\}$};
+  \node[below=2pt of b,font=\small] {$\{\text{red},\textcolor{blue}{\text{blue}}\}$};
+  \node[above=2pt of c,font=\small] {$\{\text{red},\text{blue},\textcolor{green!50!black}{\text{green}}\}$};
+\end{tikzpicture}
+\end{center}
+\vspace{-0.5em}
+{\small\centering A triangle with lists. The colouring shown uses red, blue, green.\par}
+
+List colouring is harder than ordinary colouring. The adversary picks the lists, and lists can be
+chosen to block every colouring. A triangle needs 3 colours in any case, so its choice number is
+at least 3.
+
+\section{The torus grid}
+
+Take a cycle $C_m$ with vertices $0,1,\dots,m-1$ and a cycle $C_n$. The \emph{toroidal grid}
+$C_m \T C_n$ has a vertex $(i,j)$ for each \emph{row} $i$ and \emph{column} $j$. Each vertex is
+joined to its two neighbours in its column, $(i \pm 1, j)$, and its two neighbours in its row,
+$(i, j \pm 1)$, where indices wrap around. Picture an $m \times n$ grid whose left edge is glued
+to its right edge and top edge to its bottom edge: a doughnut. Every vertex has degree 4.
+
+\begin{center}
+\begin{tikzpicture}[scale=0.8,v/.style={circle,draw,fill=white,minimum size=7pt,inner sep=0pt}]
+  \foreach \i in {0,...,4}{\foreach \j in {0,...,6}{\node[v] (w\i\j) at (\j,-\i) {};}}
+  \foreach \i in {0,...,4}{\foreach \j in {0,...,5}{\pgfmathtruncatemacro{\k}{\j+1}\draw (w\i\j)--(w\i\k);}}
+  \foreach \j in {0,...,6}{\foreach \i in {0,...,3}{\pgfmathtruncatemacro{\k}{\i+1}\draw (w\i\j)--(w\k\j);}}
+  \foreach \i in {0,...,4}{\draw[dashed,gray,-{Stealth}] (w\i6)--++(0.7,0); \draw[dashed,gray,{Stealth}-] (w\i0)--++(-0.7,0);}
+  \foreach \j in {0,...,6}{\draw[dashed,gray,-{Stealth}] (w4\j)--++(0,-0.6); \draw[dashed,gray,{Stealth}-] (w0\j)--++(0,0.6);}
+  \node[left=14pt,font=\small] at (w20) {rows $0,\dots,4$};
+  \node[above=12pt,font=\small] at (w03) {columns $0,\dots,6$};
+  \node[right=16pt,font=\small,gray,align=left] at (w26) {dashed edges\\wrap around};
+\end{tikzpicture}
+
+{\small $C_5 \T C_7$: five rows, seven columns, edges wrap around in both directions.}
+\end{center}
+
+\section{The conjecture}
+
+\begin{definitionbox}{Conjecture (Cai, Wang and Zhu, 2010)}
+Every toroidal grid $C_m \T C_n$ is 3-choosable.
+\end{definitionbox}
+
+Since every vertex has degree 4, lists of size 5 are always enough (colour greedily). Lists of
+size 4 are also known to be enough. The question is whether 3 is enough.
+
+\begin{itemize}
+\item If $m$ or $n$ is \textbf{even}, it is true: Li, Shao, Petrov and Gordeev proved it in 2023.
+\item If $m$ and $n$ are \textbf{both odd}, it is open. This is our problem.
+\end{itemize}
+
+\begin{definitionbox}{Palette: how to read ``with four colours'' in this book}
+In this book every list always has exactly \textbf{3} colours. When a computer result says
+``with a palette of four colours'' (or ``four-colour windows''), it means the lists are all chosen
+from a fixed pool of four colours, say $\{0,1,2,3\}$, so each list is one of $\{0,1,2\}$,
+$\{0,1,3\}$, $\{0,2,3\}$, $\{1,2,3\}$. It never means a 4-colouring. A bigger palette gives the
+adversary more freedom to choose awkward lists. 3-choosability means no palette of any size
+contains a bad choice of lists, which is why the computer alone cannot settle it.
+\end{definitionbox}
+
+\begin{plainwords}
+We want to show: if you give every vertex of a doughnut grid (both side lengths odd) any three
+colours it is allowed to use, you can always colour the grid so that neighbours differ. Nobody
+knows how to do this yet, and the standard method is proved not to work.
+\end{plainwords}
+
+% ================================================================== chapter 2
+\chapter{What was already known}
+
+\section{The polynomial method (Alon and Tarsi)}
+
+Give the vertices variables $x_v$ and multiply $(x_u - x_v)$ over all edges. Call this product
+$P$. A colouring is proper exactly when $P \neq 0$ at that point. The \emph{Combinatorial
+Nullstellensatz} says: if some monomial $\prod x_v^{t_v}$ of top degree appears in $P$ with a
+nonzero coefficient, then the graph can be coloured from any lists with $|L(v)| \ge t_v + 1$.
+
+For a 4-regular graph with $N$ vertices there are $2N$ edges, so we want the monomial
+$\prod x_v^2$ (every vertex exponent 2, lists of size 3).
+
+\begin{proved}{the even case (Li, Shao, Petrov, Gordeev 2023)}
+If $m$ or $n$ is even, the coefficient of $\prod x_v^2$ in the polynomial of $C_m \T C_n$ is
+nonzero, so the torus is 3-choosable. If $m$ and $n$ are both odd, the coefficient is $0$, and in
+fact the \emph{Alon--Tarsi number} is 4: the method can never give 3 for odd tori.
+\end{proved}
+
+\begin{plainwords}
+There is a famous algebra trick that solves the even case in one stroke. For odd tori the trick
+provably breaks. So any proof for odd tori must contain at least one step that is not this
+algebra. In our proofs that step is a clever choice made by looking at the actual lists.
+\end{plainwords}
+
+\section{The smallest case: Galvin}
+
+$C_3 \T C_3$ is the $3 \times 3$ ``rook's graph'': cells of a $3\times 3$ board, adjacent if in the
+same row or column. It is the line graph of $K_{3,3}$, and Galvin's famous theorem (the solution of
+the Dinitz problem) shows it is 3-choosable. Galvin used the \emph{kernel method}: orient the
+edges cleverly so that every induced subgraph has a \emph{kernel} (an independent set that every
+outside vertex points into). Then lists of size ``out-degree $+1$'' are enough.
+
+\begin{proved}{$C_3 \T C_3$ (Galvin 1995)}
+$C_3 \T C_3$ is 3-choosable.
+\end{proved}
+
+That is where the field stood: even tori done, $C_3 \T C_3$ done, every other odd torus open.
+
+% ================================================================== chapter 3
+\chapter{Our tools in plain words}
+
+\section{Cutting the torus open}
+
+The torus is hard because it closes up in both directions. If we delete some columns, what is
+left is a \emph{strip} $C_m \T P_\ell$: columns are still cycles, but the rows are now paths. A
+strip has fewer edges than a torus of the same size, so the algebra has a little room to spare.
+
+\begin{keyidea}[: spare room at the ends]
+A strip $C_m \T P_\ell$ has $m\ell$ vertices and $2m\ell - m$ edges, so the algebra has exactly
+$m$ ``units'' of spare room. We can spend them at the two end columns:
+\begin{itemize}
+\item 2 units \textbf{pin} a vertex: its list shrinks to one colour we choose (shown in
+\textcolor{pinc}{red}).
+\item 1 unit \textbf{forbids} one colour at a vertex: its list shrinks by one
+(shown in \textcolor{forbc}{purple}).
+\end{itemize}
+Whether a particular way of spending the units works depends on a single number, the
+\emph{strip coefficient} $c_S$. If $c_S \neq 0$, it works for every choice of lists.
+\end{keyidea}
+
+\section{Computing the strip coefficient}
+
+The strip coefficient can be computed column by column: each column contributes a fixed matrix,
+the \emph{transfer matrix} $T$, and the coefficient for a strip of length $\ell$ is roughly
+``a row vector times $T^{\ell-2}$ times a column vector''. For $m=3$ this matrix is tiny and the
+coefficient has a closed formula. For $m = 5$ the matrix is $30 \times 30$, and we use its
+eigenvalues: for long strips the biggest eigenvalue dominates, so once its contribution is nonzero
+the coefficient can never vanish again.
+
+\begin{plainwords}
+We built a calculator for these numbers, proved for $m=3$ that they are never zero when they
+should not be, and proved the same for $m = 5$ using the eigenvalues of a $30\times30$ matrix. The
+computer does exact arithmetic, so there is no rounding error anywhere.
+\end{plainwords}
+
+\section{The plan of every proof in this book}
+
+\begin{center}
+\begin{tikzpicture}[box/.style={draw,rounded corners,align=center,minimum width=3.3cm,minimum height=1cm,font=\small}]
+  \node[box,fill=ideac!10] (a) {1. Look at the lists.\\Find a good place to cut.};
+  \node[box,fill=ideac!10,right=0.6cm of a] (b) {2. Delete a few columns.\\Colour the strip by algebra\\(pin and forbid).};
+  \node[box,fill=ideac!10,right=0.6cm of b] (c) {3. Fill the deleted\\columns by hand.};
+  \draw[-{Stealth},thick] (a)--(b); \draw[-{Stealth},thick] (b)--(c);
+  \node[box,fill=provedc!10,below=0.8cm of b,minimum width=8cm] (d) {If no good place exists, the lists have a special shape:\\colour those directly (for example ``every row has the same list'').};
+  \draw[-{Stealth},thick,dashed] (a) |- (d);
+\end{tikzpicture}
+\end{center}
+
+Step 1 is the non-algebraic step that the polynomial method cannot do on its own.
+
+% ================================================================== chapter 4
+\chapter{The finished case: $C_3 \T C_n$}
+
+\begin{proved}{Theorem A}
+For every $n \ge 3$, $C_3 \T C_n$ is 3-choosable. So $\chi_\ell(C_3 \T C_n) = 3$.
+\end{proved}
+
+For even $n$ this is the known even case, and $n=3$ is Galvin. The new part is odd $n \ge 5$.
+The route is Amrutanshu's; the simplification that made it short is in his work plan; we checked
+every step, wrote the strip lemma proof ourselves, and verified the finite lemma exhaustively.
+
+\section{Setting up}
+
+Each column of $C_3 \T C_n$ is a triangle. Let $L$ give every vertex 3 colours. There are two cases,
+depending on whether the lists change as you walk along a row.
+
+\section{Case 1: some list changes along a row}
+
+Suppose some row $r$ and column $j$ have a colour $\alpha$ that is in $L(r,j)$ but not in
+$L(r,j+1)$. Call the columns $C_0 = j$, $C_1$, $C_2$, $C_3$.
+
+\begin{center}
+\begin{tikzpicture}[v/.style={circle,draw,minimum size=13pt,inner sep=0pt,font=\scriptsize,fill=white}]
+  \fill[cutc] (1.55,0.45) rectangle (3.45,-2.45);
+  \node[font=\small,gray] at (2.5,0.75) {deleted};
+  \foreach \c/\x in {0/0,1/2,2/3,3/5}{
+    \node[font=\small] at (\x,-2.9) {$C_\c$};
+    \foreach \r in {0,1,2}{\node[v] (n\c\r) at (\x,-\r) {};}
+    \draw (n\c0)--(n\c1)--(n\c2); \draw (n\c0) to[bend left=40] (n\c2);
+  }
+  \foreach \r in {0,1,2}{\draw (n0\r)--(n1\r)--(n2\r)--(n3\r);}
+  \node[v,fill=pinc!40] at (0,0) {$\alpha$};
+  \node[v,fill=forbc!30] at (5,-1) {$\not\beta$};
+  \node[left=4pt,font=\small] at (n00) {row $r$};
+  \node[anchor=west,font=\small] at (5.35,-1) {row $r'$};
+  \draw[decorate,decoration={brace,amplitude=6pt,mirror}] (-0.4,-3.3) -- (0.4,-3.3);
+  \draw[decorate,decoration={brace,amplitude=6pt,mirror}] (4.6,-3.3) -- (7.2,-3.3);
+  \node[font=\small,align=center] at (3.1,-4.0) {strip: from $C_3$ around the torus back to $C_0$\\(odd length $n-2$, coloured by algebra)};
+  \node at (6.5,-2) {$\cdots$};
+\end{tikzpicture}
+\end{center}
+
+\begin{enumerate}[itemsep=0.3em]
+\item Delete $C_1$ and $C_2$. The rest is a strip of odd length $n-2$.
+\item Colour the strip by algebra, \textcolor{pinc}{pinning} $(r, C_0)$ to $\alpha$ and
+\textcolor{forbc}{forbidding} one colour $\beta$ at $(r', C_3)$, for another row $r'$. The strip
+lemma (below) says this works.
+\item Fill $C_1$ and $C_2$ by hand. Because $\alpha$ is not in $L(r,C_1)$, the vertex
+$(r, C_1)$ keeps all 3 of its colours; every other vertex of $C_1, C_2$ keeps at least 2.
+\end{enumerate}
+
+\textbf{The strip lemma for $m=3$.} For odd length $\ell$, the coefficient for ``pin one vertex
+at one end, forbid at a different row of the other end'' is exactly $\pm 3^{(\ell-1)/2}$, never
+zero. We proved this by a short exact calculation with cube roots of unity: each column has only
+6 possible states, and the sum factorises.
+
+\textbf{The two-column (prism) lemma.} The deleted part is a \emph{prism}: two triangles
+$u_0u_1u_2$ and $v_0v_1v_2$ joined by three rungs. With 3 colours at $u_0$ and at least 2
+elsewhere, the fill fails only in two patterns:
+
+\begin{center}
+\begin{tikzpicture}[v/.style={circle,draw,minimum size=15pt,inner sep=0pt,font=\scriptsize}]
+  \begin{scope}
+    \node[font=\small\bfseries] at (1.5,1.2) {Pattern Z};
+    \foreach \t/\x/\y in {0/0/0,1/-0.6/-1,2/0.6/-1}{\node[v] (u\t) at (\x,\y) {$u_\t$};}
+    \foreach \t/\x/\y in {0/3/0,1/2.4/-1,2/3.6/-1}{\node[v,fill=openc!20] (v\t) at (\x,\y) {$v_\t$};}
+    \draw (u0)--(u1)--(u2)--(u0); \draw (v0)--(v1)--(v2)--(v0);
+    \draw (u0)--(v0); \draw (u1) to[bend right=30] (v1); \draw (u2) to[bend right=30] (v2);
+    \node[font=\scriptsize,align=center] at (1.5,-2.2) {all three $v$-lists are\\the same 2 colours};
+  \end{scope}
+  \begin{scope}[xshift=6.5cm]
+    \node[font=\small\bfseries] at (1.5,1.2) {Pattern W};
+    \node[v,fill=yellow!40] (u0) at (0,0) {$u_0$}; \node[v] (u1) at (-0.6,-1) {$u_1$}; \node[v] (u2) at (0.6,-1) {$u_2$};
+    \node[v,fill=yellow!40] (v0) at (3,0) {$v_0$}; \node[v] (v1) at (2.4,-1) {$v_1$}; \node[v] (v2) at (3.6,-1) {$v_2$};
+    \draw (u0)--(u1)--(u2)--(u0); \draw (v0)--(v1)--(v2)--(v0);
+    \draw[very thick,openc] (u0)--(v0); \draw (u1) to[bend right=30] (v1); \draw (u2) to[bend right=30] (v2);
+    \node[font=\scriptsize,align=center] at (1.5,-2.2) {$u_1,u_2$ use up $D$, $v_1,v_2$ use up $E$:\\both $u_0$ and $v_0$ are forced to $\zeta$};
+  \end{scope}
+\end{tikzpicture}
+\end{center}
+
+Both patterns need the two $v$-lists in rows $r'$ and $r''$ to be the \emph{same} two colours.
+That can only happen in one specific way, and the colour $y'$ that makes it happen can be read off
+the lists in advance. We choose $\beta$ to be exactly that colour. Since the strip was coloured
+with $\beta$ forbidden at $(r', C_3)$, the bad pattern cannot occur.
+
+\begin{keyidea}[: why this beats the algebra]
+$\beta$ is chosen by looking at the lists. That is the non-algebraic step. The algebra alone
+(Alon and Tarsi) cannot do this, which is why it fails on odd tori while this proof works.
+\end{keyidea}
+
+We verified the two-column lemma by checking every list assignment of the prism up to renaming of
+colours: 236 million cases, 8,335 of them not colourable, all with the two $v$-lists equal.
+
+\section{Case 2: no list changes along any row}
+
+Then every row has a constant list $A_r$. Use Galvin on $C_3 \T C_3$ with these row lists to get
+three columns $X, Y, Z$ that fit together pairwise. Colour the columns of $C_3 \T C_n$ as
+$X, Y, Z, Y, Z, \dots, Y, Z$. Since $n$ is odd, the last column is $Z$, which fits next to $X$.
+
+\begin{center}
+\begin{tikzpicture}[c/.style={draw,minimum width=0.7cm,minimum height=1.2cm,font=\small}]
+  \foreach \l/\x/\f in {X/0/red!25,Y/1/blue!20,Z/2/green!25,Y/3/blue!20,Z/4/green!25,Y/5/blue!20,Z/6/green!25}{\node[c,fill=\f] at (\x,0) {$\l$};}
+  \draw[-{Stealth},gray,thick] (6.4,0.7) to[bend right=25] node[above,font=\scriptsize]{wraps around: $Z$ meets $X$} (-0.4,0.7);
+\end{tikzpicture}
+\end{center}
+
+\section{A second proof for $n = 3k$ (Amrutanshu)}
+
+When $n$ is a multiple of 3 (and $k$ odd), there is a completely different proof by the kernel
+method: colour vertex $(i,j)$ by $(i+j) \bmod 3$, point column edges to the smaller colour and
+row edges to the larger. Every vertex gets out-degree 2, and a careful argument shows every
+induced subgraph has a kernel. This gives the stronger property of \emph{3-paintability} (the
+online version of list colouring). We checked it line by line, and our own counts of
+kernel-perfect orientations agree with it. His note also reports an exhaustive search showing
+that for $n = 5, 7, 11, 13$ no orientation of this kind is kernel-perfect, so the kernel method
+is limited to the family $3 \mid n$.
+
+\begin{meeting}
+\textbf{What to say:} ``We have a complete proof for $C_3 \T C_n$ for every $n$. The polynomial
+method provably cannot do it; our proof adds one step that looks at the lists to choose a
+forbidden colour. Every piece is either proved in the write-up or a finite statement we checked
+exhaustively. A separate kernel-method proof covers $n = 3k$ and even gives paintability.''
+
+\textbf{Still to do before submitting:} the hand proof of the two-column lemma (Amrutanshu has
+one), and a careful literature check that $C_3 \T C_n$ for odd $n$ is not already in print.
+\end{meeting}
+
+% ================================================================== chapter 5
+\chapter{Moving to five-cycles: what we have}
+
+For $C_5 \T C_n$ each column is a 5-cycle instead of a triangle. We follow the same plan and ask
+which pieces survive.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{5.3cm}p{3.6cm}p{4.6cm}}
+\toprule
+Piece & $m = 3$ & $m = 5$ \\
+\midrule
+Strip lemma (algebra) & \cellcolor{provedc!15}proved, short formula & \cellcolor{provedc!15}proved, computer-assisted \\
+Every row constant & \cellcolor{provedc!15}Galvin & \cellcolor{provedc!15}proved (uses Theorem A) \\
+Every column constant & \cellcolor{provedc!15}covered by Cases 1 and 2 & \cellcolor{provedc!15}proved (uses Theorem A) \\
+One free row & not needed & \cellcolor{provedc!15}proved by hand (new) \\
+Filling the deleted columns & \cellcolor{provedc!15}prism lemma & \cellcolor{openc!12}the window statement \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Rows constant or columns constant}
+
+\begin{proved}{lists constant along rows or along columns (every odd $m$, $n$)}
+If every row has a constant list, colour $C_m \T C_3$ with those row lists using Theorem A (it is
+$C_3 \T C_m$ turned sideways), take its three columns $X, Y, Z$, and repeat
+$X, Y, Z, Y, Z, \dots$ exactly as before. Columns constant is the same argument turned sideways.
+\end{proved}
+
+\section{One free row (new)}
+
+\begin{proved}{one free row (every odd $m \ge 5$, every $n$)}
+If all rows except one have the same constant list $A$, the torus can be coloured.
+\end{proved}
+
+\begin{center}
+\begin{tikzpicture}[v/.style={circle,draw,minimum size=14pt,inner sep=0pt,font=\scriptsize}]
+  \foreach \j/\p in {0/0,1/1,2/2,3/0,4/1,5/2}{
+    \foreach \i/\q in {0/0,1/1,2/2,3/0}{
+      \pgfmathtruncatemacro{\col}{mod(\p+\q,3)}
+      \ifcase\col \def\fc{red!30}\or \def\fc{blue!25}\or \def\fc{green!30}\fi
+      \node[v,fill=\fc] (n\i\j) at (\j*1.1,-\i) {};
+    }
+    \node[v,fill=yellow!40] (n4\j) at (\j*1.1,-4) {?};
+  }
+  \foreach \i in {0,...,4}{\foreach \j in {0,...,4}{\pgfmathtruncatemacro{\k}{\j+1}\draw (n\i\j)--(n\i\k);}}
+  \foreach \j in {0,...,5}{\foreach \i in {0,...,3}{\pgfmathtruncatemacro{\k}{\i+1}\draw (n\i\j)--(n\k\j);}}
+  \node[left=6pt,font=\small,align=right] at (n10) {rows with\\list $A$};
+  \node[left=6pt,font=\small] at (n40) {free row};
+  \node[right=8pt,font=\scriptsize,align=left] at (n15) {each column reads\\$a,b,c,a$ from the top};
+\end{tikzpicture}
+\end{center}
+
+\textbf{How.} Colour the rows with list $A$ so that each column reads $a, b, c, a$ (three colours
+of $A$ in some order), shifting the order by one step from column to column. Then the two
+neighbours of the free row in each column have the \emph{same} colour, so each vertex of the free
+row loses at most one colour and keeps at least two. A cycle with lists of size two can be
+coloured unless all its lists are the same two colours. If that happens, rotate all the colours
+of $A$ by one step; we showed this always breaks the bad situation.
+
+\section{The strip lemma for five-cycles}
+
+\begin{proved}{strip lemma for $m=5$ (computer-assisted)}
+For 74 different ways of spending the 5 units of room (one pin plus three forbidden colours,
+placed at various rows of the two end columns), the strip coefficient is nonzero for
+\emph{every} odd length.
+\end{proved}
+
+\textbf{How.} The coefficients for odd lengths satisfy an exact recurrence of order 6, which comes
+from the minimal polynomial of the $30 \times 30$ transfer matrix. For each of the 74 ways the
+recurrence's largest root dominates from the start, with a nonzero weight, so the coefficient
+never vanishes. Checked again by exact computation up to length 41.
+
+\section{Edge deletion and a computer search}
+
+\begin{proved}{edge deletion for $m = 5, 7$ (computer-assisted)}
+Remove one edge from $C_5 \T C_n$ or $C_7 \T C_n$: the result is 3-choosable (even with one
+list of size 2). Consequence: in any counterexample, every edge has overlapping lists.
+\end{proved}
+
+\begin{proved}{no small counterexample (certified computation)}
+$C_5 \T C_5$ cannot be made uncolourable by lists of size 3 drawn from 4 colours.
+\end{proved}
+
+% ================================================================== chapter 6
+\chapter{The missing piece: the window statement}
+
+\section{What a window is}
+
+For $m = 5$, a cut deletes two columns $C_1, C_2$ next to a column $C_0$ where some row's list
+changes. The strip colours $C_0$ and $C_3$, but the strip colouring is \emph{not under our
+control} except through the pin and the forbidden colours. So we imagine an \emph{adversary}
+who colours $C_0$ and $C_3$ in the worst possible way.
+
+\begin{center}
+\begin{tikzpicture}[v/.style={circle,draw,minimum size=12pt,inner sep=0pt,font=\scriptsize,fill=white}]
+  \fill[cutc] (1.5,0.5) rectangle (3.5,-4.5);
+  \node[font=\small,gray] at (2.5,0.85) {window};
+  \foreach \c/\x/\lab in {0/0/{$C_0$ (adversary)},1/2/{$C_1$},2/3/{$C_2$},3/5/{$C_3$ (adversary)}}{
+    \node[font=\small] at (\x,-5) {\lab};
+    \foreach \r in {0,...,4}{\node[v] (m\c\r) at (\x,-\r) {};}
+    \foreach \r in {0,...,3}{\pgfmathtruncatemacro{\s}{\r+1}\draw (m\c\r)--(m\c\s);}
+    \draw (m\c0) to[bend left=35] (m\c4);
+  }
+  \foreach \r in {0,...,4}{\draw (m0\r)--(m1\r)--(m2\r)--(m3\r);}
+  \node[v,fill=pinc!40] at (0,0) {$\alpha$};
+  \foreach \r in {1,3,4}{\node[v,fill=forbc!30] at (5,-\r) {};}
+  \node[right=5pt,font=\scriptsize,align=left,forbc] at (5.3,-2.5) {forbidden\\colours};
+\end{tikzpicture}
+\end{center}
+
+A window is \emph{good} if some way of spending the 5 units (from the 74 that are proved to work)
+makes the fill succeed against every adversary. A \emph{cut} is good if its window is good.
+
+\begin{definitionbox}{The window statement (open)}
+If every possible cut of a 3-list assignment of $C_5 \T C_n$ is bad, then the lists are constant
+along rows, or constant along columns, or have one free row.
+\end{definitionbox}
+
+If this is true, then $C_5 \T C_n$ is 3-choosable for every odd $n$: Chapter 5 handles the three
+special shapes, and a good cut handles everything else.
+
+\section{What the computer says}
+
+\begin{partialbox}{the window statement}
+\begin{itemize}
+\item \textbf{Palette of four colours:} completely true for $n = 5$ and $n = 7$. We checked all
+$4^{10}$ windows, found the bad ones, and showed that every assignment in which every cut is bad
+is row-constant, column-constant or has one free row (600 such assignments for $n=5$, 2,520 for
+$n=7$, all of the last kind).
+\item \textbf{Palettes of five and six colours:} new bad windows do appear (992 found next to the four-colour
+ones), but they still never combine into anything except the three known shapes.
+\item \textbf{All palettes:} not provable by computer. Already a palette of five colours would need about 370
+CPU-hours, and there is no upper limit on the number of colours.
+\end{itemize}
+\end{partialbox}
+
+\begin{plainwords}
+The computer agrees with the statement everywhere we can look, but ``everywhere we can look'' is
+only small palettes. We need an argument that works for a palette of any size.
+\end{plainwords}
+
+\section{What we learned along the way}
+
+\begin{itemize}[itemsep=0.3em]
+\item Amrutanshu's suggested way of spending the room (all forbidden colours on one side) is not
+enough by itself: it fails on 6,904 of the million four-colour windows. Allowing all 74 proved
+ways, some of which forbid colours on the pin's side too, cuts this to a few hundred.
+\item A cut can be made in two directions at every place where a list changes. Using both
+directions removed every remaining problem except the special shapes.
+\item With five or more colours, a careless model of the pinned colour $\alpha$ created 23,280
+fake ``new obstructions''. Modelling $\alpha$ exactly removed all of them. Every one of those fake
+cases was also colourable, so there was never a counterexample.
+\end{itemize}
+
+% ================================================================== chapter 7
+\chapter{This morning: attacking the window statement}
+
+\section{Attempt 1: a prism lemma for five-cycles}
+
+For $m=3$ the fill failed in only two patterns. We hoped the same for the five-cycle version
+($C_5 \T K_2$, ten vertices). Sampling random lists shows it is \textbf{not} so: the failures
+come in many shapes, including ones where no two lists are equal. A hand classification would be
+a very long case analysis.
+
+\begin{openitem}{a short characterisation of five-cycle fill failures}
+Does not exist in the simple form that worked for triangles.
+\end{openitem}
+
+\section{Attempt 2: cut three columns instead of two}
+
+\begin{center}
+\begin{tikzpicture}[v/.style={circle,draw,minimum size=11pt,inner sep=0pt,fill=white}]
+  \fill[cutc] (1.5,0.5) rectangle (4.5,-4.5);
+  \foreach \c/\x/\f in {0/0/white,1/2/white,2/3/provedc!25,3/4/white,4/6/white}{
+    \foreach \r in {0,...,4}{\node[v,fill=\f] (k\c\r) at (\x,-\r) {};}
+    \foreach \r in {0,...,3}{\pgfmathtruncatemacro{\s}{\r+1}\draw (k\c\r)--(k\c\s);}
+    \draw (k\c0) to[bend left=35] (k\c4);
+  }
+  \foreach \r in {0,...,4}{\draw (k0\r)--(k1\r)--(k2\r)--(k3\r)--(k4\r);}
+  \node[v,fill=pinc!40] at (0,0) {};
+  \node[font=\small] at (0,-5) {$C_0$}; \node[font=\small] at (2,-5) {$C_1$};
+  \node[font=\small] at (3,-5) {$C_2$}; \node[font=\small] at (4,-5) {$C_3$}; \node[font=\small] at (6,-5) {$C_4$};
+  \node[font=\scriptsize,align=center,provedc!70!black] at (3,0.9) {middle column keeps\\its full lists};
+\end{tikzpicture}
+\end{center}
+
+If we delete three columns, the middle one is never touched by the adversary, and we get to choose
+how to colour the two outer ones so that the middle one works. This is a much more comfortable
+position. With only the pin (no forbidden colours at all), \textbf{none of 400 random four-colour
+windows and 1 of 400 five-colour-palette windows was bad}, far better than the two-column cut.
+
+\section{The real obstacle: almost-constant lists}
+
+But when the lists are \emph{almost constant} (say every list is $\{0,1,2\}$ except one or two),
+the three-column cut fails too: 75 of 135 windows with one changed list, 2,697 of 8,505 with two.
+The same was true for the two-column cut. This is not bad luck: when the deleted columns all carry
+the same three colours, the adversary always has enough control to force a clash.
+
+\begin{keyidea}[: two regimes]
+No local cutting argument can handle almost-constant lists. A proof must split:
+\begin{itemize}
+\item \textbf{Generic lists} (far from constant): cut, preferably three columns, and fill by hand.
+\item \textbf{Almost-constant lists}: colour directly with a global pattern, the way the
+one-free-row lemma does.
+\end{itemize}
+The work is to make ``almost constant'' precise so that both halves can be proved and they cover
+everything.
+\end{keyidea}
+
+\begin{openitem}{the window statement for all palettes}
+Not proved. The attempt today narrowed it to the two-regime plan above.
+\end{openitem}
+
+% ================================================================== chapter: update
+\chapter{Late morning: a sharper target}
+
+This chapter was added at 9:30 AM on the day of the meeting. It records what the searches found
+while the earlier chapters were being read.
+
+\section{Can every cut fail somewhere new?}
+
+We searched directly for an assignment of $C_5 \T C_5$ or $C_5 \T C_7$ (palettes of five or six colours) in
+which every cut fails but which is \emph{not} one of the three special shapes. Sixteen independent
+searches, about two million steps in total, never found one. Every search got stuck with at least
+two places where a cut still works.
+
+\section{What does a bad window look like?}
+
+We first guessed that a bad window must have at least 7 of its 10 lists equal to one set $X$
+(``Conjecture N$'$''). An unbiased search \textbf{disproved} this. Here is one of the three bad
+windows it found, with $X = \{2,3,4\}$:
+
+\begin{center}
+\begin{tikzpicture}[c/.style={draw,minimum width=1.6cm,minimum height=0.6cm,font=\small}]
+  \node[font=\small] at (0,0.6) {$C_1$}; \node[font=\small] at (1.8,0.6) {$C_2$};
+  \foreach \r/\a/\b/\fa/\fb in {0/{\{0,1,4\}}/{\{0,2,3\}}/white/white,1/X/X/provedc!20/provedc!20,2/X/X/provedc!20/provedc!20,3/X/X/provedc!20/provedc!20,4/{\{1,2,4\}}/{\{1,3,4\}}/white/white}{
+    \node[c,fill=\fa] at (0,-0.6*\r) {$\a$}; \node[c,fill=\fb] at (1.8,-0.6*\r) {$\b$};
+    \node[font=\scriptsize,left] at (-0.9,-0.6*\r) {row \r};
+  }
+  \node[font=\scriptsize,right,align=left] at (2.8,-1.2) {a $3 \times 2$ block\\of identical lists};
+\end{tikzpicture}
+\end{center}
+
+All the bad windows we have, 1,395 of them from every search so far, share one feature:
+
+\begin{partialbox}{Conjecture N$''$ (strong evidence, not proved)}
+If a window is bad, then three consecutive rows carry the \emph{same} 3-set $X$ in \emph{both}
+deleted columns: a rigid $3 \times 2$ block of identical lists. In the data the block never
+consists of the pinned row together with both of its neighbours.
+\end{partialbox}
+
+An unbiased search (nine runs, palettes of five to seven colours) looked for a bad window without
+such a block and found none; with a palette of five it came close but never got there.
+
+\begin{plainwords}
+A cut only ever fails where the lists contain a small rigid block, three rows tall and two columns
+wide, in which every list is the same. If we can prove that by hand, the rest of the $m=5$
+problem becomes a question about assignments built from such blocks, which is much smaller and
+more structured.
+\end{plainwords}
+
+\section{A new theorem we can state today}
+
+\begin{proved}{Theorem B (computer-assisted)}
+For every odd $n$, the torus $C_5 \T C_n$ can be coloured from any lists of size 3 that are drawn
+from a palette of four colours.
+\end{proved}
+
+\textbf{Proof outline.}
+\begin{enumerate}[itemsep=0.2em]
+\item $n=3$ is Theorem A. Row-constant, column-constant and one-free-row assignments are handled by
+the lemmas of Chapter 5 (for every palette).
+\item Otherwise some list changes along a row, so there is a cut. All $4^{10}$ four-colour windows
+were checked: the bad ones (with the real pinned colour) are exactly 184 windows.
+\item Only 64 different columns can sit next to a cut. ``Every cut fails'' is then a closed walk
+in a finite graph whose states are three consecutive columns (262,144 states, 270,976 edges). We
+found every part of the graph that carries a closed walk of odd length (81 parts) and checked that
+each one consists of a single special shape (column-constant or one free row). Since walks of every
+length are covered, this settles every odd $n$ at once.
+\item So if the assignment is not special, some cut is good, and the strip lemma for all odd lengths
+plus the fill give a colouring.
+\end{enumerate}
+The program that judges windows with all 74 shapes was re-checked by an independent Python brute
+force on 40 windows (20 good, 20 bad): all 40 agree.
+
+\begin{plainwords}
+This is a complete result for infinitely many tori, under one restriction: the lists come from four
+colours. Removing that restriction is exactly the window statement.
+\end{plainwords}
+
+\section{Rigid rows: the sharpest form of the target}
+
+Call row $t$ of a window \emph{rigid} if its two deleted lists are the same set, $L(t,C_1) =
+L(t,C_2)$. In a rigid row the two vertices have almost no room: one of them is forced to copy the
+colour the adversary put next to the other. Three rigid rows in a row chain these forced copies
+around the cycle, and the adversary can make the chain contradict itself.
+
+\begin{partialbox}{Lemma R (strong evidence, not proved)}
+A cut can only fail if at least three rows of its window are rigid.
+\end{partialbox}
+
+Evidence: all 4,731 bad (window, $\alpha$) pairs we know have at least three rigid rows (1,659 have
+exactly three, 2,852 have four, 220 have five), and sixteen unbiased searches with palettes of five to
+eight colours found no bad window with two or fewer.
+
+\textbf{First step towards a proof.} The generic case is ``no rigid row at all''. Amrutanshu's
+single cut shape, with a natural choice of forbidden colours, already handles 81\% of the
+four-colour windows of this kind; the rest (for example every $C_1$ list $\{0,2,3\}$ and every $C_2$
+list $\{1,2,3\}$) need the shapes that also forbid colours on the pinned side. So even the generic
+case needs a careful, several-page case analysis. That is Phase 1 of the plan.
+
+\section{A folding trick}
+
+Suppose rows $i-1$ and $i+1$ have the same list in every column. Then fold the torus: glue those
+two rows together. The rows other than $i$ become a copy of $C_3 \T C_n$ (for $m = 5$), which
+Theorem A colours. Row $i$ then sees the same colour twice in every column, so each of its vertices
+loses only one colour, and an odd cycle with lists of size two can almost always be coloured.
+
+\begin{center}
+\begin{tikzpicture}[v/.style={circle,draw,minimum size=12pt,inner sep=0pt,font=\scriptsize}]
+  \foreach \r/\f in {0/red!25,1/blue!20,2/green!25,3/red!25}{\node[v,fill=\f] (a\r) at (0,-\r*0.8) {};}
+  \node[v,fill=yellow!40] (a4) at (0,-3.2) {?};
+  \draw (a0)--(a1)--(a2)--(a3)--(a4); \draw (a4) to[bend left=50] (a0);
+  \node[font=\scriptsize,right=4pt] at (a0) {row $i+1$}; \node[font=\scriptsize,right=4pt] at (a3) {row $i-1$};
+  \node[font=\scriptsize,right=4pt] at (a4) {row $i$};
+  \draw[-{Stealth},thick] (1.6,-1.6)--(3,-1.6) node[midway,above,font=\scriptsize]{fold};
+  \foreach \r/\f in {0/red!25,1/blue!20,2/green!25}{\node[v,fill=\f] (b\r) at (4,-\r*0.8-0.4) {};}
+  \draw (b0)--(b1)--(b2); \draw (b2) to[bend left=50] (b0);
+  \node[font=\scriptsize,right=6pt,align=left] at (b1) {a copy of $C_3 \T C_n$:\\Theorem A colours it};
+\end{tikzpicture}
+\end{center}
+
+\begin{partialbox}{Folding lemma}
+This works whenever $C_3 \T C_n$ stays colourable when one vertex has only two colours
+(``Lemma S''). Lemma S held in every test (all 393,216 assignments of $C_3 \T C_3$ with four
+colours, and 80,000 random ones on larger tori), but is not yet proved: its hard case is again the
+almost-constant one. The folding lemma would extend the one-free-row lemma and gives a way to
+reduce $m$ to $m-2$ for lists with this kind of symmetry.
+\end{partialbox}
+
+\section{Revised plan for Phase 1}
+
+\begin{itemize}
+\item Prove Lemma R by hand (a window with at most two rigid rows always has a good cut),
+starting with windows that have no rigid row.
+\item Classify the assignments in which every cut fails, using that every column next to a cut
+contains such blocks. Because the blocks are rigid, this step should reduce to a finite check.
+\item Prove Lemma S, which gives the folding lemma.
+\end{itemize}
+
+% ================================================================== chapter 8
+\chapter{Roadmap and dates}
+
+\section{Where the whole problem stands}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{3cm}p{4.2cm}p{6.6cm}}
+\toprule
+Case & Status & What is missing \\
+\midrule
+$m$ or $n$ even & \cellcolor{provedc!15}known (2023) & nothing \\
+$C_3 \T C_n$ & \cellcolor{provedc!15}proved (ours) & hand proof of the prism lemma, literature check \\
+$C_5 \T C_n$ & \cellcolor{partialc!15}reduced to one statement & the window statement (two regimes) \\
+$C_7 \T C_n$ & \cellcolor{partialc!15}some pieces & strip lemma for $m=7$, window statement \\
+all odd $m, n$ & \cellcolor{openc!12}open & strip lemma for every $m$, window statement for every $m$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{The plan}
+
+\begin{center}
+\begin{tikzpicture}[st/.style={draw,rounded corners,align=left,text width=11.5cm,font=\small,inner sep=5pt}]
+  \node[st,fill=provedc!10] (p0) {\textbf{Phase 0, by Fri 30 Oct.} Finish the $C_3 \T C_n$ paper:
+    merge the hand proof of the prism lemma, full literature check, agree authorship.};
+  \node[st,fill=partialc!10,below=0.3cm of p0] (p1) {\textbf{Phase 1, by Fri 6 Nov.} Prove Lemma R (a cut can only fail when three rows of the
+    window are rigid), starting with the case of no rigid row; prove Lemma S (gives the folding
+    lemma).};
+  \node[st,fill=partialc!10,below=0.3cm of p1] (p2) {\textbf{Phase 2, by Fri 20 Nov.} Generic regime:
+    prove that generic windows have a good three-column cut (hand proof with computer-checked case
+    splits), and prove the even-length strip lemma for the shapes used (same method as the
+    odd-length one, about a day).};
+  \node[st,fill=partialc!10,below=0.3cm of p2] (p3) {\textbf{Phase 3, by Fri 27 Nov.} Assemble
+    $C_5 \T C_n$, verify everything, write it up. \textbf{Target for $C_5 \T C_n$: end of November.}};
+  \node[st,fill=openc!8,below=0.3cm of p3] (p4) {\textbf{Phase 4, December to January.} General odd
+    $m$. Needs (a) a strip lemma that works for every $m$ at once (today it is one computation per
+    $m$), and (b) the two-regime argument written uniformly in $m$. \textbf{Decision point mid
+    December:} if no uniform strip argument is in sight, do $C_7 \T C_n$ by computer and publish
+    $m = 3, 5, 7$.};
+  \foreach \a/\b in {p0/p1,p1/p2,p2/p3,p3/p4}{\draw[-{Stealth},thick] (\a)--(\b);}
+\end{tikzpicture}
+\end{center}
+
+\begin{plainwords}
+Honest dates: $C_3 \T C_n$ is done now (paper by the end of this week). $C_5 \T C_n$ is
+realistic by the end of November, with real risk in Phase 2. The full odd case has no promised
+date: the earliest plausible finish is the end of January 2027, and only if two new uniform
+arguments are found. Each phase ends with something we can show, even if the next phase stalls.
+\end{plainwords}
+
+% ================================================================== chapter 9
+\chapter{Questions to expect, and answers}
+
+\begin{description}[style=nextline,itemsep=0.6em]
+\item[Is $C_3 \T C_n$ really new?]
+Li, Shao, Petrov and Gordeev (2023) state that the odd case is open, and we have found no later
+paper that closes it. A full check of everything citing their paper and the recent dynamic survey
+is planned for this week.
+
+\item[Why does your proof work when the Alon--Tarsi method provably fails?]
+Our proof uses the algebra only on a strip, which has spare room, and then makes one choice by
+looking at the lists (the forbidden colour $\beta$). That choice is not algebraic, so the
+impossibility result for the torus does not apply.
+
+\item[Why should we trust the computer parts?]
+All arithmetic is exact (integers and the cube roots of unity, no rounding). Each result was
+reproduced by at least two independent methods. The finite lemma was checked over every list
+assignment up to renaming colours. The SAT result comes with a certificate checked by a second
+solver. Every number has a script in the repository.
+
+\item[What exactly is missing for $C_5 \T C_n$?]
+One statement: when every cut fails, the lists have one of three special shapes. Everything else
+is proved. It is verified for a palette of four colours and survived targeted searches with
+palettes of five and six. Since this morning we know more: every bad window we have ever found has at least three
+rigid rows (Lemma R) and a $3 \times 2$ block of identical lists (Conjecture N$''$), so the missing
+proof has a concrete local target.
+
+\item[Why not just compute it?]
+The palette is unbounded: lists always have 3 colours, but they can be drawn from any number of
+colours. A palette of five alone would take about 370 CPU-hours, and that would still not cover
+six or more.
+
+\item[Could the conjecture be false?]
+No counterexample has appeared: none for $C_5 \T C_5$ with lists from a palette of four colours (certified), and every
+candidate obstruction found by the searches was colourable. A counterexample would have to beat
+every cut, which is very restrictive.
+
+\item[What did you do differently from the original plan?]
+We proved that the plan's single way of spending the room fails on some windows, found 74 proved
+alternatives, added cuts in both directions, proved the one-free-row lemma, proved the strip lemma
+for every odd length when $m=5$, and found today that almost-constant lists need a separate,
+global argument.
+
+\item[Who did what?]
+The $m=3$ route and the kernel proof are Amrutanshu's; the simplification is in his plan. The
+verification, the strip lemma proof write-up, the $m=5$ results and the analysis of the window
+statement are ours. Credit is shared equally.
+\end{description}
+
+% ================================================================== appendix
+\appendix
+\chapter{Where every number comes from}\label{app:verify}
+
+All paths are inside \texttt{\textasciitilde/work/gt/odd-torus/}.
+
+\begin{center}\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{5.6cm}p{4.6cm}p{3.6cm}}
+\toprule
+Claim & Script & Result \\
+\midrule
+Strip coefficient, $m=3$ & \texttt{ws-W1/strip\_coeff.py}, \texttt{compare.py} & 0 mismatches in 500 \\
+Prism lemma, all assignments & \texttt{ws-W9/prism\_sizes.c}, \texttt{prism.c} & 0 exceptions \\
+Case 1 extension check & \texttt{ws-W9/ext3.c} & 0 failures \\
+One-free-row construction & \texttt{ws-W9/freerow\_check.py} & 0 failures in 20,000 \\
+Strip lemma $m=5$, all odd lengths & \texttt{ws-W7/prove\_strip5.py} & 148 cases proved \\
+Edge deletion $m=5,7$ & \texttt{ws-W4/} & see \texttt{REPORT.md} \\
+No bad lists from a 4-colour palette on $C_5 \T C_5$ & \texttt{ws-W2/certify.py} & UNSAT, certified \\
+Windows, plan shape & \texttt{ws-W8/window5.c} & 6,904 bad of 1,048,576 \\
+Windows, 74 shapes & \texttt{ws-W8/window5g.c} & 184 bad (exact $\alpha$) \\
+Every cut bad, $n=5,7$ & \texttt{ws-W8/global\_q4\_all\_n.py} & 600 and 2,520, all one free row \\
+Palettes of five and six & \texttt{ws-W8/global\_alpha.py} & only the known shapes \\
+Five-cycle fill failures & \texttt{ws-W10/prism5\_sample.py} & many different shapes \\
+Three-column cut & \texttt{ws-W10/cut3.py}, \texttt{cut3\_nearconst.py} & see Chapter 7 \\
+Every cut fails, new shapes? & \texttt{ws-W11/evade.c} & none found (16 runs) \\
+Conjecture N$'$ & \texttt{ws-W11/hunt.c} & false (3 counterexamples) \\
+Conjecture N$''$ & \texttt{ws-W11/hunt5.c} & 1,395 bad windows agree; hunt found none against \\
+Lemma S evidence & \texttt{ws-W11/one\_short.py} & 0 failures \\
+Lemma R evidence & \texttt{ws-W11/huntR.c} & none against (16 runs) \\
+Theorem B, every odd $n$ & \texttt{ws-W8/alln\_q4.py} & 81 odd components, all special \\
+Window verdicts re-checked & \texttt{ws-W8/validate\_shapes.py} & 40 of 40 agree \\
+No rigid row, single shape & \texttt{ws-W11/r0\_strategy.c} & 47,976 of 248,832 need more shapes \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\chapter{Glossary}
+
+\begin{description}[itemsep=0.3em]
+\item[Choosable] $G$ is $k$-choosable if it can be coloured from any lists of size $k$.
+\item[Torus grid $C_m \T C_n$] An $m \times n$ grid with both pairs of opposite sides glued.
+\item[Strip] What is left after deleting some columns: columns are cycles, rows are paths.
+\item[Pin] Use 2 units of the strip's spare room to force one vertex to a chosen colour.
+\item[Forbid] Use 1 unit to stop one vertex from using one chosen colour.
+\item[Strip coefficient] The number that decides whether a pin and forbid pattern works.
+\item[Transfer matrix] A matrix that computes strip coefficients one column at a time.
+\item[Window] The deleted columns of a cut, together with the adversary's choices around them.
+\item[Kernel] An independent set that every vertex outside it points into.
+\item[Alon--Tarsi number] The best list size the polynomial method can prove. It is 4 for odd tori.
+\item[Paintability] A harder, online version of choosability.
+\end{description}
+
+\end{document}

@@ -1,0 +1,4 @@
+<frozen site>:101: RuntimeWarning: Unexpected value in sys.prefix, expected /home/sid/work/gt/odd-torus/env, got /home/sid/work/gt/odd-torus/ws-W2/../env
+<frozen site>:101: RuntimeWarning: Unexpected value in sys.exec_prefix, expected /home/sid/work/gt/odd-torus/env, got /home/sid/work/gt/odd-torus/ws-W2/../env
+certify torus 5 5 q=4 ckpt/t55q4_nosym.json: 8 cuts, 38400 cut clauses incl. images verified, 0 INVALID; CNF has 38625 clauses (1s)
+independent re-solve with glucose4: UNSAT (agrees) in 92.6s

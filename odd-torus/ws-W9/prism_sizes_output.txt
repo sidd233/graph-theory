@@ -1,0 +1,2 @@
+canonical assignments (outer lists of size 2 or 3) 236160170, not colourable 8335
+(L') not colourable but not (|B1|=|B2|=2 and B1 == B2): 0

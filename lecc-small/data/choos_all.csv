@@ -1,0 +1,7 @@
+graph6,N,k,result,seconds,last_log
+GCY^B_,8,3,choosable,1.3,"CHOOSABLE: outer UNSAT after 17 iterations, 136 colourings blocked, 1.3s"
+I?`amQoM?,10,3,choosable,30.6,"CHOOSABLE: outer UNSAT after 250 iterations, 2000 colourings blocked, 30.3s"
+I?`bfAWF?,10,3,choosable,42.2,"CHOOSABLE: outer UNSAT after 409 iterations, 3272 colourings blocked, 41.9s"
+ICOedO[X?,10,3,choosable,48.4,"CHOOSABLE: outer UNSAT after 1038 iterations, 8304 colourings blocked, 48.1s"
+I?bEHow[?,10,3,choosable,333.0,"CHOOSABLE: outer UNSAT after 22918 iterations, 183344 colourings blocked, 332.0s"
+GEnbvG,8,4,timeout,1699.4,"TIMEOUT after 0 iterations, 0 colourings blocked"

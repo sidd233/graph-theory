@@ -1,0 +1,23 @@
+=== torus 5 5 5 --crit --overlap --colsym --gsym --shrink --glits --diverse 4 --orbit graph --time-limit 18000 --report 5 --ckpt ckpt/t55q5_crit.json --log run_t55q5_crit.txt
+started 2026-10-28 10:18:37 AM
+graph torus 5 5: N=25 |E|=50 q=5 k=3
+adding images of every cut under 199 symmetries
+  iters=5 cuts=20 avg_cut_len=11.20 t=0s
+  iters=10 cuts=40 avg_cut_len=11.72 t=0s
+  iters=15 cuts=60 avg_cut_len=11.70 t=0s
+  iters=20 cuts=80 avg_cut_len=11.88 t=1s
+  iters=25 cuts=100 avg_cut_len=11.98 t=1s
+  iters=30 cuts=120 avg_cut_len=12.11 t=1s
+  iters=35 cuts=140 avg_cut_len=12.22 t=1s
+  iters=40 cuts=160 avg_cut_len=12.30 t=2s
+  iters=45 cuts=180 avg_cut_len=12.37 t=2s
+  iters=50 cuts=200 avg_cut_len=12.40 t=3s
+  iters=55 cuts=220 avg_cut_len=12.50 t=5s
+  iters=60 cuts=240 avg_cut_len=12.52 t=7s
+  iters=65 cuts=260 avg_cut_len=12.47 t=9s
+  iters=70 cuts=280 avg_cut_len=12.49 t=17s
+  iters=75 cuts=300 avg_cut_len=12.51 t=51s
+  iters=80 cuts=320 avg_cut_len=12.55 t=113s
+  iters=85 cuts=340 avg_cut_len=12.60 t=189s
+  iters=90 cuts=360 avg_cut_len=12.62 t=661s
+  iters=95 cuts=380 avg_cut_len=12.63 t=1935s

@@ -1,0 +1,8 @@
+=== torus 5 5 4 --shrink --glits --diverse 4 --targeted --orbit both --time-limit 3000 --report 1 --ckpt ckpt/t55q4_nosym.json --log run_t55q4_nosym.txt
+started 2026-10-26 02:59:26 PM
+graph torus 5 5: N=25 |E|=50 q=4 k=3
+adding images of every cut under 4799 symmetries
+  iters=1 cuts=4 avg_cut_len=11.00 t=0s
+  iters=2 cuts=8 avg_cut_len=11.00 t=0s
+NONE: master UNSAT after iters=2 cuts=8 t=97.7s
+RESULT none iters=2 cuts=8

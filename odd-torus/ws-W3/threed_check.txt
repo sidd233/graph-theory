@@ -1,0 +1,31 @@
+<frozen site>:101: RuntimeWarning: Unexpected value in sys.prefix, expected /home/sid/work/gt/odd-torus/env, got /home/sid/work/gt/odd-torus/ws-W3/../env
+<frozen site>:101: RuntimeWarning: Unexpected value in sys.exec_prefix, expected /home/sid/work/gt/odd-torus/env, got /home/sid/work/gt/odd-torus/ws-W3/../env
+C3 x C3 x C3: kernels=12 formula=12 definition_ok=True one_per_fibre=True
+C3 x C3 x C4: kernels=36 formula=36 definition_ok=True one_per_fibre=True
+C3 x C3 x C5: kernels=60 formula=60 definition_ok=True one_per_fibre=True
+C3 x C3 x C6: kernels=132 formula=132 definition_ok=True one_per_fibre=True
+C3 x C3 x C7: kernels=252 formula=252 definition_ok=True one_per_fibre=True
+C3 x C3 x C8: kernels=516 formula=516 definition_ok=True one_per_fibre=True
+C3 x C3 x C9: kernels=1020 formula=1020 definition_ok=True one_per_fibre=True
+C3 x C4 x C4: kernels=0 formula=0 definition_ok=True one_per_fibre=True
+C3 x C4 x C5: kernels=0 formula=0 definition_ok=True one_per_fibre=True
+C3 x C4 x C6: kernels=36 formula=36 definition_ok=True one_per_fibre=True
+C3 x C4 x C7: kernels=0 formula=0 definition_ok=True one_per_fibre=True
+C3 x C4 x C8: kernels=0 formula=0 definition_ok=True one_per_fibre=True
+C3 x C4 x C9: kernels=36 formula=36 definition_ok=True one_per_fibre=True
+C3 x C5 x C5: kernels=0 formula=0 definition_ok=True one_per_fibre=True
+C3 x C5 x C6: kernels=60 formula=60 definition_ok=True one_per_fibre=True
+C3 x C5 x C7: kernels=0 formula=0 definition_ok=True one_per_fibre=True
+C3 x C5 x C8: kernels=0 formula=0 definition_ok=True one_per_fibre=True
+C3 x C5 x C9: kernels=60 formula=60 definition_ok=True one_per_fibre=True
+C3 x C6 x C6: kernels=252 formula=252 definition_ok=True one_per_fibre=True
+C3 x C6 x C7: kernels=252 formula=252 definition_ok=True one_per_fibre=True
+C3 x C6 x C8: kernels=516 formula=516 definition_ok=True one_per_fibre=True
+C3 x C6 x C9: kernels=1140 formula=1140 definition_ok=True one_per_fibre=True
+C3 x C7 x C7: kernels=0 formula=0 definition_ok=True one_per_fibre=True
+C3 x C7 x C8: kernels=0 formula=0 definition_ok=True one_per_fibre=True
+C3 x C7 x C9: kernels=252 formula=252 definition_ok=True one_per_fibre=True
+C3 x C8 x C8: kernels=0 formula=0 definition_ok=True one_per_fibre=True
+C3 x C8 x C9: kernels=516 formula=516 definition_ok=True one_per_fibre=True
+C3 x C9 x C9: kernels=2028 formula=2028 definition_ok=True one_per_fibre=True
+disagreements: 0

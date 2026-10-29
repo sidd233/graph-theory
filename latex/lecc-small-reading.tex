@@ -1,0 +1,300 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=0.9in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{booktabs}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem*{step}{Step}
+
+\newcommand{\ch}{\operatorname{ch}}
+\newcommand{\dout}{d^{+}}
+\newcommand{\gsix}[1]{\texttt{\detokenize{#1}}}
+
+\title{Reading copy: notes 03 and 04 of \texttt{lecc-small}}
+\author{Prepared for Sid, 9 October 2026}
+\date{}
+
+\begin{document}
+\maketitle
+
+\noindent This is a typeset copy of notes \texttt{03} and \texttt{04} in \texttt{lecc-small/}, for reading before the 5:00 PM meeting. The
+Markdown notes are the source of truth. While reading, mark any step you cannot justify in
+one line.
+
+\section{Theorem R5: for regular graphs, the kernel method works only on bipartite graphs}
+
+\begin{theorem}
+Let $G$ be a simple $k$-regular graph with $k \ge 1$. Then $L(G)$ has a kernel-perfect
+orientation with maximum out-degree at most $k-1$ if and only if $G$ is bipartite.
+\end{theorem}
+
+``If'' is Galvin's theorem. ``Only if'' is the direction we prove. Through Lemma~1 of
+Chapter~33 of \emph{Proofs from THE BOOK}, it says:
+
+\begin{corollary}
+For a regular graph $G$ that is not bipartite, the kernel method (Lemma~1 with lists of size
+$\Delta(G)$) cannot prove $\ch'(G) = \Delta(G)$, whatever the true value of $\ch'(G)$ is.
+\end{corollary}
+
+\paragraph{Special cases it contains.} The triangle theorem (note 11), the even complete graph
+theorem (note 12), the case $C_5 \times K_2$, and the failure of the kernel method on all 52 of
+Schauz's open zero-sum graphs.
+
+\paragraph{Novelty.} It is not in Borodin, Kostochka and Woodall (1998), who characterise
+kernel-perfect orientations of line graphs, nor in McDonald (2015, arXiv:1508.01820). McDonald
+proves the $K_n$ case only for her restricted ``Galvin orientations'', and shows the Petersen
+graph \emph{does} have one with $4 = \Delta + 1$ colours. So the barrier is specific to the
+tight budget $k = \Delta$ on regular graphs. Status: \textbf{not found in the literature; not
+yet claimed as new.}
+
+\subsection*{Proof}
+
+Throughout, $D$ is a kernel-perfect orientation of $L(G)$ with $\dout(e) \le k-1$ for every
+edge $e$ of $G$.
+
+\begin{step}[1: ranks]
+By the star lemma (note 09), for each vertex $u$ the $k$ edges at $u$ induce a transitive
+tournament in $D$. Let $r_u(v)$ be the number of edges at $u$ that $uv$ points to: its
+\emph{rank} at $u$, with $0$ the best. At each $u$ the ranks are exactly $0, 1, \dots, k-1$.
+Since $G$ is simple, two edges share at most one vertex, so every arc of $D$ lies in exactly
+one star, and
+\[
+  \dout(uv) = r_u(v) + r_v(u).
+\]
+\end{step}
+
+\begin{step}[2: tightness]
+Summing over all edges,
+\[
+  \sum_{uv \in E} \dout(uv) = \sum_{u \in V} \bigl(0 + 1 + \dots + (k-1)\bigr)
+  = |V|\,\frac{k(k-1)}{2} = |E|\,(k-1).
+\]
+Each term is at most $k-1$, so every term equals $k-1$:
+\[
+  r_u(v) + r_v(u) = k-1 \qquad \text{for every edge } uv.
+\]
+\end{step}
+
+\begin{step}[3: no odd ring]
+An \emph{odd ring} is an odd cycle $a_1 a_2 \dots a_m$ of $G$ ($m \ge 3$ odd) in which every
+$a_i$ ranks $a_{i+1}$ above $a_{i-1}$, indices mod $m$. Suppose one exists. Let $S$ be its edge
+set and $e_i = a_i a_{i+1}$.
+\begin{itemize}[nosep]
+  \item In $L(G)$, within $S$ the edge $e_i$ is adjacent only to $e_{i-1}$ and $e_{i+1}$,
+        because the cycle is simple. (For $m = 3$ all three are adjacent; same statement.)
+  \item At $a_i$, the edge $e_i$ is ranked above $e_{i-1}$, so $e_{i-1} \to e_i$.
+  \item Hence $D[S]$ is a directed cycle of odd length, which has no kernel. This contradicts
+        kernel-perfectness.
+\end{itemize}
+So $G$ has no odd ring.
+\end{step}
+
+\begin{step}[4: an orientation of $G$]
+Put $y(u,v) = r_u(v) - \tfrac{k-1}{2}$. By Step 2, $y(v,u) = -y(u,v)$. Orient $uv$ as
+$u \to v$ in a digraph $O$ when $y(u,v) < 0$, that is, when $u$ ranks $v$ in its better half.
+Let $M_0$ be the set of edges with $y = 0$; they stay unoriented.
+\begin{itemize}[nosep]
+  \item If $k$ is even, $y$ is never $0$, so $M_0 = \emptyset$.
+  \item If $k$ is odd, $y(u,v) = 0$ exactly when $r_u(v) = \tfrac{k-1}{2}$, and by Step 2 then
+        also $r_v(u) = \tfrac{k-1}{2}$. Each vertex has exactly one edge of middle rank, so $M_0$
+        is a perfect matching.
+\end{itemize}
+At every vertex the out-arcs of $O$ are the edges of rank below $\tfrac{k-1}{2}$ and the
+in-arcs those above it, $\lfloor k/2 \rfloor$ of each. So $O$ is a balanced (Eulerian)
+orientation of $G - M_0$.
+\end{step}
+
+\begin{step}[5: admissible cycles are rings]
+Traverse a cycle $a_1 \to a_2 \to \dots \to a_m \to a_1$. Then $a_i$ ranks $a_{i+1}$ above
+$a_{i-1}$ exactly when
+\begin{align*}
+  r_{a_i}(a_{i+1}) < r_{a_i}(a_{i-1})
+  &\iff y(a_i, a_{i+1}) < y(a_i, a_{i-1}) = -y(a_{i-1}, a_i)\\
+  &\iff y(a_{i-1}, a_i) + y(a_i, a_{i+1}) < 0.
+\end{align*}
+Call the cycle \emph{admissible} if every edge is either an arc of $O$ traversed forwards
+($y < 0$) or an edge of $M_0$ ($y = 0$). Two consecutive edges share a vertex, so they are not
+both in the matching $M_0$. Hence in an admissible cycle every consecutive sum is negative, and
+\textbf{every admissible odd cycle is an odd ring}. By Step 3, $G$ has no admissible odd cycle.
+\end{step}
+
+\begin{step}[6: strong connectivity]
+In a balanced digraph every arc lies on a directed cycle. Hence each connected component $H$
+of $G - M_0$, oriented by $O$, is strongly connected.
+\end{step}
+
+\begin{step}[7: each component is bipartite]
+Suppose $H$ is not bipartite.
+\begin{itemize}[nosep]
+  \item \emph{If there is no odd directed closed walk, return paths are odd.} Suppose $H$ has no
+        directed closed walk of odd length. For each arc $x \to y$ pick a directed path $P_{yx}$
+        from $y$ to $x$ (Step 6). Then $x \to y$ followed by $P_{yx}$ is a closed walk, so
+        $|P_{yx}|$ is odd.
+  \item \emph{Build an odd closed walk.} Take an odd cycle $Z$ of $H$ and walk around it. Keep
+        each arc traversed forwards, and replace each arc $x \to y$ traversed backwards by
+        $P_{yx}$. The result is a directed closed walk of length $\equiv |Z| \equiv 1
+        \pmod 2$, a contradiction. So $H$ has an odd directed closed walk.
+  \item \emph{Extract a cycle.} A directed closed walk splits into directed cycles whose lengths
+        add up, so one of them is odd. A directed odd cycle of $O$ is admissible, contradicting
+        Step 5.
+\end{itemize}
+So $H$ is bipartite.
+\end{step}
+
+\begin{step}[8: $k$ even]
+$M_0 = \emptyset$, so $G$ is the union of its components, each bipartite by Step 7.
+\end{step}
+
+\begin{step}[9: $k$ odd]
+Fix a 2-colouring $\mathrm{col}$ of every component of $G - M_0$. Form the multigraph $\Gamma$
+whose nodes are the components and whose edges are the edges of $M_0$, loops allowed. Give
+$f = vu \in M_0$ the label $\lambda(f) = 1$ if $\mathrm{col}(v) = \mathrm{col}(u)$, and $0$
+otherwise. Flipping the colouring of a component changes $\lambda$ on its non-loop edges, so
+\[
+  G \text{ is bipartite} \iff \text{every cycle of } \Gamma \text{ has even label sum.}
+\]
+Suppose some cycle of $\Gamma$ has odd label sum; take one with the fewest edges.
+\begin{itemize}[nosep]
+  \item \emph{It visits no component twice}, or it would split into two shorter closed walks,
+        one with odd sum. Write it as $H_1, \dots, H_t$, distinct, with $f_i = v_i u_{i+1}$
+        joining $H_i$ to $H_{i+1}$ (indices mod $t$; $t = 1$ is a loop).
+  \item \emph{Entry and exit differ:} in $H_i$ we enter at $u_i$ and leave at $v_i$, and
+        $u_i \ne v_i$ because $M_0$ is a matching.
+  \item \emph{A cycle in $G$:} by Step 6 choose a directed $O$-path $P_i$ from $u_i$ to $v_i$
+        inside $H_i$. Then $Z = P_1 f_1 P_2 f_2 \dots P_t f_t$ is a simple cycle of $G$, since
+        the components are distinct, and it is admissible.
+  \item \emph{It is odd:} $H_i$ is bipartite, so $|P_i| \equiv \mathrm{col}(u_i) +
+        \mathrm{col}(v_i) \pmod 2$. Regrouping cyclically,
+        \[
+          |Z| = \sum_i |P_i| + t \equiv \sum_i \bigl(\mathrm{col}(v_i) + \mathrm{col}(u_{i+1})
+          + 1\bigr) \equiv \sum_i \lambda(f_i) \equiv 1 \pmod 2.
+        \]
+\end{itemize}
+So $Z$ is an admissible odd cycle, contradicting Step 5. Therefore $G$ is bipartite. \qed
+\end{step}
+
+\subsection*{Remarks}
+\begin{itemize}[nosep]
+  \item \textbf{Not needed:} Tan or Chung (the hard direction of the odd-ring lemma, note 02), or
+        the class-1 hypothesis. Only the star lemma, counting, and ``a directed odd cycle has no
+        kernel''.
+  \item \textbf{Simple graphs only.} Step 1 uses simplicity. The multigraph case is open here.
+  \item \textbf{Sharpness.} Regularity forces tightness; for non-regular graphs McDonald's
+        ``bipartite plus an edge'' shows the kernel method can succeed off the bipartite world.
+        The budget must be $k = \Delta$: with $\Delta + 1$ the Petersen graph succeeds
+        (McDonald, Theorem 4).
+  \item \textbf{Machine confirmation:} \texttt{kernel\_sat.py} on 1923 connected regular graphs
+        (6, 8 and 10 vertices, cubic on 12, triangle-free cubic on 14, 4-regular on 12). SAT on
+        exactly the 29 bipartite ones.
+\end{itemize}
+
+\section{Computer proofs of the LECC for open zero-sum graphs}
+
+\paragraph{Claim.} For each graph in the table at the end, $\ch'(G) = \chi'(G) = k$, that is,
+$L(G)$ is $k$-choosable. For each of them the uniform Alon--Tarsi coefficient vanishes, so
+Schauz's method fails, and by Theorem R5 Galvin's kernel method fails.
+
+\paragraph{Setting.} $H = L(G)$, $n$ vertices, lists of size $k$. A list assignment is
+\emph{bad} if $H$ has no proper colouring from it. We show no bad assignment exists.
+
+\begin{lemma}[P, precheck]
+If for every vertex $v$ the graph $H - v$ has a monomial with nonzero coefficient and all
+exponents at most $k-1$, then by the Combinatorial Nullstellensatz every proper induced
+subgraph of $H$ is $k$-choosable.
+\end{lemma}
+
+\begin{lemma}[C, criticality]
+Under (P), let $L$ be bad, $v$ a vertex and $c \in L(v)$. Then $c$ lies in the list of some
+neighbour of $v$.
+\end{lemma}
+\begin{proof}
+Otherwise colour $H - v$ from $L$ (possible by (P)) and give $v$ the colour $c$.
+\end{proof}
+
+\begin{lemma}[B, palette]
+Under (C), every colour lies in at least 2 lists. There are $nk$ list slots, so at most $nk/2$
+colours occur; rename them into $\{0, \dots, nk/2 - 1\}$.
+\end{lemma}
+
+\begin{lemma}[S, symmetry]
+Rename colours in order of first appearance along $v_0, v_1, \dots$. Then whenever colour
+$c \ge 1$ lies in $L(v_i)$, colour $c-1$ lies in some $L(v_j)$ with $j \le i$. Renaming does not
+change badness, (C) or (R).
+\end{lemma}
+
+\begin{lemma}[R, reducible colour classes]
+Let $A(c)$ be the set of vertices whose list contains $c$. Suppose $I \subseteq A(c)$ is
+independent and $H - I$ has a nonzero monomial $x^t$ with $t_w \le k-2$ for
+$w \in A(c) \setminus I$ and $t_w \le k-1$ elsewhere. Then $L$ is colourable.
+\end{lemma}
+\begin{proof}
+Colour $I$ with $c$ and delete $c$ from the lists of $A(c) \setminus I$. Those lists now have
+size $k-1 > t_w$, and the others size $k > t_w$. The Combinatorial Nullstellensatz colours
+$H - I$ from the reduced lists, none of which contains $c$.
+\end{proof}
+The condition depends only on the set $A(c)$. So in a bad $L$ no colour class $A$ satisfies
+$I \subseteq A \subseteq I \cup Z(t)$, where $Z(t) = \{w : t_w \le k-2\}$. Each such pair
+$(I, t)$ is a \emph{witness}.
+
+\paragraph{The loop (CEGAR).} A SAT solver searches for an assignment satisfying ``lists of size
+$k$'', (B), (S), (C) and (R), and admitting none of the colourings found so far. If it proposes
+$L$, a second solver looks for colourings from $L$; if there are some, up to 8 are added as
+exclusions and the loop repeats. If it reports UNSAT, no bad assignment exists, so $H$ is
+$k$-choosable.
+
+\paragraph{Certificates (new, 9 October).} The search was rerun with one selector literal per
+witness (\texttt{core\_check.py}). After UNSAT, the solver's unsat core names the witnesses the
+refutation actually used. \texttt{verify\_core.py}, which shares no code with the search,
+then re-checks:
+\begin{enumerate}[nosep]
+  \item (P): each stored monomial is the out-degree sequence of an orientation of $H - v$ with
+        $EE \ne EO$ (Alon--Tarsi, counted by Eulerian subgraphs, not by expanding the
+        polynomial);
+  \item (R): the same for every core witness, plus $I$ independent and $Z(t)$ as claimed;
+  \item every blocked colouring is proper;
+  \item the CNF rebuilt from (L), (S), (C), the core witnesses and the exclusions is UNSAT under a
+        different solver (Glucose~4; the search used CaDiCaL).
+\end{enumerate}
+
+\paragraph{Validation of the method.} \texttt{tests/test\_choosability.py} compares against
+brute force over every list assignment on 79 random graphs (4 to 6 vertices), and compares
+\texttt{--reduce} with the plain search on 120 more (6 to 9 vertices). Known cases come out
+right, including non-choosability of $L(\text{Petersen})$ with 3 colours.
+
+\paragraph{Results.}
+\begin{center}
+\begin{tabular}{lcccl}
+\toprule
+graph6 & $N$ & $k$ & core / all witnesses & independent check \\
+\midrule
+\gsix{GCY^B_} (X) & 8 & 3 & 892 / 6972 & passed \\
+\texttt{I?\textasciigrave{}amQoM?} & 10 & 3 & 4636 / 73657 & passed \\
+\texttt{I?\textasciigrave{}bfAWF?} & 10 & 3 & 4473 / 75994 & passed \\
+\gsix{ICOedO[X?} & 10 & 3 & 5809 / 73302 & passed \\
+\gsix{I?bEHow[?} & 10 & 3 & 7723 / 70276 & passed \\
+\gsix{GEnbvG} & 8 & 4 & 2235 / 201177 (lazy) & passed \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Still open.} A DRAT proof of the final UNSAT checked by \texttt{drat-trim} (so the
+SAT step is certified, not just reproduced by a second solver), and a human reading of (P),
+(C), (B), (S), (R).
+
+\paragraph{Degree 4 (9 October).} Adding all (R) witnesses up front gives 6.4 million clauses
+for \gsix{GEnbvG} and the solver never finished its first call. \texttt{lazy\_choos.py} keeps
+the witnesses in memory and, for each proposed $L$, adds clauses only for witnesses matching
+its actual colour classes. Soundness is unchanged: every clause added is still a valid witness.
+Result: \gsix{GEnbvG} is 4-edge-choosable after 30 seconds of search (plus 18 minutes to
+generate the witnesses), and its certificate passes \texttt{verify\_core.py}.
+
+\end{document}

@@ -1,0 +1,6 @@
+=== torus 5 5 5 --overlap --colsym --gsym --shrink --glits --diverse 4 --targeted --orbit both --time-limit 28800 --report 5 --ckpt ckpt/t55q5_overlap.json --log run_t55q5_overlap.txt
+started 2026-10-28 07:07:25 AM
+graph torus 5 5: N=25 |E|=50 q=5 k=3
+adding images of every cut under 23999 symmetries
+  iters=5 cuts=20 avg_cut_len=9.80 t=2s
+  iters=10 cuts=40 avg_cut_len=10.82 t=167s

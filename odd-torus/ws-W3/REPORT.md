@@ -263,7 +263,12 @@ Literature:
   - Cor 2.6, verbatim: "If m, n are even, then σ(2−d)(Cn × Cm) = 2. If n is odd, then σ(2−d)(Cn × Cn) = 2n." False: C_6 □ C_6 has 8, C_9 □ C_9 has 24.
   - The proof assumes each copy of C_m holds an MIS of size ⌊m/2⌋.
 - Works citing it: 11 entries from OpenAlex, checked by title and abstract. None revisits C_m □ C_n or corrects Thm 2.5.
-  - **P. Bednarz, "On (2-d)-kernels in the tensor product of graphs", Symmetry 13 (2021) 230.** Covers tensor products of paths, cycles and complete graphs, with Perrin and Padovan counts. Not read: MDPI blocks automated access. For odd n, the tensor product C_n × C_n is isomorphic to C_n □ C_n via (i, j) ↦ (i + j, i − j), so this paper may already contain the count 2P(n) for odd squares. **Must be read before any novelty claim.**
+  - **P. Bednarz, "On (2-d)-kernels in the tensor product of graphs", Symmetry 13 (2021) 230, doi 10.3390/sym13020230.** Read 2026-10-29; PDF and text in references/papers/bednarz-2021-symmetry-tensor.{pdf,txt}.
+    - Thm 6(ii): C_n × C_m (tensor) has a 2-d kernel for all n, m ≥ 3 (existence only).
+    - Thm 9: σ(C_n × C_3) = 3 + P(n). Brute force agrees for n from 3 to 12.
+    - No count for C_n × C_m with m ≥ 4, so no count for odd squares beyond n = 3. Since C_3 × C_3 ≅ C_3 □ C_3, Thm 9 gives σ = 6 there, which agrees with our 2P(3).
+    - Cites the 2016 Cartesian paper only as "some results were obtained in [23]". No correction of Thm 2.5.
+    - Verdict: does not contain our 2D classification, existence criterion or count.
   - The others are about other objects: Bednarz–Paja 2021 (generalised Petersen graphs); Michalski–Bednarz 2021 (corona and G-join); Michalski–Włoch 2020; Michalski et al. 2022; Kosiorowska et al. 2023 (two papers); Bednarz–Pirga 2024; U. Bednarz 2020 and 2021 ((1,1,2)-kernels).
 - Włoch, Australas. J. Combin. 53 (2012) 273 to 284: origin of the notion. Not re-read.
 - γ₂ of tori: "Chen–Zhang (2019)" not found. Leads, none verified:
@@ -275,7 +280,7 @@ Literature:
 - i₂ of tori: nothing found. Shaheen's paper on toroidal digraphs covers ordinary independent domination, not this.
 - Fall colourings: Dunbar et al. 2000 and Lyle, DAM 157 (2009). No statement about C_b □ C_c found, so P6 may or may not be known.
 
-Novelty verdict: the 2D results correct a published false theorem. They are not confirmed new until Bednarz 2021 is read. Nothing found contains the 3D results (P5, P6, the a = 3 criterion, the exact c-sets).
+Novelty verdict: the 2D results correct a published false theorem. Bednarz 2021 (read 2026-10-29) does not contain them; only the C_3 × C_3 = C_3 □ C_3 case overlaps. Still to do: a Google Scholar "cited by" search on Bednarz–Włoch 2016. Nothing found contains the 3D results (P5, P6, the a = 3 criterion, the exact c-sets).
 
 ## Cross-checks
 - 2D: the theorem, the transfer digraph (m ≤ 20), SAT existence (456 cases), SAT enumeration (95 tori), SAT-free brute force (mn ≤ 64), and the coordinating session's own SAT enumeration (m ≤ 10, n ≤ 12) all agree.
@@ -288,7 +293,7 @@ Novelty verdict: the 2D results correct a published false theorem. They are not 
   - The Wielandt-type bound is unnecessary in 2D, because every SCC is a simple cycle. In 3D exact repeats are detected instead of assuming a bound.
   - p = 2 needs no special case: the 2-cycle multigraph gives the checkerboard directly.
 - The published literature (Bednarz–Włoch 2016, Thm 2.5 and Cor 2.6) is contradicted by counterexamples checked by the definition, SAT, brute force, and an independent SAT encoding.
-- Bednarz 2021 was unreadable here, so novelty is open.
+- Bednarz 2021 was unreadable here at the time; read on 2026-10-29, see Literature.
 - The Chen–Zhang γ₂ values were not found.
 - The (4,6) layer transfer exceeded the 3 GB cap.
 - Process slip: in one api.unpaywall.org query (looking for an open-access copy of Bednarz 2021), the W3 agent passed Sid's email address as the required parameter. It should not have. It was the only such use.
@@ -300,3 +305,33 @@ Novelty verdict: the 2D results correct a published false theorem. They are not 
 2. If the results are new, write P1, P2, the count, P5 and P6 as a short LaTeX note in latex/, framed as a correction of Thm 2.5.
 3. 3D: prove or refute "kernel ⇒ some pairwise gcd > 1". Understand the non-layered kernels of C_4 □ C_4 □ C_c for odd c ≥ 9.
 4. Only if it serves A4: check whether any of this transfers to kernels of orientations. Expected not to.
+
+## Round 2 addendum (2026-10-29): proof audit, grid-quotient form, novelty search
+
+Proof audit (main session, by hand):
+- P1 (line lemma), both directions: correct for m, n ≥ 3.
+- P2, Step 2 written out. Let R_t have points p_i, gaps g_i, next-row offsets e_i, previous-row offsets b_i = g_i − e_i. Then R_{t+1} has gaps G_i = b_i + e_{i+1}, and the offset of R_t inside gap i of R_{t+1} is again b_i. So going down one row, b stays fixed and e shifts by one index. Every row is an MIS, so G ≤ 3 for every row, hence (e_j, b_i) ≠ (2, 2) for all i, j. Then e ≡ 1 (R_{t+1} = R_t + 1) or b ≡ 1 (R_{t+1} = R_t − 1), and the same holds for every later row. Correct.
+- Wrap-around, d = 1 non-existence, count with the two checkerboard coincidences: correct.
+- P5 and P6: correct. P6 can be shortened: one column with constant step ε already gives εc ≡ 0 mod 3, so the "every column has the same winding" step is not needed.
+
+Grid-quotient form (sketch proved, computer-verified). Let G = Z²/L, where L avoids ±(1,0), ±(0,1), ±(2,0), ±(0,2), ±(1,1), ±(1,−1), so that Z² → G is a covering of simple 4-regular graphs. Put d_± = gcd{y ∓ x : (x, y) ∈ L}. Then the 2-d kernels of G are exactly the images of the L-invariant diagonal sets {y ∓ x ∈ K}, and
+  σ(G) = P(d_+) + P(d_−) − 2·[d_+ and d_− both even],   P = Perrin, P(1) = 0.
+Proof: P4 in both directions (a covering preserves independence and S-neighbour counts), then P1 and P2 on Z² with bi-infinite rows.
+- C_m □ C_n: d_+ = d_− = gcd(m, n). This gives the main theorem.
+- Tensor C_m × C_n (each component is a grid quotient via i = u + v, j = u − v):
+  - m, n odd: P(m) + P(n);
+  - m odd, n even: P(2m) + P(n) − 2;
+  - both even: (P(m) + P(n) − 2)².
+  This contains Bednarz 2021, Thm 9 (m = 3), as the case m = 3.
+- Circulant C_N(a, b), connected, simple, 4-regular: d_± = gcd(N, a ± b). So it has a 2-d kernel iff gcd(N, a + b) > 1 or gcd(N, a − b) > 1.
+- Evidence: grid_quotient_check.py: `64 30` → grid_quotient_check.txt. Tensor: 49 cases with mn ≤ 64, 0 disagreements. Circulants: 798 cases with N ≤ 30, 0 disagreements. An earlier, larger tensor run was stopped part way (grid_quotient_check_partial_tensor.txt: 49 more cases up to C4 x C21, 0 disagreements).
+
+Novelty search (2026-10-29):
+- Bednarz 2021 (tensor): read; see Literature above.
+- Its 10 OpenAlex citers, screened by abstract: none on Cartesian products of cycles or grid quotients.
+- Bednarz, Michalski, Paja, Opuscula Math. 46(2) (2026) 139 to 152: existence of independent (1,1)-dominating sets (= 2-d kernels) in tensor and strong products, existence only. It cites the 2016 paper with no correction, so the error was still uncorrected in 2026. Alias to search for: "independent (1,1)-dominating set" (Hedetniemi et al. 2008).
+- zbMATH 1352.05159 (the 2016 paper): summary only, no critical review.
+- Web searches for independent 2-domination, 2-d kernels, (1,1)-domination and idomatic partitions of tori, grids and circulants: nothing found that classifies or counts them.
+- Fall colourings: Kaul and Mitillos (Graphs Combin. 2019) give 3 ∈ Fall(G) and H 3-colourable ⇒ G □ H fall 3-colourable, which is the "if" direction of P6. The "only if" direction (rigidity) was not found. They note that C5 □ C5 is fall 5-colourable although C5 is not, so a converse is not automatic.
+- Not done: Google Scholar lists (MDPI and Scholar block automated access), MathSciNet, and the 5 Scholar citers of Bednarz 2021 that are missing from OpenAlex. Semantic Scholar rate-limited the query.
+- Formal write-up of the grid-quotient theorem and its three corollaries (tori, tensor products, circulants): latex/2-d-kernels-grid-quotients.tex → latex/_build/2-d-kernels-grid-quotients.pdf (23 pages, every step written out). It now also contains the 3D results: the triangle reduction (P5), a full classification of fall 3-colourings of C_b □ C_c (P6, strengthened: every fall 3-colouring has the form εy + g(z) or h(y) + εz), their count 2χ(c)[3|b] + 2χ(b)[3|c] − 12[3|b and 3|c] with χ(k) = 2^k + 2(−1)^k, and hence σ(C_3 □ C_b □ C_c). Checked by threed_check.py `9` → threed_check.txt: 28 tori with 3 ≤ b ≤ c ≤ 9, 0 disagreements, every kernel has one vertex per triangle fibre.

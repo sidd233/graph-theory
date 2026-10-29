@@ -1,0 +1,15 @@
+step 0 cur 1218 best 1218
+step 500 cur 149 best 141
+step 1000 cur 1406 best 141
+step 1500 cur 812 best 141
+step 2000 cur 779 best 141
+step 2500 cur 388 best 141
+step 3000 cur 1000000 best 141
+step 3500 cur 694 best 141
+step 4000 cur 1077 best 141
+step 4500 cur 484 best 141
+step 5000 cur 1114 best 52
+step 5500 cur 820 best 52
+step 6000 cur 1000000 best 52
+step 6500 cur 172 best 52
+BAD WINDOW VIOLATING N' at step 6955: alpha 31 L1: 031 00e 00e 00e 026  L2: 01a 00e 00e 00e 02c  maxeq 6

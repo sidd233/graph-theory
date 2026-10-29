@@ -98,4 +98,4 @@ projector sanity: sum P_z contains I: True; sum z P_z contains T: True; traces (
   row i=3: K=2, exact check needed for odd n <= 0, min|B| >= [5.3146633 +/- 3.95e-9]
   row i=4: K=2, exact check needed for odd n <= 3, min|B| >= [3.2846426 +/- 3.95e-8]
 N_needed (exact check of all odd n <= N_needed suffices) = 3
-time 3.9s
+time 4.0s

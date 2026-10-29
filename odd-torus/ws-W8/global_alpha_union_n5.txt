@@ -1,0 +1,3 @@
+bad windows 4728 ; columns that can sit next to a cut: 1044
+n = 5: evaders (counted with cyclic shifts) 39144 {'column-constant': 24, 'one free row': 39120}
+OTHER evaders colourable: 0 of 0

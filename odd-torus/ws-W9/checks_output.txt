@@ -1,0 +1,5 @@
+palette 5: 200000 (lists, r') cases, 0 failures
+
+<frozen site>:101: RuntimeWarning: Unexpected value in sys.prefix, expected /home/sid/work/gt/odd-torus/env, got /home/sid/work/gt/odd-torus/ws-W9/../env
+<frozen site>:101: RuntimeWarning: Unexpected value in sys.exec_prefix, expected /home/sid/work/gt/odd-torus/env, got /home/sid/work/gt/odd-torus/ws-W9/../env
+checked 2600 (shape, l) pairs, l = 2..27, mismatches 0

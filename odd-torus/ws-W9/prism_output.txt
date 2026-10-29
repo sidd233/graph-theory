@@ -1,0 +1,3 @@
+canonical assignments 397546, not colourable 986
+(L) not colourable but B1 != B2: 0
+(P) mismatches with (Z) or (W): 0

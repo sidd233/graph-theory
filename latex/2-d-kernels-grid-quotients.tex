@@ -1,0 +1,1740 @@
+\documentclass[11pt]{article}
+
+% ---------- Page & fonts ----------
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% ---------- Math ----------
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+
+% ---------- Graphs / figures ----------
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, calc}
+
+% ---------- Quality of life ----------
+\usepackage{enumitem}
+\usepackage{aliascnt}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{xcolor}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+% ================= Theorem environments =================
+% Each environment gets its own alias of the theorem counter, so that cleveref
+% prints the right name ("Lemma 3.2", not "Theorem 3.2") while numbering is shared.
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\crefname{theorem}{Theorem}{Theorems}
+\newaliascnt{lemma}{theorem}
+\newtheorem{lemma}[lemma]{Lemma}
+\aliascntresetthe{lemma}
+\crefname{lemma}{Lemma}{Lemmas}
+\newaliascnt{proposition}{theorem}
+\newtheorem{proposition}[proposition]{Proposition}
+\aliascntresetthe{proposition}
+\crefname{proposition}{Proposition}{Propositions}
+\newaliascnt{corollary}{theorem}
+\newtheorem{corollary}[corollary]{Corollary}
+\aliascntresetthe{corollary}
+\crefname{corollary}{Corollary}{Corollaries}
+\newaliascnt{fact}{theorem}
+\newtheorem{fact}[fact]{Fact}
+\aliascntresetthe{fact}
+\crefname{fact}{Fact}{Facts}
+\theoremstyle{definition}
+\newaliascnt{definition}{theorem}
+\newtheorem{definition}[definition]{Definition}
+\aliascntresetthe{definition}
+\crefname{definition}{Definition}{Definitions}
+\newaliascnt{example}{theorem}
+\newtheorem{example}[example]{Example}
+\aliascntresetthe{example}
+\crefname{example}{Example}{Examples}
+\theoremstyle{remark}
+\newaliascnt{remark}{theorem}
+\newtheorem{remark}[remark]{Remark}
+\aliascntresetthe{remark}
+\crefname{remark}{Remark}{Remarks}
+
+% ================= Macros =================
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\T}{\mathbin{\square}}
+\newcommand{\Dg}[2]{D_{#1}(#2)}
+\newcommand{\Per}{P}
+\newcommand{\Iv}[1]{[\,#1\,]}
+\DeclareMathOperator{\tr}{tr}
+
+\tikzset{
+    vertex/.style={circle, draw=black, fill=black, inner sep=1.6pt},
+    kern/.style={circle, draw=black, fill=white, very thick, inner sep=2.6pt}
+}
+
+% ================= Document =================
+\title{$2$-d Kernels in Quotients of the Square Grid\\
+and in Three-Dimensional Tori with a Triangle Factor}
+\author{%
+  Siddharth Narayan Mishra\\[0.2em]
+  \small Roll No.\ 123CS0189\\
+  \small Department of Computer Science and Engineering\\
+  \small National Institute of Technology Rourkela%
+}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A $2$-d kernel of a graph is an independent set $S$ such that every vertex outside $S$ has
+at least two neighbours in $S$. We determine all $2$-d kernels of every finite simple
+$4$-regular graph obtained from the square grid $\Z^2$ as a quotient by a lattice. Every
+such kernel is the image of a \emph{diagonal} set $\{(x,y) : x - sy \in K\}$ with
+$s = \pm 1$, and their number is
+$\Per(d_{+}) + \Per(d_{-}) - 2\,\Iv{d_{+}, d_{-} \text{ both even}}$, where $\Per$ is the
+Perrin sequence and $d_{\pm}$ are two explicit periods of the lattice. Three corollaries
+follow. The torus $C_m \T C_n$ ($m,n \ge 3$) has a $2$-d kernel if and only if
+$\gcd(m,n) > 1$, and it then has exactly $2\Per(d) - 2\,\Iv{d \text{ even}}$ of them, where
+$d = \gcd(m,n)$; this corrects Theorem~2.5 and Corollary~2.6 of Bednarz and W{\l}och
+(2016). The number of $2$-d kernels of the tensor product $C_m \times C_n$ is determined for
+all $m,n \ge 3$, which extends the case $n = 3$ due to Bednarz (2021). The circulant
+$C_N(a,b)$ has a $2$-d kernel if and only if $\gcd(N, a+b) > 1$ or $\gcd(N, a-b) > 1$.
+Finally, we show that $C_3 \T C_b \T C_c$ ($b, c \ge 3$) has a $2$-d kernel if and only if
+$3 \mid b$ or $3 \mid c$, by reducing to fall $3$-colourings of $C_b \T C_c$, which we
+classify and count.
+\end{abstract}
+
+\tableofcontents
+
+% =====================================================================
+\section{Introduction}\label{sec:intro}
+% =====================================================================
+
+\subsection{Definitions and conventions}
+
+All graphs are simple. For a graph $G$ and a vertex $v$ we write $N_G(v)$ for the set of
+neighbours of $v$, and we drop the subscript when the graph is clear. For an integer $k \ge 1$
+we write $\Z_k = \Z/k\Z$, and for a statement $Q$ the \emph{Iverson bracket} $\Iv{Q}$ is $1$
+if $Q$ is true and $0$ otherwise.
+
+\begin{definition}[$2$-d kernel]\label{def:2d}
+A set $S \subseteq V(G)$ is a \emph{$2$-d kernel} of $G$ if
+\begin{enumerate}[label=(K\arabic*)]
+  \item\label{K1} $S$ is independent, that is, no two vertices of $S$ are adjacent, and
+  \item\label{K2} every vertex $v \notin S$ satisfies $|N_G(v) \cap S| \ge 2$.
+\end{enumerate}
+We write $\sigma(G)$ for the number of $2$-d kernels of a finite graph $G$.
+\end{definition}
+
+The notion was introduced by A.~W{\l}och~\cite{Wloch2012} under the name
+$(2\text{-}d)$-kernel. It also appears as an \emph{independent $(1,1)$-dominating set}; see
+\cite{BMP2026}.
+
+\begin{definition}[Perrin numbers]\label{def:perrin}
+The Perrin sequence is defined by $\Per(0) = 3$, $\Per(1) = 0$, $\Per(2) = 2$ and
+$\Per(k) = \Per(k-2) + \Per(k-3)$ for $k \ge 3$. Its first terms are
+\[
+\begin{array}{c|ccccccccccccc}
+k & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12\\ \hline
+\Per(k) & 3 & 0 & 2 & 3 & 2 & 5 & 5 & 7 & 10 & 12 & 17 & 22 & 29
+\end{array}
+\]
+\end{definition}
+
+\begin{definition}[cycles and products]\label{def:products}
+For $k \ge 3$ the cycle $C_k$ has vertex set $\Z_k$, and $u, v$ are adjacent if
+$v - u \in \{1, -1\}$. Let $G$ and $H$ be graphs.
+\begin{itemize}
+  \item The \emph{Cartesian product} $G \T H$ has vertex set $V(G) \times V(H)$, and $(g,h)$
+        is adjacent to $(g',h')$ if either $g = g'$ and $hh' \in E(H)$, or $h = h'$ and
+        $gg' \in E(G)$.
+  \item The \emph{tensor product} $G \times H$ has vertex set $V(G) \times V(H)$, and $(g,h)$
+        is adjacent to $(g',h')$ if $gg' \in E(G)$ and $hh' \in E(H)$.
+\end{itemize}
+The Cartesian product is associative up to the obvious isomorphism
+\cite{HIK2011}, so $C_a \T C_b \T C_c$ is the graph on $\Z_a \times \Z_b \times
+\Z_c$ in which two vertices are adjacent when they differ in exactly one coordinate, and
+there by $\pm 1$.
+\end{definition}
+
+\subsection{Main results}
+
+\begin{theorem}[tori; \Cref{cor:torus}]\label{thm:intro-torus}
+Let $m, n \ge 3$ and $d = \gcd(m,n)$. Then $C_m \T C_n$ has a $2$-d kernel if and only if
+$d \ge 2$. Every $2$-d kernel has the form
+$\{(x,y) \in \Z_m \times \Z_n : (x - sy) \bmod d \in \overline{K}\}$ with $s \in \{+1,-1\}$ and
+$\overline{K}$ a maximal independent set of the cycle on $\Z_d$ (for $d = 2$, one of
+$\{0\}$ and $\{1\}$), and
+\[
+\sigma(C_m \T C_n) = 2\Per(d) - 2\,\Iv{d \text{ even}} .
+\]
+The sizes of the $2$-d kernels are exactly the numbers $mnk/d$ with
+$\lceil d/3 \rceil \le k \le \lfloor d/2 \rfloor$.
+\end{theorem}
+
+\Cref{thm:intro-torus} is a special case of a general statement about quotients of the
+square grid (\Cref{thm:main}), which also gives the number of $2$-d kernels of every tensor
+product of two cycles (\Cref{cor:tensor}) and of every $4$-regular circulant satisfying a
+mild condition (\Cref{cor:circulant}). In three dimensions we prove the following.
+
+\begin{theorem}[\Cref{cor:3d}]\label{thm:intro-3d}
+Let $b, c \ge 3$. The graph $C_3 \T C_b \T C_c$ has a $2$-d kernel if and only if $3 \mid b$
+or $3 \mid c$. More precisely, writing $\chi(k) = 2^k + 2(-1)^k$,
+\[
+\sigma(C_3 \T C_b \T C_c) = 2\chi(c)\,\Iv{3 \mid b} + 2\chi(b)\,\Iv{3 \mid c}
+- 12\,\Iv{3 \mid b \text{ and } 3 \mid c} .
+\]
+\end{theorem}
+
+\subsection{Relation to the literature}
+
+Bednarz and W{\l}och \cite[Theorem~2.5]{BW2016} state that for $n, m \ge 3$ the Cartesian
+product $C_n \T C_m$ has a $2$-d kernel if and only if $n$ and $m$ are both even or $n = m$,
+and \cite[Corollary~2.6]{BW2016} states that the number of $2$-d kernels is $2$ when $m, n$ are
+both even and $2n$ for $C_n \T C_n$ with $n$ odd. \Cref{thm:intro-torus} shows that both
+statements are false. \Cref{sec:literature} gives explicit counterexamples and identifies
+the two steps of their proof that fail. Bednarz \cite{Bednarz2021} studied the tensor
+product and proved $\sigma(C_n \times C_3) = 3 + \Per(n)$; \Cref{cor:tensor} gives
+$\sigma(C_m \times C_n)$ for all $m, n \ge 3$ and contains that result as the case $m = 3$.
+
+Fall colourings (\Cref{def:fall}) were introduced by Dunbar et al.~\cite{Dunbar2000}. Kaul
+and Mitillos \cite{KM2019} proved that if $G$ has a fall $k$-colouring and $H$ has a proper
+$k$-colouring then $G \T H$ has a fall $k$-colouring; for $k = 3$, $G = C_b$ with $3 \mid b$
+and $H = C_c$ this gives the ``if'' part of \Cref{thm:fall-classification}. We prove that
+part again for completeness. We have not found the ``only if'' part, the classification, or
+the count in the literature.
+
+\subsection{Method and organisation}
+
+Each of the two-dimensional graphs above is a quotient $\Z^2/L$ of the infinite square grid by
+a lattice $L$, and the quotient map is a covering. Coverings preserve $2$-d kernels in both
+directions (\Cref{lem:lift}), so it suffices to classify the $2$-d kernels of $\Z^2$
+(\Cref{thm:grid}) and then decide which of them are invariant under $L$
+(\Cref{thm:main}). The classification on $\Z^2$ is the heart of the paper. Every row and
+every column of a $2$-d kernel is a maximal independent set of the line
+(\Cref{lem:line}), and the way consecutive rows interlock forces every row to be the previous
+row shifted by one and the same $s = \pm 1$ (\Cref{sec:grid}).
+
+\Cref{sec:facts} lists the standard facts we use. \Cref{sec:line} treats maximal independent
+sets of the line and of cycles, \Cref{sec:grid} the grid, \Cref{sec:quotients} quotients,
+and \Cref{sec:corollaries} the three families. \Cref{sec:3d} contains the three-dimensional
+result, \Cref{sec:literature} the comparison with \cite{BW2016}, and
+\Cref{sec:verification} the computer checks.
+
+% =====================================================================
+\section{Standard facts}\label{sec:facts}
+% =====================================================================
+
+We use the following standard facts. The first three are in every introduction to number
+theory, for example \cite{NZM}.
+
+\begin{fact}\label{fact:subgroups}
+Every subgroup of $\Z$ equals $d\Z$ for exactly one integer $d \ge 0$.
+\end{fact}
+
+\begin{fact}[B\'ezout]\label{fact:bezout}
+For integers $a_1, \dots, a_r$, not all zero, $a_1\Z + \dots + a_r\Z = g\Z$ with
+$g = \gcd(a_1, \dots, a_r)$. In particular there are integers $t_1, \dots, t_r$ with
+$t_1 a_1 + \dots + t_r a_r = g$.
+\end{fact}
+
+\begin{fact}[linear congruences]\label{fact:congruence}
+Let $N \ge 1$ and $\alpha, \beta \in \Z$. The congruence $\alpha y \equiv \beta \pmod N$ has a
+solution $y \in \Z$ if and only if $\gcd(\alpha, N)$ divides $\beta$.
+\end{fact}
+
+\begin{fact}[fibres of a homomorphism]\label{fact:fibres}
+Let $\theta : A \to B$ be a surjective homomorphism of finite abelian groups. Then every fibre
+$\theta^{-1}(b)$ is a coset of $\ker\theta$, so it has $|\ker\theta| = |A|/|B|$ elements.
+\end{fact}
+
+\begin{fact}[counting walks]\label{fact:walks}
+Let $A$ be the adjacency matrix of a finite digraph $D$ (with $A_{uv} = 1$ if $u \to v$ is an
+arc and $0$ otherwise). For $k \ge 1$ the entry $(A^k)_{uv}$ is the number of sequences
+$(w_0, w_1, \dots, w_k)$ of vertices with $w_0 = u$, $w_k = v$ and $w_{t} \to w_{t+1}$ an arc
+for every $t$. Indeed, expanding the matrix product,
+$(A^k)_{uv} = \sum_{w_1, \dots, w_{k-1}} A_{u w_1} A_{w_1 w_2} \cdots A_{w_{k-1} v}$, and each
+summand is $1$ exactly for such a sequence and $0$ otherwise. Consequently $\tr(A^k)$ is the
+number of closed walks of length $k$ with a marked starting vertex.
+\end{fact}
+
+\begin{fact}[Cayley--Hamilton]\label{fact:ch}
+Every square matrix satisfies its characteristic polynomial; see, for example,
+\cite{HJ2013}.
+\end{fact}
+
+\begin{fact}[maximal independent sets]\label{fact:mis}
+An independent set $I$ of a graph is maximal (with respect to inclusion) if and only if every
+vertex outside $I$ has a neighbour in $I$. Indeed, $I \cup \{v\}$ is independent exactly when
+$v$ has no neighbour in $I$.
+\end{fact}
+
+% =====================================================================
+\section{Maximal independent sets of the line and of cycles}\label{sec:line}
+% =====================================================================
+
+We regard $\Z$ as the vertex set of the two-way infinite path, in which $x$ and $x+1$ are
+adjacent.
+
+\begin{definition}\label{def:mis-line}
+A set $K \subseteq \Z$ is an \emph{MIS of $\Z$} if
+\begin{enumerate}[label=(M\arabic*)]
+  \item\label{M1} there is no $x \in \Z$ with $x \in K$ and $x+1 \in K$, and
+  \item\label{M2} there is no $x \in \Z$ with $x \notin K$, $x+1 \notin K$ and
+        $x+2 \notin K$.
+\end{enumerate}
+\end{definition}
+
+By \Cref{fact:mis}, these are exactly the maximal independent sets of the path on $\Z$:
+\ref{M1} is independence, and \ref{M2} says that every $x+1 \notin K$ has a neighbour $x$ or
+$x+2$ in $K$.
+
+\subsection{Enumerations and gaps}
+
+\begin{lemma}[enumerations]\label{lem:enum}
+Let $K \subseteq \Z$ be unbounded above and below. Then there is a strictly increasing sequence
+$(p_i)_{i \in \Z}$ with $K = \{p_i : i \in \Z\}$, and for every such sequence:
+\begin{enumerate}[label=(\alph*)]
+  \item no element of $K$ lies strictly between $p_i$ and $p_{i+1}$;
+  \item every integer $x$ satisfies $p_i \le x < p_{i+1}$ for exactly one $i$, so $\Z$ is the
+        disjoint union of the sets $\{p_i\}$ and the open intervals $(p_i, p_{i+1})$;
+  \item if $(p'_i)_{i \in \Z}$ is another strictly increasing sequence with
+        $K = \{p'_i : i \in \Z\}$, then there is $c \in \Z$ with $p'_i = p_{i+c}$ for all $i$.
+\end{enumerate}
+We call such a sequence an \emph{enumeration} of $K$.
+\end{lemma}
+
+\begin{proof}
+\emph{Existence.} $K$ is nonempty because it is unbounded; choose $p_0 \in K$. For $i \ge 0$
+put $p_{i+1} = \min\{k \in K : k > p_i\}$; the set is nonempty because $K$ is unbounded
+above, and it is bounded below by $p_i$, so the minimum exists. For $i \le 0$ put
+$p_{i-1} = \max\{k \in K : k < p_i\}$, which exists for the symmetric reason. The sequence is
+strictly increasing by construction, and since its terms are integers, $p_i \ge p_0 + i$ for
+$i \ge 0$ and $p_i \le p_0 + i$ for $i \le 0$; so it is unbounded above and below.
+
+\emph{(a)} For the constructed sequence this holds by the choice of $p_{i+1}$ as a minimum
+(for $i \ge 0$) or of $p_i$ as a maximum (for $i < 0$). For an arbitrary strictly increasing
+sequence with $K = \{p_j\}$: an element of $K$ strictly between $p_i$ and $p_{i+1}$ would be
+some $p_j$ with $p_i < p_j < p_{i+1}$, so $i < j < i+1$, which is impossible.
+
+\emph{(b)} Let $x \in \Z$. The set $\{i : p_i \le x\}$ is nonempty (the sequence is unbounded
+below) and bounded above (it is unbounded above and increasing), so it has a largest element
+$i$. Then $p_i \le x < p_{i+1}$. This $i$ is unique because the intervals
+$[p_i, p_{i+1})$ are pairwise disjoint.
+
+\emph{$K = \{p_i\}$ for the constructed sequence.} Each $p_i \in K$. Conversely, if $x \in K$,
+take $i$ with $p_i \le x < p_{i+1}$ by (b); by (a), $x$ is not strictly between $p_i$ and
+$p_{i+1}$, so $x = p_i$.
+
+\emph{(c)} Since $p'_0 \in K$, there is $c$ with $p'_0 = p_c$. For any strictly increasing
+enumeration $(q_j)$ of $K$, (a) and (b) show that $q_{j+1}$ is the smallest element of $K$
+larger than $q_j$, and $q_{j-1}$ is the largest element of $K$ smaller than $q_j$. Applying
+this to both sequences, induction on $i \ge 0$ gives $p'_{i} = p_{i+c}$, and induction on
+$i \le 0$ gives the same.
+\end{proof}
+
+\begin{lemma}[gaps]\label{lem:gaps}
+Let $K$ be an MIS of $\Z$. Then $K$ is unbounded above and below, and for every enumeration
+$(p_i)$ of $K$ the \emph{gaps} $g_i = p_{i+1} - p_i$ satisfy $g_i \in \{2, 3\}$. Conversely,
+if $K$ is unbounded above and below and some enumeration has all gaps in $\{2,3\}$, then $K$
+is an MIS of $\Z$.
+\end{lemma}
+
+\begin{proof}
+Suppose $K$ were bounded above by $b$. Then $b+1, b+2, b+3 \notin K$, contrary to \ref{M2}.
+The case of a lower bound is symmetric. So an enumeration exists by \Cref{lem:enum}.
+\begin{itemize}
+  \item $g_i \ne 1$: otherwise $p_i$ and $p_i + 1$ both lie in $K$, contrary to \ref{M1}.
+  \item $g_i \le 3$: otherwise $p_i + 1$, $p_i + 2$, $p_i + 3$ are all strictly between $p_i$
+        and $p_{i+1}$, hence not in $K$ by \Cref{lem:enum}(a), contrary to \ref{M2}.
+\end{itemize}
+Since $g_i \ge 1$ (the sequence is strictly increasing), $g_i \in \{2, 3\}$.
+
+Conversely, assume all gaps are $2$ or $3$. If $x, x+1 \in K$, then $x = p_i$ for some $i$
+and $x + 1 = p_j$ with $j > i$, so $g_i \le p_j - p_i = 1$, a contradiction; so \ref{M1}
+holds. For \ref{M2}, let $x \in \Z$; we show that one of $x, x+1, x+2$ lies in $K$. Take $i$
+with $p_i \le x < p_{i+1}$ (\Cref{lem:enum}(b)). If $x = p_i$, then $x \in K$. Otherwise
+$x \ge p_i + 1$, so $p_{i+1} = p_i + g_i \le p_i + 3 \le x + 2$; together with
+$p_{i+1} > x$ this gives $p_{i+1} \in \{x+1, x+2\}$, and $p_{i+1} \in K$.
+\end{proof}
+
+\begin{lemma}[one point in each gap]\label{lem:one-per-gap}
+Let $A$ and $B$ be MIS of $\Z$ with $A \cap B = \emptyset$, and let $(p_i)$ enumerate $A$, with
+gaps $g_i$. Then for every $i$ the open interval $(p_i, p_{i+1})$ contains exactly one element
+of $B$; call it $b_i$. Moreover
+\[
+b_i - p_i \in \{1, 2\} \qquad\text{and}\qquad b_i - p_i \le g_i - 1,
+\]
+and $(b_i)_{i \in \Z}$ is an enumeration of $B$.
+\end{lemma}
+
+\begin{proof}
+Fix $i$ and write $g = g_i \in \{2, 3\}$ (\Cref{lem:gaps}). The integers strictly between
+$p_i$ and $p_{i+1}$ are $p_i + 1, \dots, p_i + g - 1$: one integer if $g = 2$, and the two
+consecutive integers $p_i + 1, p_i + 2$ if $g = 3$.
+\begin{itemize}
+  \item \emph{At most one.} Two elements of $B$ in the interval would be $p_i + 1$ and
+        $p_i + 2$, which are consecutive, contrary to \ref{M1} for $B$.
+  \item \emph{At least one.} If none of them lies in $B$, then, because $p_i, p_{i+1} \in A$
+        and $A \cap B = \emptyset$, all $g + 1 \ge 3$ consecutive integers
+        $p_i, p_i + 1, \dots, p_{i+1}$ avoid $B$, contrary to \ref{M2} for $B$.
+\end{itemize}
+So the interval contains exactly one element $b_i$ of $B$, and
+$1 \le b_i - p_i \le g - 1 \le 2$.
+
+By \Cref{lem:enum}(b) applied to $A$, every integer is either some $p_j \in A$ or lies in
+exactly one interval $(p_j, p_{j+1})$. Elements of $B$ are not in $A$, so every element of $B$
+lies in some interval and therefore equals the corresponding $b_j$. Hence
+$B = \{b_i : i \in \Z\}$. Finally $b_i < p_{i+1} < b_{i+1}$, so $(b_i)$ is strictly
+increasing and is an enumeration of $B$.
+\end{proof}
+
+\subsection{Periodic MIS and cycles}
+
+\begin{definition}\label{def:periodic}
+Let $d \ge 1$. A set $K \subseteq \Z$ is \emph{$d$-periodic} if $K + d = K$. We write $M(d)$
+for the number of $d$-periodic MIS of $\Z$, and $q_d : \Z \to \Z_d$ for reduction modulo $d$.
+\end{definition}
+
+If $K$ is $d$-periodic, then $K - d = K$ as well (subtract $d$ from both sides of
+$K + d = K$), and by induction $K + td = K$ for every $t \in \Z$. Hence $x \in K$ depends only
+on $q_d(x)$, and $K = q_d^{-1}(\overline{K})$ for $\overline{K} = q_d(K) \subseteq \Z_d$.
+Conversely, for every $\overline{K} \subseteq \Z_d$ the set $q_d^{-1}(\overline{K})$ is
+$d$-periodic. So $K \mapsto \overline{K}$ is a bijection from $d$-periodic subsets of $\Z$ to
+subsets of $\Z_d$.
+
+\begin{lemma}\label{lem:periodic-cycle}
+Let $d \ge 3$ and let $K \subseteq \Z$ be $d$-periodic. Then $K$ is an MIS of $\Z$ if and only
+if $\overline{K}$ is a maximal independent set of the cycle $C_d$.
+\end{lemma}
+
+\begin{proof}
+Since $K = q_d^{-1}(\overline{K})$ and $q_d(x + 1) = q_d(x) + 1$, for every $x \in \Z$ we have
+$x \in K \iff q_d(x) \in \overline{K}$, $x+1 \in K \iff q_d(x)+1 \in \overline{K}$, and
+similarly for $x + 2$. Every element of $\Z_d$ is $q_d(x)$ for some $x$. Therefore:
+\begin{itemize}
+  \item \ref{M1} for $K$ holds if and only if there is no $u \in \Z_d$ with
+        $u, u+1 \in \overline{K}$. Since $d \ge 3$, the edges of $C_d$ are exactly the pairs
+        $\{u, u+1\}$, so this is independence of $\overline{K}$ in $C_d$.
+  \item \ref{M2} for $K$ holds if and only if there is no $u \in \Z_d$ with
+        $u, u+1, u+2 \notin \overline{K}$; that is, every vertex $u + 1 \notin \overline{K}$
+        has one of its two neighbours $u, u+2$ in $\overline{K}$.
+\end{itemize}
+By \Cref{fact:mis}, the two conditions together say that $\overline{K}$ is a maximal
+independent set of $C_d$.
+\end{proof}
+
+\begin{lemma}[Perrin count]\label{lem:perrin}
+For every $d \ge 1$, $M(d) = \Per(d)$. In particular $M(1) = 0$, and $M(2) = 2$ with the two
+$2$-periodic MIS being $2\Z$ and $2\Z + 1$.
+\end{lemma}
+
+\begin{proof}
+\emph{$d = 1$.} The $1$-periodic sets are $\emptyset$ and $\Z$. The empty set violates
+\ref{M2} and $\Z$ violates \ref{M1}. So $M(1) = 0 = \Per(1)$.
+
+\emph{$d = 2$.} The $2$-periodic sets are $\emptyset$, $\Z$, $2\Z$ and $2\Z + 1$. The first
+two fail as before. The sets $2\Z$ and $2\Z+1$ are unbounded in both directions with all gaps
+equal to $2$, so they are MIS by \Cref{lem:gaps}. So $M(2) = 2 = \Per(2)$.
+
+\emph{$d \ge 3$.} By \Cref{lem:periodic-cycle} and the bijection $K \mapsto \overline{K}$,
+$M(d)$ is the number of maximal independent sets of $C_d$. Encode $\overline{K}$ by the word
+$w : \Z_d \to \{0,1\}$ with $w_u = 1$ if and only if $u \in \overline{K}$. By the proof of
+\Cref{lem:periodic-cycle}, $\overline{K}$ is a maximal independent set if and only if
+\begin{enumerate}[label=(W\arabic*)]
+  \item\label{W1} there is no $u \in \Z_d$ with $w_u w_{u+1} = 11$, and
+  \item\label{W2} there is no $u \in \Z_d$ with $w_u w_{u+1} w_{u+2} = 000$.
+\end{enumerate}
+Let $\Sigma = \{00, 01, 10\}$ and let $D$ be the digraph on $\Sigma$ with an arc
+$ab \to bc$ whenever $ab \in \Sigma$, $bc \in \Sigma$ and $abc \ne 000$. Checking the
+possibilities for each state:
+\begin{itemize}
+  \item from $00$: the candidates are $00$ (giving $000$, excluded) and $01$ (allowed);
+  \item from $01$: the candidates are $10$ (allowed) and $11$ (not in $\Sigma$);
+  \item from $10$: the candidates are $00$ (giving $100$, allowed) and $01$ (giving $101$,
+        allowed).
+\end{itemize}
+So the arcs are $00 \to 01$, $01 \to 10$, $10 \to 00$ and $10 \to 01$.
+
+\emph{Words and closed walks.} For a word $w$ put $\tau_u = w_u w_{u+1}$. If $w$ satisfies
+\ref{W1} and \ref{W2}, then every $\tau_u \in \Sigma$ by \ref{W1}, and
+$\tau_u = w_u w_{u+1} \to w_{u+1} w_{u+2} = \tau_{u+1}$ is an arc by \ref{W2}; so
+$(\tau_0, \tau_1, \dots, \tau_{d-1})$ is a closed walk of length $d$ in $D$ starting at
+$\tau_0$. Conversely, let $(\tau_0, \dots, \tau_{d-1})$ be a closed walk, meaning that
+$\tau_u \to \tau_{u+1}$ is an arc for every $u \in \Z_d$. Define $w_u$ to be the first letter
+of $\tau_u$. Every arc has the form $ab \to bc$, so the second letter of $\tau_u$ equals the
+first letter of $\tau_{u+1}$, which is $w_{u+1}$; hence $\tau_u = w_u w_{u+1}$, and $w$
+satisfies \ref{W1} (as $\tau_u \in \Sigma$) and \ref{W2} (as each step is an arc). These two
+constructions are inverse to each other. By \Cref{fact:walks},
+$M(d) = \tr(A^d)$, where $A$ is the adjacency matrix of $D$.
+
+\emph{The trace.} In the order $(00, 01, 10)$,
+\[
+A = \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 1 \\ 1 & 1 & 0 \end{pmatrix},
+\qquad
+\lambda I - A = \begin{pmatrix} \lambda & -1 & 0 \\ 0 & \lambda & -1 \\ -1 & -1 & \lambda
+\end{pmatrix}.
+\]
+Expanding the determinant along the first row,
+\[
+\det(\lambda I - A)
+= \lambda \det\begin{pmatrix} \lambda & -1 \\ -1 & \lambda \end{pmatrix}
+  - (-1)\det\begin{pmatrix} 0 & -1 \\ -1 & \lambda \end{pmatrix}
+= \lambda(\lambda^2 - 1) + \bigl(0 \cdot \lambda - (-1)(-1)\bigr)
+= \lambda^3 - \lambda - 1 .
+\]
+By \Cref{fact:ch}, $A^3 = A + I$. Multiplying by $A^{k-3}$ gives $A^k = A^{k-2} + A^{k-3}$ for
+$k \ge 3$, and taking traces, $t_k = \tr(A^k)$ satisfies $t_k = t_{k-2} + t_{k-3}$ for
+$k \ge 3$. The initial values are $t_0 = \tr I = 3$, $t_1 = \tr A = 0$, and, since
+\[
+A^2 = \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 1 \\ 1 & 1 & 0 \end{pmatrix}
+      \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 1 \\ 1 & 1 & 0 \end{pmatrix}
+    = \begin{pmatrix} 0 & 0 & 1 \\ 1 & 1 & 0 \\ 0 & 1 & 1 \end{pmatrix},
+\]
+$t_2 = 0 + 1 + 1 = 2$. These are the defining recurrence and initial values of the Perrin
+sequence, so $t_k = \Per(k)$ for all $k \ge 0$, and $M(d) = \Per(d)$.
+\end{proof}
+
+\begin{remark}
+That the number of maximal independent sets of $C_d$ is the Perrin number $\Per(d)$ is due to
+F\"uredi \cite{Furedi1987}; we included a proof to keep the paper self-contained.
+\end{remark}
+
+\begin{lemma}\label{lem:perrin-positive}
+$\Per(d) \ge 2$ for every $d \ge 2$.
+\end{lemma}
+
+\begin{proof}
+$\Per(2) = 2$, $\Per(3) = 3$ and $\Per(4) = 2$. For $d \ge 5$ we have $d - 2 \ge 3$ and
+$d - 3 \ge 2$, so by strong induction $\Per(d) = \Per(d-2) + \Per(d-3) \ge 2 + 2 \ge 2$.
+\end{proof}
+
+\begin{lemma}[sizes]\label{lem:sizes}
+Let $d \ge 2$. The numbers $|\overline{K}|$, for $K$ a $d$-periodic MIS of $\Z$, are exactly
+the integers $k$ with $\lceil d/3 \rceil \le k \le \lfloor d/2 \rfloor$.
+\end{lemma}
+
+\begin{proof}
+For $d = 2$ the two sets $\overline{K}$ are $\{0\}$ and $\{1\}$, of size $1$, and
+$\lceil 2/3 \rceil = \lfloor 2/2 \rfloor = 1$. Let $d \ge 3$.
+
+\emph{Necessity.} Let $K$ be a $d$-periodic MIS with enumeration $(p_i)$, and let
+$k = |\overline{K}|$. Then $k \ge 1$, since $K \ne \emptyset$. The elements of $K$ in the
+half-open interval $[p_0, p_0 + d)$ are $p_0, p_1, \dots, p_{k-1}$, because $q_d$ is a
+bijection from this interval onto $\Z_d$ and maps $K \cap [p_0, p_0 + d)$ onto
+$\overline{K}$. The next element of $K$ after $p_{k-1}$ is $p_0 + d$ (it lies in $K$ by
+periodicity, and nothing in $K$ lies strictly between $p_{k-1}$ and $p_0 + d$), so
+$p_k = p_0 + d$ and $g_0 + g_1 + \dots + g_{k-1} = p_k - p_0 = d$. Each gap is $2$ or $3$
+(\Cref{lem:gaps}), so $2k \le d \le 3k$, which is $\lceil d/3 \rceil \le k \le \lfloor d/2
+\rfloor$.
+
+\emph{Sufficiency.} Let $k$ satisfy $2k \le d \le 3k$. Put $r = d - 2k$, so $0 \le r \le k$.
+Let $p_0 = 0$, let the gaps $g_0, \dots, g_{k-1}$ consist of $r$ entries equal to $3$ and
+$k - r$ entries equal to $2$, and extend periodically by $g_{i+k} = g_i$. Their sum over one
+period is $3r + 2(k - r) = 2k + r = d$. The resulting set $K = \{p_i\}$ satisfies
+$K + d = K$ (since $p_{i+k} = p_i + d$), is unbounded both ways, has all gaps in $\{2,3\}$,
+and is therefore an MIS by \Cref{lem:gaps}, with $|\overline{K}| = k$.
+\end{proof}
+
+% =====================================================================
+\section{The square grid}\label{sec:grid}
+% =====================================================================
+
+Let $\Gamma$ denote the infinite square grid: its vertex set is $\Z^2$, and $(x,y)$ is
+adjacent exactly to the four vertices $(x \pm 1, y)$ and $(x, y \pm 1)$. For $T \subseteq \Z^2$
+the \emph{row} at height $y$ and the \emph{column} at abscissa $x$ are
+\[
+T_y = \{x \in \Z : (x,y) \in T\}, \qquad T^x = \{y \in \Z : (x,y) \in T\}.
+\]
+A set $T \subseteq \Z^2$ is a $2$-d kernel of $\Gamma$ if it satisfies \ref{K1} and \ref{K2}
+of \Cref{def:2d} in $\Gamma$.
+
+\begin{definition}[diagonal sets]\label{def:diagonal}
+For $s \in \{+1, -1\}$ define $\varphi_s : \Z^2 \to \Z$ by $\varphi_s(x,y) = x - sy$, and for
+$K \subseteq \Z$ put
+\[
+\Dg{s}{K} = \varphi_s^{-1}(K) = \{(x,y) \in \Z^2 : x - sy \in K\}.
+\]
+Since $(x,y) \in \Dg{s}{K} \iff x \in K + sy$, the rows are $\Dg{s}{K}_y = K + sy$: each row is
+the row below it shifted by $s$.
+\end{definition}
+
+\subsection{Rows and columns}
+
+\begin{lemma}[line lemma]\label{lem:line}
+A set $T \subseteq \Z^2$ is a $2$-d kernel of $\Gamma$ if and only if every row $T_y$ and
+every column $T^x$ is an MIS of $\Z$.
+\end{lemma}
+
+\begin{proof}
+($\Leftarrow$) \emph{Independence.} Every edge of $\Gamma$ joins $(x,y)$ to $(x+1,y)$ or to
+$(x, y+1)$ for some $x, y$. Both ends of the first kind of edge in $T$ would put $x, x+1$ in
+$T_y$, and of the second kind would put $y, y+1$ in $T^x$; both are excluded by \ref{M1}.
+
+\emph{Domination.} Let $v = (x,y) \notin T$, so $x \notin T_y$ and $y \notin T^x$. By
+\ref{M2} for $T_y$ applied to $x-1, x, x+1$, at least one of $x - 1$ and $x + 1$ lies in
+$T_y$; that is, $(x-1, y) \in T$ or $(x+1, y) \in T$. In the same way $(x, y-1) \in T$ or
+$(x, y+1) \in T$. The first vertex differs from $v$ in the first coordinate and the second in
+the second coordinate, so they are two distinct neighbours of $v$ in $T$.
+
+($\Rightarrow$) \emph{\ref{M1}.} If $x, x+1 \in T_y$ then the adjacent vertices $(x,y)$ and
+$(x+1,y)$ lie in $T$, contrary to \ref{K1}; similarly for columns.
+
+\emph{\ref{M2} for rows.} Suppose that $(x-1,y)$, $(x,y)$ and $(x+1,y)$ are not in $T$.
+\begin{enumerate}[label=(\roman*)]
+  \item The neighbours of $(x,y)$ are $(x-1,y)$, $(x+1,y)$, $(x,y-1)$ and $(x,y+1)$, and the
+        first two are not in $T$. Since $(x,y) \notin T$, \ref{K2} says that at least two
+        neighbours are in $T$, so $(x, y-1) \in T$ and $(x, y+1) \in T$.
+  \item The neighbours of $(x-1,y)$ are $(x-2,y)$, $(x,y)$, $(x-1,y-1)$ and $(x-1,y+1)$.
+        \begin{itemize}
+          \item $(x,y) \notin T$ by assumption.
+          \item $(x-1, y+1)$ is adjacent to $(x, y+1)$, which is in $T$ by (i). By
+                \ref{K1}, $(x-1, y+1) \notin T$.
+          \item $(x-1, y-1)$ is adjacent to $(x, y-1) \in T$, so $(x-1, y-1) \notin T$.
+        \end{itemize}
+  \item Hence $(x-1, y)$, which is not in $T$, has at most one neighbour in $T$, namely
+        possibly $(x-2,y)$. This contradicts \ref{K2}.
+\end{enumerate}
+\emph{\ref{M2} for columns.} The map $(x,y) \mapsto (y,x)$ is an automorphism of $\Gamma$; it
+maps $T$ to a $2$-d kernel whose rows are the columns of $T$. Applying the previous paragraph
+to that kernel gives \ref{M2} for the columns of $T$.
+\end{proof}
+
+\begin{lemma}[adjacent rows]\label{lem:adjacent-rows}
+Let $T$ be a $2$-d kernel of $\Gamma$ and $y \in \Z$. Then
+\begin{enumerate}[label=(\alph*)]
+  \item $T_y \cap T_{y+1} = \emptyset$, and
+  \item $T_{y-1} \cup T_y \cup T_{y+1} = \Z$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Fix $x \in \Z$. By \Cref{lem:line} the column $T^x$ is an MIS of $\Z$. By \ref{M1} for $T^x$,
+not both $y$ and $y+1$ lie in $T^x$; that is, not both $x \in T_y$ and $x \in T_{y+1}$. This
+is (a) at $x$. By \ref{M2} for $T^x$, at least one of $y-1, y, y+1$ lies in $T^x$; that is,
+$x \in T_{y-1} \cup T_y \cup T_{y+1}$. This is (b) at $x$.
+\end{proof}
+
+\subsection{Offsets of consecutive rows}
+
+Throughout this subsection $T$ is a $2$-d kernel of $\Gamma$. By \Cref{lem:line} every row is
+an MIS of $\Z$, and by \Cref{lem:adjacent-rows}(a), applied at $y$ and at $y-1$, the rows
+$T_{y+1}$ and $T_{y-1}$ are both disjoint from $T_y$. So \Cref{lem:one-per-gap} applies with
+$A = T_y$ and $B = T_{y+1}$, and also with $A = T_y$ and $B = T_{y-1}$.
+
+\begin{definition}[offsets]\label{def:offsets}
+Fix a height $y$ and an enumeration $(p_i)$ of $T_y$ with gaps $g_i$. For each $i$, let
+$e_i$ and $f_i$ be the integers with
+\[
+p_i + e_i \in T_{y+1} \cap (p_i, p_{i+1}), \qquad p_i + f_i \in T_{y-1} \cap (p_i, p_{i+1}).
+\]
+By \Cref{lem:one-per-gap} they exist and are unique, and
+\begin{equation}\label{eq:offset-bounds}
+e_i, f_i \in \{1, 2\}, \qquad e_i \le g_i - 1, \qquad f_i \le g_i - 1 .
+\end{equation}
+We call $e = (e_i)$ and $f = (f_i)$ the \emph{upper} and \emph{lower offsets} of row $y$
+with respect to $(p_i)$. By \Cref{lem:one-per-gap}, $(p_i + e_i)_i$ enumerates $T_{y+1}$ and
+$(p_i + f_i)_i$ enumerates $T_{y-1}$.
+\end{definition}
+
+If $(p_i)$ is replaced by another enumeration $(p_{i+c})$ of $T_y$ (\Cref{lem:enum}(c)), the
+offsets become $(e_{i+c})$ and $(f_{i+c})$. In particular the statements ``$e_i = 1$ for all
+$i$'' and ``$f_i = 1$ for all $i$'' do not depend on the enumeration. We abbreviate them as
+``$e \equiv 1$ in row $y$'' and ``$f \equiv 1$ in row $y$''.
+
+\begin{lemma}[gap identity]\label{lem:gap-identity}
+With the notation of \Cref{def:offsets}, $g_i = e_i + f_i$ for every $i$.
+\end{lemma}
+
+\begin{proof}
+By \Cref{lem:gaps}, $g_i \in \{2, 3\}$.
+
+\emph{Case $g_i = 2$.} By \eqref{eq:offset-bounds}, $1 \le e_i \le g_i - 1 = 1$ and likewise
+for $f_i$, so $e_i = f_i = 1$ and $e_i + f_i = 2 = g_i$.
+
+\emph{Case $g_i = 3$.} Let $I = \{p_i + 1, p_i + 2\}$, the set of integers strictly between
+$p_i$ and $p_{i+1}$.
+\begin{itemize}
+  \item No element of $I$ lies in $T_y$ (\Cref{lem:enum}(a)).
+  \item By the uniqueness in \Cref{lem:one-per-gap}, $T_{y+1} \cap I = \{p_i + e_i\}$ and
+        $T_{y-1} \cap I = \{p_i + f_i\}$.
+  \item By \Cref{lem:adjacent-rows}(b), every element of $I$ lies in
+        $T_{y-1} \cup T_y \cup T_{y+1}$, hence in $T_{y-1} \cup T_{y+1}$.
+\end{itemize}
+Therefore $I = (T_{y-1} \cap I) \cup (T_{y+1} \cap I) = \{p_i + f_i, p_i + e_i\}$. Since $I$
+has two elements, $\{e_i, f_i\} = \{1, 2\}$, and $e_i + f_i = 3 = g_i$.
+\end{proof}
+
+\begin{lemma}[transport to the next row]\label{lem:transport}
+With the notation of \Cref{def:offsets}, let $q_i = p_i + e_i$. Then $(q_i)$ is an enumeration
+of $T_{y+1}$, and the upper and lower offsets $e'$ and $f'$ of row $y+1$ with respect to
+$(q_i)$ are
+\[
+f'_i = f_i \qquad\text{and}\qquad e'_i = e_{i+1} \qquad (i \in \Z).
+\]
+\end{lemma}
+
+\begin{proof}
+$(q_i)$ enumerates $T_{y+1}$ by \Cref{def:offsets}. The lower offsets of row $y+1$ locate the
+points of row $(y+1) - 1 = y$ inside the gaps of $T_{y+1}$.
+
+\emph{Lower offsets.} Using $e_i \le g_i - 1$ and $e_{i+1} \ge 1$,
+\[
+q_i = p_i + e_i \le p_i + g_i - 1 < p_i + g_i = p_{i+1} < p_{i+1} + e_{i+1} = q_{i+1}.
+\]
+So $p_{i+1} \in T_y$ lies in $(q_i, q_{i+1})$, and by the uniqueness in
+\Cref{lem:one-per-gap} it is the point of $T_y$ in that interval. Hence, using
+\Cref{lem:gap-identity},
+\[
+f'_i = p_{i+1} - q_i = (p_i + g_i) - (p_i + e_i) = g_i - e_i = f_i .
+\]
+
+\emph{Upper offsets.} The gaps of $T_{y+1}$ with respect to $(q_i)$ are
+\[
+h_i = q_{i+1} - q_i = (p_{i+1} + e_{i+1}) - (p_i + e_i) = g_i + e_{i+1} - e_i
+= (e_i + f_i) + e_{i+1} - e_i = f_i + e_{i+1}.
+\]
+\Cref{lem:gap-identity} applied to row $y+1$ gives $h_i = e'_i + f'_i = e'_i + f_i$.
+Comparing, $e'_i = e_{i+1}$.
+\end{proof}
+
+\begin{corollary}[iterated transport]\label{cor:transport-s}
+With the notation of \Cref{def:offsets}, let $t \ge 0$. There is an enumeration of
+$T_{y+t}$ with respect to which the upper and lower offsets of row $y+t$ are
+$(e_{i+t})_{i \in \Z}$ and $(f_i)_{i \in \Z}$, and the gaps of $T_{y+t}$ are
+$e_{i+t} + f_i$. Consequently:
+\begin{enumerate}[label=(\alph*)]
+  \item $e \equiv 1$ in row $y$ if and only if $e \equiv 1$ in row $y+t$;
+  \item $f \equiv 1$ in row $y$ if and only if $f \equiv 1$ in row $y+t$.
+\end{enumerate}
+\end{corollary}
+
+\begin{proof}
+Induction on $t$. For $t = 0$ take $(p_i)$ itself. If the claim holds for $t$, apply
+\Cref{lem:transport} to row $y + t$ with the enumeration given by the induction hypothesis:
+the new offsets are $(e_{(i+1)+t})_i = (e_{i + (t+1)})_i$ and $(f_i)_i$. The gaps follow from
+\Cref{lem:gap-identity}. For (a), $(e_{i+t})_i$ is the sequence $(e_i)_i$ re-indexed, so it is
+constantly $1$ if and only if $(e_i)$ is. For (b), the lower offsets are literally the same
+sequence.
+\end{proof}
+
+Let $y < y'$ be any two heights. Applying \Cref{cor:transport-s} with base row $y$ and
+$t = y' - y$ shows that $e \equiv 1$ holds in row $y$ exactly when it holds in row $y'$, and
+the same for $f \equiv 1$. Hence:
+\begin{equation}\label{eq:all-or-none}
+\text{each of the properties ``$e \equiv 1$'' and ``$f \equiv 1$'' holds either in every row
+or in no row.}
+\end{equation}
+
+\begin{lemma}[dichotomy]\label{lem:dichotomy}
+In every row, $e \equiv 1$ or $f \equiv 1$.
+\end{lemma}
+
+\begin{proof}
+Suppose not. Then there are a row $y$, an enumeration of $T_y$ with offsets $(e,f)$, and
+indices $i, j$ with $e_j = 2$ and $f_i = 2$.
+
+\emph{Case $j \ge i$.} Apply \Cref{cor:transport-s} with $t = j - i \ge 0$. Row $y + t$ has
+the gap $e_{i+t} + f_i = e_j + f_i = 2 + 2 = 4$, which contradicts \Cref{lem:gaps}.
+
+\emph{Case $j < i$.} Put $t = i - j > 0$, choose an enumeration of $T_{y-t}$, and let
+$(e^\ast, f^\ast)$ be its offsets. By \Cref{cor:transport-s} with base row $y - t$, there is
+an enumeration $(r_k)$ of $T_y$ whose offsets are $(e^\ast_{k+t})_k$ and $(f^\ast_k)_k$. By
+\Cref{lem:enum}(c), the fixed enumeration of $T_y$ is $(r_{k+c})_k$ for some $c \in \Z$, so
+its offsets are $e_k = e^\ast_{k+c+t}$ and $f_k = f^\ast_{k+c}$ for all $k$. Then
+\[
+e^\ast_{i+c} = e^\ast_{(j+t)+c} = e_j = 2
+\qquad\text{and}\qquad
+f^\ast_{i+c} = f_i = 2,
+\]
+so by \Cref{lem:gap-identity} row $y - t$ has the gap
+$e^\ast_{i+c} + f^\ast_{i+c} = 4$, which again contradicts \Cref{lem:gaps}.
+\end{proof}
+
+\subsection{Classification}
+
+\begin{theorem}[$2$-d kernels of the grid]\label{thm:grid}
+A set $T \subseteq \Z^2$ is a $2$-d kernel of $\Gamma$ if and only if $T = \Dg{s}{K}$ for some
+$s \in \{+1,-1\}$ and some MIS $K$ of $\Z$. Moreover, $K$ is determined by $T$, namely
+$K = T_0$; equivalently, for fixed $s$ the map $K \mapsto \Dg{s}{K}$ is injective.
+\end{theorem}
+
+\begin{proof}
+($\Leftarrow$) Let $T = \Dg{s}{K}$. Its rows are $T_y = K + sy$ (\Cref{def:diagonal}).
+Translation $z \mapsto z + sy$ is an automorphism of the path on $\Z$, so it maps the MIS
+$K$ to an MIS. Its columns are
+\[
+T^x = \{y : x - sy \in K\} = \{y : sy \in x - K\} = \{s z : z \in x - K\} = s\,(x - K),
+\]
+where we used $s^{-1} = s$. The maps $z \mapsto x - z$ and $z \mapsto sz$ are automorphisms of
+the path on $\Z$, so $T^x$ is an MIS. By \Cref{lem:line}, $T$ is a $2$-d kernel.
+
+($\Rightarrow$) Let $T$ be a $2$-d kernel. By \eqref{eq:all-or-none}, either $e \equiv 1$ in
+every row, or $e \equiv 1$ in no row.
+\begin{enumerate}[label=(\roman*)]
+  \item \emph{$e \equiv 1$ in every row.} For each $y$, with any enumeration $(p_i)$ of
+        $T_y$, $T_{y+1} = \{p_i + e_i\} = \{p_i + 1\} = T_y + 1$ (\Cref{def:offsets}). By
+        induction, $T_y = T_0 + y$ for $y \ge 0$, and also for $y < 0$, because
+        $T_{y} = T_{y+1} - 1$. Hence $(x,y) \in T \iff x \in T_0 + y \iff x - y \in T_0$,
+        that is, $T = \Dg{+1}{T_0}$.
+  \item \emph{$e \equiv 1$ in no row.} By \Cref{lem:dichotomy}, $f \equiv 1$ in every row.
+        So $T_{y-1} = \{p_i + f_i\} = T_y + 1$ for every $y$, that is, $T_y = T_{y-1} - 1$.
+        By induction in both directions, $T_y = T_0 - y$ for all $y$, so
+        $(x,y) \in T \iff x + y \in T_0$, that is, $T = \Dg{-1}{T_0}$.
+\end{enumerate}
+In both cases $K = T_0$ is an MIS of $\Z$ by \Cref{lem:line}. Finally, the row at height $0$ of
+$\Dg{s}{K}$ is $K + 0 = K$, so $K$ is recovered from $\Dg{s}{K}$.
+\end{proof}
+
+\begin{lemma}[the two families meet only in checkerboards]\label{lem:overlap}
+Let $K, K'$ be MIS of $\Z$. Then $\Dg{+1}{K} = \Dg{-1}{K'}$ if and only if $K = K'$ and
+$K \in \{2\Z,\ 2\Z + 1\}$.
+\end{lemma}
+
+\begin{proof}
+($\Rightarrow$) The rows at height $0$ are $K$ and $K'$, so $K = K'$. The rows at height $1$
+are $K + 1$ and $K' - 1 = K - 1$, so $K + 1 = K - 1$, and adding $1$ gives $K + 2 = K$. Thus
+$K$ is a $2$-periodic MIS, and $K \in \{2\Z, 2\Z+1\}$ by \Cref{lem:perrin}.
+
+($\Leftarrow$) If $K + 2 = K$, then $K + 2y = K$ for every $y \in \Z$, hence
+$K + y = K - y$ (add $-y$ to both sides of $K + 2y = K$). So $\Dg{+1}{K}$ and $\Dg{-1}{K}$
+have the same rows, and they are equal.
+\end{proof}
+
+% =====================================================================
+\section{Quotients of the grid}\label{sec:quotients}
+% =====================================================================
+
+\begin{definition}[admissible lattice, quotient graph]\label{def:quotient}
+Let $U = \{(1,0), (-1,0), (0,1), (0,-1)\}$ and
+\[
+F = U \cup \{(\pm 2, 0),\ (0, \pm 2),\ \pm(1,1),\ \pm(1,-1)\}.
+\]
+A subgroup $L \le \Z^2$ is an \emph{admissible lattice} if it has finite index in $\Z^2$ and
+$L \cap F = \emptyset$. The \emph{quotient graph} $G_L$ has vertex set $\Z^2/L$, and two
+cosets $[v], [w]$ are adjacent if $w - v \in U + L$. We write $\pi : \Z^2 \to \Z^2/L$ for the
+quotient map, $\pi(v) = [v] = v + L$.
+\end{definition}
+
+The adjacency is well defined: if $v' = v + \ell$ and $w' = w + \ell'$ with
+$\ell, \ell' \in L$, then $w' - v' = (w - v) + (\ell' - \ell)$, and since $U + L$ is invariant
+under adding elements of $L$, $w' - v' \in U + L \iff w - v \in U + L$. Note also that
+$F \setminus U$ is exactly the set of nonzero differences $u - u'$ of elements
+$u, u' \in U$: the differences are $(\pm 2, 0)$, $(0, \pm 2)$ and $(\pm 1, \pm 1)$.
+
+\begin{lemma}[covering]\label{lem:covering}
+Let $L$ be admissible. Then $G_L$ is a simple $4$-regular graph, and for every $v \in \Z^2$
+the map $\pi$ restricts to a bijection from $N_\Gamma(v) = v + U$ onto $N_{G_L}(\pi(v))$.
+\end{lemma}
+
+\begin{proof}
+\emph{Symmetry.} $U = -U$, so $U + L = -(U + L)$, and $w - v \in U + L$ implies
+$v - w \in U + L$.
+
+\emph{No loops.} $[v] \sim [v]$ would mean $0 \in U + L$, that is, $-u \in L$ for some
+$u \in U$; since $-u \in U \subseteq F$, this contradicts $L \cap F = \emptyset$.
+
+\emph{Neighbourhoods.} $[w] \sim [v]$ if and only if $w = v + u + \ell$ for some $u \in U$
+and $\ell \in L$, if and only if $[w] = [v + u]$ for some $u \in U$. So
+$N_{G_L}([v]) = \{[v + u] : u \in U\} = \pi(v + U)$, and $\pi$ maps $v + U$ onto
+$N_{G_L}(\pi(v))$.
+
+\emph{Injectivity.} If $[v + u] = [v + u']$ for distinct $u, u' \in U$, then
+$u - u' \in L$, and $u - u' \in F \setminus U$ by the remark above, contradicting
+$L \cap F = \emptyset$. So $\pi$ is injective on $v + U$, and $|N_{G_L}([v])| = 4$.
+\end{proof}
+
+\begin{lemma}[lifting]\label{lem:lift}
+Let $L$ be admissible and $S \subseteq \Z^2/L$. Then $S$ is a $2$-d kernel of $G_L$ if and only
+if $\pi^{-1}(S)$ is a $2$-d kernel of $\Gamma$. Consequently $S \mapsto \pi^{-1}(S)$ is a
+bijection from the set of $2$-d kernels of $G_L$ onto the set of $L$-invariant $2$-d kernels
+of $\Gamma$, with inverse $T \mapsto \pi(T)$.
+\end{lemma}
+
+\begin{proof}
+Write $\widetilde S = \pi^{-1}(S)$. For every $v \in \Z^2$:
+\begin{itemize}
+  \item $v \in \widetilde S$ if and only if $\pi(v) \in S$, by definition of the preimage;
+  \item $|N_\Gamma(v) \cap \widetilde S| = |N_{G_L}(\pi(v)) \cap S|$, because by
+        \Cref{lem:covering} $\pi$ is a bijection from $N_\Gamma(v)$ onto $N_{G_L}(\pi(v))$,
+        and a neighbour $w$ of $v$ lies in $\widetilde S$ exactly when $\pi(w) \in S$.
+\end{itemize}
+A set is a $2$-d kernel exactly when every vertex $u$ satisfies: if $u$ is in the set then it
+has $0$ neighbours in the set, and if $u$ is not in the set then it has at least $2$. By the
+two bullets, this condition holds at $v$ for $\widetilde S$ in $\Gamma$ if and only if it
+holds at $\pi(v)$ for $S$ in $G_L$. Every vertex of $G_L$ has the form $\pi(v)$, so
+$\widetilde S$ is a $2$-d kernel of $\Gamma$ if and only if $S$ is one of $G_L$.
+
+For the bijection: $\pi^{-1}(S)$ is $L$-invariant, and $\pi(\pi^{-1}(S)) = S$ because $\pi$
+is surjective. Conversely, if $T$ is $L$-invariant then $\pi^{-1}(\pi(T)) = T$: the inclusion
+$\supseteq$ is clear, and if $\pi(v) \in \pi(T)$ then $v = t + \ell$ for some $t \in T$ and
+$\ell \in L$, so $v \in T$. Applying the first part to $S = \pi(T)$ shows that $\pi(T)$ is a
+$2$-d kernel of $G_L$ when $T$ is an $L$-invariant $2$-d kernel of $\Gamma$.
+\end{proof}
+
+\begin{definition}[diagonal periods]\label{def:periods}
+Let $L$ be an admissible lattice and $s \in \{+1,-1\}$. The image $\varphi_s(L)$ is a subgroup
+of $\Z$, so $\varphi_s(L) = d_s\Z$ for a unique $d_s \ge 0$ (\Cref{fact:subgroups}). We write
+$d_{+} = d_{+1}$ and $d_{-} = d_{-1}$.
+\end{definition}
+
+\begin{lemma}\label{lem:periods-positive}
+For an admissible lattice, $d_{+} \ge 1$ and $d_{-} \ge 1$.
+\end{lemma}
+
+\begin{proof}
+We have $\varphi_s(x,y) = 0$ if and only if $x = sy$, so $\ker\varphi_s = \Z\cdot(s,1)$.
+Suppose $d_s = 0$, i.e.\ $L \subseteq \Z\cdot(s,1)$. The vertices $(k, 0)$, $k \in \Z$, lie in
+pairwise different cosets of $\Z\cdot(s,1)$, because $(k - k', 0) = y(s,1)$ forces $y = 0$ and
+$k = k'$. Hence they lie in pairwise different cosets of the smaller group $L$, and $L$ has
+infinite index, a contradiction.
+\end{proof}
+
+\begin{theorem}[main theorem]\label{thm:main}
+Let $L$ be an admissible lattice and $N = |\Z^2 / L|$.
+\begin{enumerate}[label=(\alph*)]
+  \item\label{main-a} The $2$-d kernels of $G_L$ are exactly the sets $\pi(\Dg{s}{K})$ with
+        $s \in \{+1,-1\}$ and $K$ a $d_s$-periodic MIS of $\Z$.
+  \item\label{main-b} The number of $2$-d kernels of $G_L$ is
+        \[
+        \sigma(G_L) = \Per(d_{+}) + \Per(d_{-}) - 2\,\Iv{d_{+} \text{ and } d_{-}
+        \text{ are both even}} .
+        \]
+  \item\label{main-c} $G_L$ has a $2$-d kernel if and only if $d_{+} \ge 2$ or
+        $d_{-} \ge 2$.
+  \item\label{main-d} The sizes of the $2$-d kernels of $G_L$ are exactly the numbers
+        $Nk/d_s$ with $s \in \{+1,-1\}$, $d_s \ge 2$ and
+        $\lceil d_s/3 \rceil \le k \le \lfloor d_s/2 \rfloor$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\ref{main-a} By \Cref{lem:lift}, the $2$-d kernels of $G_L$ are the sets $\pi(T)$ with $T$ an
+$L$-invariant $2$-d kernel of $\Gamma$, and by \Cref{thm:grid} these $T$ are the sets
+$\Dg{s}{K}$ that are $L$-invariant. For $\ell \in L$,
+\[
+\Dg{s}{K} + \ell = \{v + \ell : \varphi_s(v) \in K\}
+= \{w : \varphi_s(w - \ell) \in K\}
+= \{w : \varphi_s(w) \in K + \varphi_s(\ell)\}
+= \Dg{s}{K + \varphi_s(\ell)},
+\]
+using that $\varphi_s$ is additive. By the injectivity in \Cref{thm:grid}, $\Dg{s}{K} + \ell =
+\Dg{s}{K}$ if and only if $K + \varphi_s(\ell) = K$. So $\Dg{s}{K}$ is $L$-invariant if and
+only if $K + t = K$ for every $t \in \varphi_s(L) = d_s\Z$. This holds if and only if
+$K + d_s = K$: one direction takes $t = d_s$, and conversely $K + d_s = K$ implies
+$K + t d_s = K$ for all $t \in \Z$ (see the remark after \Cref{def:periodic}).
+
+\ref{main-b} By \ref{main-a}, \Cref{lem:lift} (which says distinct $L$-invariant sets have
+distinct images) and \Cref{thm:grid} (injectivity of $K \mapsto \Dg{s}{K}$), the number of
+$2$-d kernels of $G_L$ is the number of distinct sets in the union of the two families
+\[
+\mathcal{F}_{+} = \{\Dg{+1}{K} : K \text{ a } d_{+}\text{-periodic MIS}\},
+\qquad
+\mathcal{F}_{-} = \{\Dg{-1}{K} : K \text{ a } d_{-}\text{-periodic MIS}\},
+\]
+which have $M(d_{+})$ and $M(d_{-})$ members respectively. By \Cref{lem:overlap}, a set lies
+in both families exactly when it equals $\Dg{+1}{K} = \Dg{-1}{K}$ with
+$K \in \{2\Z, 2\Z+1\}$ and $K$ both $d_{+}$-periodic and $d_{-}$-periodic. The set $2\Z$ is
+$d$-periodic if and only if $d$ is even, and the same holds for $2\Z + 1$. So
+$|\mathcal{F}_{+} \cap \mathcal{F}_{-}| = 2$ if $d_{+}$ and $d_{-}$ are both even and $0$
+otherwise. By inclusion and exclusion and \Cref{lem:perrin},
+$\sigma(G_L) = M(d_{+}) + M(d_{-}) - |\mathcal{F}_{+} \cap \mathcal{F}_{-}|$, which is the
+stated formula.
+
+\ref{main-c} Both $d_\pm \ge 1$ by \Cref{lem:periods-positive}, $\Per(1) = 0$, and
+$\Per(d) \ge 2$ for $d \ge 2$ (\Cref{lem:perrin-positive}).
+\begin{itemize}
+  \item If $d_{+} = d_{-} = 1$, the count is $0 + 0 - 0 = 0$.
+  \item If exactly one of them is at least $2$, the other equals $1$, which is odd, so the
+        correction term is $0$ and the count is at least $2$.
+  \item If both are at least $2$, the count is at least $2 + 2 - 2 = 2$.
+\end{itemize}
+
+\ref{main-d} The map $\bar\varphi_s : \Z^2/L \to \Z_{d_s}$, $[v] \mapsto q_{d_s}(\varphi_s(v))$,
+is well defined, because $v - v' \in L$ gives
+$\varphi_s(v) - \varphi_s(v') = \varphi_s(v - v') \in d_s\Z$. It is a homomorphism because
+$\varphi_s$ is additive, and it is surjective because $\varphi_s(t, 0) = t$ for every
+$t \in \Z$. By \Cref{fact:fibres} each fibre of $\bar\varphi_s$ has $N/d_s$ elements.
+Let $K$ be $d_s$-periodic. Then
+\[
+[v] \in \pi(\Dg{s}{K}) \iff \exists\, \ell \in L : \varphi_s(v + \ell) \in K
+\iff \varphi_s(v) \in K \iff \bar\varphi_s([v]) \in \overline{K},
+\]
+where the middle step holds because $\varphi_s(v + \ell) - \varphi_s(v) \in d_s\Z$ and $K$ is
+$d_s$-periodic. Hence $\pi(\Dg{s}{K}) = \bar\varphi_s^{-1}(\overline{K})$, which has
+$|\overline{K}| \cdot N/d_s$ elements. The possible values of $|\overline{K}|$ are given by
+\Cref{lem:sizes} when $d_s \ge 2$; when $d_s = 1$ there is no $K$ (\Cref{lem:perrin}).
+\end{proof}
+
+\begin{remark}
+The hypothesis $L \cap F = \emptyset$ is used only in \Cref{lem:covering}. Without it the
+quotient has loops or parallel edges, or two grid neighbours of a vertex collapse to one
+vertex, and the neighbour count in \Cref{lem:lift} breaks down.
+\end{remark}
+
+% =====================================================================
+\section{Tori, tensor products and circulants}\label{sec:corollaries}
+% =====================================================================
+
+\subsection{Tori}
+
+\begin{corollary}[tori]\label{cor:torus}
+Let $m, n \ge 3$ and $d = \gcd(m,n)$. Then:
+\begin{enumerate}[label=(\alph*)]
+  \item $C_m \T C_n$ has a $2$-d kernel if and only if $d \ge 2$;
+  \item every $2$-d kernel is the set
+        $\{(x, y) \in \Z_m \times \Z_n : (x - sy) \bmod d \in \overline{K}\}$ for some
+        $s \in \{+1, -1\}$ and some maximal independent set $\overline{K}$ of $C_d$ (for
+        $d = 2$: $\overline{K} \in \{\{0\}, \{1\}\}$), and every such set is a $2$-d kernel;
+  \item $\sigma(C_m \T C_n) = 2\Per(d) - 2\,\Iv{d \text{ even}}$;
+  \item the sizes of the $2$-d kernels are exactly $mnk/d$ for
+        $\lceil d/3 \rceil \le k \le \lfloor d/2 \rfloor$; in particular the minimum size of a
+        $2$-d kernel is $mn\lceil d/3 \rceil / d$.
+\end{enumerate}
+\end{corollary}
+
+\begin{proof}
+Let $L = m\Z \times n\Z = \{(am, bn) : a, b \in \Z\}$, a subgroup of index $mn$.
+
+\emph{$G_L \cong C_m \T C_n$.} The map $\Z^2/L \to \Z_m \times \Z_n$,
+$[(x,y)] \mapsto (x \bmod m, y \bmod n)$, is well defined and bijective. Two cosets are
+adjacent in $G_L$ when their difference is congruent modulo $(m,n)$ to one of $(\pm 1, 0)$,
+$(0, \pm 1)$, which is exactly adjacency in $C_m \T C_n$.
+
+\emph{Admissibility.} We check that no element of $F$ lies in $L$. An element $(am, bn)$ of
+$L$ has first coordinate divisible by $m \ge 3$ and second coordinate divisible by $n \ge 3$.
+Every element of $F$, namely $(\pm 1, 0)$, $(0, \pm 1)$, $(\pm 2, 0)$, $(0, \pm 2)$,
+$\pm(1, 1)$ and $\pm(1, -1)$, has at least one coordinate whose absolute value is $1$ or $2$.
+An integer of absolute value $1$ or $2$ is not divisible by any integer that is at least $3$,
+so that coordinate is not divisible by $m$ (if it is the first) or by $n$ (if it is the
+second). So $L \cap F = \emptyset$.
+
+\emph{Periods.} $\varphi_s(am, bn) = am - sbn$. As $a, b$ range over $\Z$ this ranges over
+$m\Z + n\Z = d\Z$ (\Cref{fact:bezout}; the sign $s$ is irrelevant because $b$ ranges over
+$\Z$). So $d_{+} = d_{-} = d$.
+
+\emph{Conclusions.} (a) is \Cref{thm:main}\ref{main-c}. (c) is \Cref{thm:main}\ref{main-b},
+since $d_{+}$ and $d_{-}$ are both even exactly when $d$ is even. (d) is
+\Cref{thm:main}\ref{main-d} with $N = mn$. For (b): by \Cref{thm:main}\ref{main-a} the kernels
+are $\pi(\Dg{s}{K})$ with $K$ a $d$-periodic MIS, and by the computation in the proof of
+\Cref{thm:main}\ref{main-d}, $\pi(\Dg{s}{K}) = \{[v] : \varphi_s(v) \bmod d \in
+\overline{K}\}$, which in the coordinates of $\Z_m \times \Z_n$ reads
+$\{(x,y) : (x - sy) \bmod d \in \overline{K}\}$ (well defined since $d \mid m$ and
+$d \mid n$). The sets $\overline{K}$ are the maximal independent sets of $C_d$ for $d \ge 3$
+(\Cref{lem:periodic-cycle}) and $\{0\}, \{1\}$ for $d = 2$ (\Cref{lem:perrin}).
+\end{proof}
+
+\begin{example}\label{ex:c6c3}
+In $C_6 \T C_3$ ($m = 6$, $n = 3$, $d = 3$) take $s = -1$ and $\overline{K} = \{0\}$, the
+maximal independent set of $C_3$ consisting of one vertex. The kernel is
+$S = \{(x,y) : x + y \equiv 0 \pmod 3\}$, shown in \Cref{fig:c6c3}. We verify it directly.
+Two adjacent vertices differ by $\pm 1$ in one coordinate, so their values of $x + y$ differ by
+$\pm 1$ modulo $3$ and cannot both be $0$; so $S$ is independent. If $x + y \equiv 1$, the
+neighbours $(x - 1, y)$ and $(x, y - 1)$ have $x + y - 1 \equiv 0$; if $x + y \equiv 2$, the
+neighbours $(x + 1, y)$ and $(x, y + 1)$ have $x + y + 1 \equiv 0$. So every vertex outside
+$S$ has exactly two neighbours in $S$. In total
+$\sigma(C_6 \T C_3) = 2\Per(3) - 0 = 6$: for each $s = \pm 1$, the three choices
+$\overline{K} = \{0\}, \{1\}, \{2\}$.
+\end{example}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[scale=1.0]
+  \foreach \x in {0,...,5} {
+    \foreach \y in {0,1,2} {
+      \pgfmathtruncatemacro{\r}{mod(\x+\y,3)}
+      \ifnum\r=0
+        \node[kern] (v\x\y) at (\x,\y) {};
+      \else
+        \node[vertex] (v\x\y) at (\x,\y) {};
+      \fi
+    }
+  }
+  \foreach \y in {0,1,2} {
+    \foreach \x [evaluate=\x as \xn using int(\x+1)] in {0,...,4} {
+      \draw (v\x\y) -- (v\xn\y);
+    }
+    \draw[dashed] (v0\y) -- ++(-0.5,0);
+    \draw[dashed] (v5\y) -- ++(0.5,0);
+  }
+  \foreach \x in {0,...,5} {
+    \draw (v\x0) -- (v\x1) -- (v\x2);
+    \draw[dashed] (v\x0) -- ++(0,-0.5);
+    \draw[dashed] (v\x2) -- ++(0,0.5);
+  }
+  \node[below=0.55cm] at (2.5,0) {\small $x = 0,\dots,5$ (horizontal), $y = 0,1,2$ (vertical)};
+\end{tikzpicture}
+\caption{The $2$-d kernel $\{x + y \equiv 0 \pmod 3\}$ of $C_6 \T C_3$ (white vertices).
+Dashed edges wrap around. According to \cite[Theorem~2.5]{BW2016} this graph has no $2$-d
+kernel.}
+\label{fig:c6c3}
+\end{figure}
+
+\subsection{Tensor products of cycles}
+
+By \Cref{def:products}, the tensor product $C_m \times C_n$ has vertex set
+$\Z_m \times \Z_n$, and $(i,j)$ is adjacent to $(i + \alpha, j + \beta)$ for all
+$\alpha, \beta \in \{+1,-1\}$.
+
+\begin{corollary}[tensor products]\label{cor:tensor}
+Let $m, n \ge 3$. Then
+\[
+\sigma(C_m \times C_n) =
+\begin{cases}
+\Per(m) + \Per(n) & \text{if $m$ and $n$ are odd,}\\
+\Per(2m) + \Per(n) - 2 & \text{if $m$ is odd and $n$ is even,}\\
+\Per(m) + \Per(2n) - 2 & \text{if $m$ is even and $n$ is odd,}\\
+\bigl(\Per(m) + \Per(n) - 2\bigr)^2 & \text{if $m$ and $n$ are even.}
+\end{cases}
+\]
+In particular $C_m \times C_n$ always has a $2$-d kernel, and
+$\sigma(C_m \times C_3) = \Per(m) + 3$ for every $m \ge 3$.
+\end{corollary}
+
+\begin{proof}
+We set up notation in four steps and then treat the cases.
+
+\emph{Step 1: the even sublattice.} Let $E = \{(i,j) \in \Z^2 : i \equiv j \pmod 2\}$, a
+subgroup of index $2$ in $\Z^2$ with cosets $E$ and $(1,0) + E$. Let
+$W = \{(\alpha, \beta) : \alpha, \beta \in \{+1,-1\}\} \subseteq E$. For a subgroup
+$M \le E$ of finite index, let $H_M$ be the graph on $E/M$ in which $[a] \sim [b]$ if
+$b - a \in W + M$ (well defined by the argument after \Cref{def:quotient}).
+
+\emph{Step 2: rotating the grid.} The map $\psi : \Z^2 \to E$, $\psi(u,v) = (u+v, u-v)$, takes
+values in $E$ because $(u + v) - (u - v) = 2v$ is even. It is additive, and it is bijective
+with inverse $(i,j) \mapsto \bigl(\tfrac{i+j}{2}, \tfrac{i-j}{2}\bigr)$, which has integer
+values on $E$. It maps
+\[
+(1,0) \mapsto (1,1),\quad (-1,0) \mapsto (-1,-1),\quad (0,1) \mapsto (1,-1),\quad
+(0,-1) \mapsto (-1,1),
+\]
+so $\psi(U) = W$. For a finite-index subgroup $M \le E$ put $L = \psi^{-1}(M)$. Then $\psi$
+induces a bijection $\Z^2/L \to E/M$, $[v] \mapsto [\psi(v)]$, and $w - v \in U + L$ if and
+only if $\psi(w) - \psi(v) = \psi(w - v) \in W + M$. Hence $G_L \cong H_M$. Moreover, for
+$(i,j) \in E$ and $(u,v) = \psi^{-1}(i,j)$,
+\[
+\varphi_{+1}(u,v) = u - v = j, \qquad \varphi_{-1}(u,v) = u + v = i .
+\]
+So $d_{+}$ is the generator of the group of $j$-coordinates of elements of $M$, and $d_{-}$
+the generator of the group of $i$-coordinates.
+
+\emph{Step 3: admissibility.} Let $\Lambda = m\Z \times n\Z$, and suppose $M \subseteq
+\Lambda$. The images under $\psi$ of the elements of $F$ are
+\[
+\psi(\pm(1,0)) = \pm(1,1),\ \psi(\pm(0,1)) = \pm(1,-1),\ \psi(\pm(2,0)) = \pm(2,2),\
+\psi(\pm(0,2)) = \pm(2,-2),\ \psi(\pm(1,1)) = \pm(2,0),\ \psi(\pm(1,-1)) = \pm(0,2).
+\]
+Each of these has a coordinate equal to $\pm 1$ or $\pm 2$ in a position where elements of
+$\Lambda$ have coordinates divisible by $m \ge 3$ or $n \ge 3$: the first coordinate in the
+first four cases and in $\pm(2,0)$, and the second coordinate in $\pm(0,2)$. So none of them
+lies in $\Lambda \supseteq M$, and $L \cap F = \emptyset$. Since $\Lambda$ has finite index
+in $\Z^2$, $M$ has finite index in $E$ in both cases below, so $L$ is admissible.
+
+\emph{Step 4: the tensor product as a quotient.} By definition $C_m \times C_n$ is the graph
+on $\Z^2/\Lambda$ in which $[a] \sim [b]$ if $b - a \in W + \Lambda$.
+
+\emph{Case 1: $m$ or $n$ is odd.} Then $\Lambda \not\subseteq E$: if $m$ is odd then
+$(m, 0) \in \Lambda \setminus E$, and if $n$ is odd then $(0, n) \in \Lambda \setminus E$.
+Take $\lambda \in \Lambda \setminus E$; then $\lambda + E = (1,0) + E$, so
+$\Z^2 = E \cup (\lambda + E) \subseteq E + \Lambda$. Let $M = E \cap \Lambda$. The map
+$E/M \to \Z^2/\Lambda$, $a + M \mapsto a + \Lambda$, is well defined (as $M \subseteq
+\Lambda$), injective (if $a - a' \in \Lambda$ with $a, a' \in E$, then $a - a' \in E \cap
+\Lambda = M$), and surjective (every $z \in \Z^2$ is $a + \lambda'$ with $a \in E$ and
+$\lambda' \in \Lambda$). It preserves adjacency in both directions: for $a, b \in E$ we have
+$b - a \in E$ and $W \subseteq E$, so $b - a \in W + \Lambda$ if and only if
+$b - a \in W + (E \cap \Lambda)$. Hence $C_m \times C_n \cong H_M \cong G_L$ with
+$L = \psi^{-1}(M)$, and $\sigma(C_m \times C_n) = \sigma(G_L)$. Now
+$M = \{(am, bn) : am \equiv bn \pmod 2\}$.
+\begin{itemize}
+  \item \emph{$m$ and $n$ odd.} Then $am \equiv a$ and $bn \equiv b \pmod 2$, so $M$ consists
+        of the $(am, bn)$ with $a \equiv b \pmod 2$. For every $a$ the choice $b = a$ is
+        allowed, so the $i$-coordinates of $M$ are all of $m\Z$; symmetrically the
+        $j$-coordinates are all of $n\Z$. Hence $d_{-} = m$ and $d_{+} = n$, both odd, and
+        \Cref{thm:main}\ref{main-b} gives $\Per(m) + \Per(n)$.
+  \item \emph{$m$ odd and $n$ even.} Then $bn$ is even, so the condition is that $am$ is
+        even, that is, $a$ is even; $b$ is arbitrary. The $i$-coordinates form $2m\Z$ and the
+        $j$-coordinates form $n\Z$. Hence $d_{-} = 2m$ and $d_{+} = n$, both even, and
+        \Cref{thm:main}\ref{main-b} gives $\Per(2m) + \Per(n) - 2$.
+  \item \emph{$m$ even and $n$ odd.} By the symmetric argument, $d_{-} = m$ and
+        $d_{+} = 2n$, both even, giving $\Per(m) + \Per(2n) - 2$.
+\end{itemize}
+
+\emph{Case 2: $m$ and $n$ even.} Then $\Lambda \subseteq E$. Every coset of $\Lambda$ lies
+inside one coset of $E$, so $\Z^2/\Lambda$ is the disjoint union of $V_0 = E/\Lambda$ and
+$V_1 = ((1,0) + E)/\Lambda$. Since $W \subseteq E$, every edge joins two vertices in the same
+part. Translation $a \mapsto a + (1,0)$ maps $E$ bijectively onto $(1,0) + E$ and preserves
+differences, so it induces an isomorphism between the subgraphs induced on $V_0$ and $V_1$.
+The subgraph on $V_0$ is $H_\Lambda \cong G_L$ with $L = \psi^{-1}(\Lambda)$; here $M = \Lambda$
+has $i$-coordinates $m\Z$ and $j$-coordinates $n\Z$, so $d_{-} = m$ and $d_{+} = n$, both
+even, and the part has $\Per(m) + \Per(n) - 2$ kernels. In a disjoint union of two graphs with
+no edges between them, every neighbourhood lies inside one part, so a set is a $2$-d kernel if
+and only if its intersection with each part is a $2$-d kernel of that part. Hence
+$\sigma(C_m \times C_n) = (\Per(m) + \Per(n) - 2)^2$.
+
+\emph{Existence.} In every case at least one of $d_\pm$ is at least $m \ge 3$ or $n \ge 3$,
+so a $2$-d kernel exists by \Cref{thm:main}\ref{main-c} (in Case 2, in each part).
+
+\emph{The case $n = 3$.} If $m$ is odd, $\Per(m) + \Per(3) = \Per(m) + 3$. If $m$ is even,
+the third line applies with $n = 3$: $\Per(m) + \Per(6) - 2 = \Per(m) + 5 - 2 = \Per(m) + 3$.
+\end{proof}
+
+\begin{remark}
+For $n = 3$, \Cref{cor:tensor} is \cite[Theorem~9(i)]{Bednarz2021} (stated there as
+$\sigma(C_n \times C_3) = 3 + \Per(n)$), and the existence statement contains
+\cite[Theorem~6(ii)]{Bednarz2021}. When $m = n$ is odd, $M = \{(an, bn) : a \equiv b \pmod 2\}$
+and $\psi^{-1}(an, bn) = \bigl(\tfrac{a+b}{2}n, \tfrac{a-b}{2}n\bigr)$; as $a \equiv b$ ranges
+over all pairs of the same parity, $(\tfrac{a+b}{2}, \tfrac{a-b}{2})$ ranges over all of
+$\Z^2$. So $L = n\Z \times n\Z$ and $C_n \times C_n \cong C_n \T C_n$ for odd $n$; accordingly
+\Cref{cor:torus,cor:tensor} both give $2\Per(n)$.
+\end{remark}
+
+\subsection{Circulants}
+
+For $N \ge 1$ and $a, b \in \Z$, the circulant $C_N(a,b)$ has vertex set $\Z_N$, and $k$ is
+adjacent to $k \pm a$ and $k \pm b$.
+
+\begin{corollary}[circulants]\label{cor:circulant}
+Let $N \ge 1$ and $a, b \in \Z$ with $\gcd(a, b, N) = 1$, and suppose that none of
+$a, b, 2a, 2b, a + b, a - b$ is divisible by $N$. Then $C_N(a,b)$ is a connected simple
+$4$-regular graph, and
+\[
+\sigma(C_N(a,b)) = \Per(g_{+}) + \Per(g_{-}) - 2\,\Iv{g_{+}, g_{-} \text{ both even}},
+\qquad g_{\pm} = \gcd(N, a \pm b) .
+\]
+In particular $C_N(a,b)$ has a $2$-d kernel if and only if $\gcd(N, a+b) > 1$ or
+$\gcd(N, a-b) > 1$.
+\end{corollary}
+
+\begin{proof}
+\emph{The quotient.} Let $\chi : \Z^2 \to \Z_N$, $\chi(x,y) = q_N(xa + yb)$, and
+$L = \ker\chi$. The image of $\chi$ is the subgroup of $\Z_N$ generated by $q_N(a)$ and
+$q_N(b)$; by \Cref{fact:bezout} there are integers $t_1, t_2, t_3$ with
+$t_1 a + t_2 b + t_3 N = \gcd(a,b,N) = 1$, so $q_N(1) = \chi(t_1, t_2)$ lies in the image, and
+$\chi$ is surjective. Hence $\chi$ induces a group isomorphism $\bar\chi : \Z^2/L \to \Z_N$,
+and $L$ has index $N$. Under $\bar\chi$, $[w] \sim [v]$ in $G_L$ (that is,
+$w - v \in U + L$) if and only if $\chi(w) - \chi(v) \in \chi(U) = \{\pm a, \pm b\}$ (modulo
+$N$), which is adjacency in $C_N(a,b)$. So $G_L \cong C_N(a,b)$.
+
+\emph{Admissibility.} $\chi$ maps the elements of $F$ to
+$\pm a, \pm b, \pm 2a, \pm 2b, \pm(a+b), \pm(a-b)$. By hypothesis none of these is $0$ in
+$\Z_N$, so $L \cap F = \emptyset$. By \Cref{lem:covering}, $C_N(a,b)$ is simple and
+$4$-regular; it is connected because $\Z^2 = \Gamma$ is connected and $\pi$ maps edges to
+edges.
+
+\emph{Periods.} Fix $s \in \{+1,-1\}$ and put $g = \gcd(N, a + sb)$. Every $(x,y) \in \Z^2$
+can be written as $x = t + sy$ with $t = \varphi_s(x,y)$. Then, using $s^2 = 1$,
+\begin{equation}\label{eq:circ}
+xa + yb = (t + sy)a + yb = ta + y(sa + b) = ta + sy(a + sb).
+\end{equation}
+\begin{itemize}
+  \item \emph{$\varphi_s(L) \subseteq g\Z$.} Let $(x,y) \in L$, so $N \mid xa + yb$. Since
+        $g \mid N$ and $g \mid a + sb$, \eqref{eq:circ} gives $g \mid ta$. Suppose a prime
+        $r$ divides both $g$ and $a$. Then $r \mid a + sb$ gives $r \mid sb$, hence
+        $r \mid b$, and $r \mid g \mid N$; so $r \mid \gcd(a,b,N) = 1$, which is impossible.
+        Thus $\gcd(g, a) = 1$, and $g \mid ta$ gives $g \mid t = \varphi_s(x,y)$.
+  \item \emph{$g \in \varphi_s(L)$.} By \Cref{fact:congruence}, the congruence
+        $s(a + sb)\,y \equiv -ga \pmod N$ has a solution $y$, because
+        $\gcd(s(a+sb), N) = g$ divides $-ga$. Put $x = g + sy$. By \eqref{eq:circ} with
+        $t = g$, $xa + yb = ga + sy(a + sb) \equiv ga - ga = 0 \pmod N$, so
+        $(x,y) \in L$, and $\varphi_s(x,y) = g$.
+\end{itemize}
+Hence $\varphi_s(L) = g\Z$ and $d_s = \gcd(N, a + sb)$, so $d_{+} = g_{+}$ and
+$d_{-} = g_{-}$. \Cref{thm:main}\ref{main-b} and \ref{main-c} give the claims.
+\end{proof}
+
+\begin{remark}
+If $\gcd(m,n) = 1$, then $C_m \T C_n \cong C_{mn}(n, m)$ via the Chinese remainder
+isomorphism $\Z_m \times \Z_n \to \Z_{mn}$, which sends $(1,0)$ and $(0,1)$ to elements of
+orders $m$ and $n$. Any common prime factor of $mn$ and $m \pm n$ would divide both $m$ and
+$n$, so $\gcd(mn, m \pm n) = 1$, and \Cref{cor:circulant} gives no $2$-d kernel, in agreement
+with \Cref{cor:torus}.
+\end{remark}
+
+% =====================================================================
+\section{Three-dimensional tori with a triangle factor}\label{sec:3d}
+% =====================================================================
+
+In this section we work with colours in $\Z_3 = \{0, 1, 2\}$, where $2 = -1$. Its nonzero
+elements are $1$ and $-1$, and for $u, w \in \{1, -1\}$ we have $u = -w$ if and only if
+$u \ne w$.
+
+\begin{definition}[fall colouring \cite{Dunbar2000}]\label{def:fall}
+A \emph{fall $3$-colouring} of a graph $G$ is a map $f : V(G) \to \Z_3$ such that
+\begin{enumerate}[label=(F\arabic*)]
+  \item\label{F1} $f$ is a proper colouring: $f(u) \ne f(v)$ for every edge $uv$, and
+  \item\label{F2} every vertex $v$ has, for each colour $k \ne f(v)$, a neighbour $w$ with
+        $f(w) = k$.
+\end{enumerate}
+\end{definition}
+
+\subsection{Reduction to fall colourings}
+
+The cycle $C_3$ is the complete graph $K_3$: any two distinct elements of $\Z_3$ differ by
+$1$ or $-1$. So for a graph $G$, the graph $C_3 \T G$ has vertex set $\Z_3 \times V(G)$ and
+\begin{equation}\label{eq:nbhd-3}
+N_{C_3 \T G}(x, p) = \{(x', p) : x' \in \Z_3,\ x' \ne x\} \cup \{(x, q) : q \in N_G(p)\},
+\end{equation}
+a set of exactly $2 + |N_G(p)|$ vertices (the two parts are disjoint, since vertices in the
+first part have second coordinate $p$ and those in the second part have second coordinate in
+$N_G(p) \not\ni p$). For $p \in V(G)$ the \emph{fibre} $\Z_3 \times \{p\}$ induces a triangle.
+
+\begin{lemma}[triangle reduction]\label{lem:triangle}
+Let $G$ be a graph. For a map $f : V(G) \to \Z_3$ put $S_f = \{(f(p), p) : p \in V(G)\}$.
+\begin{enumerate}[label=(\alph*)]
+  \item If $f$ is a fall $3$-colouring of $G$, then $S_f$ is a $2$-d kernel of $C_3 \T G$.
+  \item If every vertex of $G$ has degree at most $5$, then every $2$-d kernel of $C_3 \T G$
+        equals $S_f$ for exactly one map $f$, and that $f$ is a fall $3$-colouring of $G$.
+\end{enumerate}
+Consequently, if every vertex of $G$ has degree at most $5$, then $\sigma(C_3 \T G)$ equals
+the number of fall $3$-colourings of $G$.
+\end{lemma}
+
+\begin{proof}
+We first compute, for an arbitrary map $f$, when $S_f$ is a $2$-d kernel. The set $S_f$ meets
+every fibre in exactly one vertex.
+
+\emph{Independence of $S_f$.} Two vertices of $S_f$ lie in different fibres, say
+$(f(p), p)$ and $(f(q), q)$ with $p \ne q$. By \eqref{eq:nbhd-3} they are adjacent if and
+only if $pq \in E(G)$ and $f(p) = f(q)$. So $S_f$ is independent if and only if $f$
+satisfies \ref{F1}.
+
+\emph{Domination by $S_f$.} Let $(x, p) \notin S_f$, that is, $x \ne f(p)$. By
+\eqref{eq:nbhd-3}, its neighbours in $S_f$ are
+\begin{itemize}
+  \item the vertex $(f(p), p)$, which is a neighbour because $f(p) \ne x$, and
+  \item the vertices $(x, q)$ with $q \in N_G(p)$ and $f(q) = x$.
+\end{itemize}
+So $|N(x,p) \cap S_f| = 1 + |\{q \in N_G(p) : f(q) = x\}|$, and this is at least $2$ if and
+only if $p$ has a neighbour of colour $x$. Requiring this for every $p$ and every
+$x \ne f(p)$ is exactly \ref{F2}.
+
+Hence $S_f$ is a $2$-d kernel if and only if $f$ is a fall $3$-colouring. This proves (a).
+
+(b) Let $S$ be a $2$-d kernel of $C_3 \T G$, and let $p \in V(G)$.
+\begin{itemize}
+  \item \emph{At most one vertex of $S$ in the fibre of $p$.} The fibre is a triangle, and
+        $S$ is independent.
+  \item \emph{At least one.} Suppose the fibre of $p$ contains no vertex of $S$. For
+        $x \in \Z_3$, the vertex $(x,p)$ is not in $S$, and its neighbours $(x', p)$ in the
+        fibre are not in $S$; so by \eqref{eq:nbhd-3} and \ref{K2} the set
+        $Q_x = \{q \in N_G(p) : (x, q) \in S\}$ has at least $2$ elements. The sets
+        $Q_0, Q_1, Q_2$ are pairwise disjoint: if $q \in Q_x \cap Q_{x'}$ with $x \ne x'$, then
+        $(x,q)$ and $(x',q)$ are two vertices of $S$ in the fibre of $q$, which is impossible
+        by the previous bullet. Hence
+        $|N_G(p)| \ge |Q_0| + |Q_1| + |Q_2| \ge 6$, contradicting the degree bound.
+\end{itemize}
+So every fibre contains exactly one vertex of $S$, and $S = S_f$ for the map $f$ defined by
+$(f(p), p) \in S$. This $f$ is unique because $S_f$ determines $f$. By the computation above,
+$f$ is a fall $3$-colouring. The final statement follows: $f \mapsto S_f$ is injective, it maps
+fall $3$-colourings to $2$-d kernels by (a), and it is onto the $2$-d kernels by (b).
+\end{proof}
+
+\subsection{Proper 3-colourings of cycles}
+
+\begin{lemma}\label{lem:cycle-colourings}
+For $k \ge 3$, the number of proper colourings $g : \Z_k \to \Z_3$ of $C_k$ is
+$\chi(k) = 2^k + 2(-1)^k$.
+\end{lemma}
+
+\begin{proof}
+A map $g$ is a proper colouring of $C_k$ if and only if $g(u) \ne g(u+1)$ for every
+$u \in \Z_k$, that is, if and only if $(g(0), g(1), \dots, g(k-1))$ is a closed walk of length
+$k$ in the complete graph $K_3$ on $\Z_3$ (viewed as a digraph with arcs in both directions).
+By \Cref{fact:walks} their number is $\tr(B^k)$, where $B = J - I$ and $J$ is the $3 \times 3$
+all-ones matrix. The vector $\mathbf{1} = (1,1,1)^{\mathsf T}$ satisfies
+$B\mathbf{1} = 3\mathbf{1} - \mathbf{1} = 2\mathbf{1}$. The vectors
+$v_1 = (1, -1, 0)^{\mathsf T}$ and $v_2 = (0, 1, -1)^{\mathsf T}$ have coordinate sum $0$, so
+$Jv_1 = Jv_2 = 0$ and $Bv_1 = -v_1$, $Bv_2 = -v_2$. The three vectors
+$\mathbf{1}, v_1, v_2$ are linearly independent (the matrix with these columns has determinant
+$3 \ne 0$), so with $Q = (\mathbf{1}\ v_1\ v_2)$ we have
+$B = Q\,\mathrm{diag}(2, -1, -1)\,Q^{-1}$ and $B^k = Q\,\mathrm{diag}(2^k, (-1)^k, (-1)^k)\,
+Q^{-1}$. Since the trace is invariant under conjugation,
+$\tr(B^k) = 2^k + 2(-1)^k$.
+\end{proof}
+
+This is the value at $3$ of the chromatic polynomial $(\lambda - 1)^k + (-1)^k(\lambda - 1)$ of
+the cycle; see, for example, \cite{DKT2005}.
+
+\subsection{Fall 3-colourings of two-dimensional tori}
+
+Throughout this subsection $b, c \ge 3$, the torus $C_b \T C_c$ has vertex set
+$\Z_b \times \Z_c$, and its vertices $(y,z)$ have the four distinct neighbours
+$(y \pm 1, z)$ (\emph{horizontal}) and $(y, z \pm 1)$ (\emph{vertical}). The set
+$\{y\} \times \Z_c$ is the \emph{column} of $y$ and $\Z_b \times \{z\}$ the \emph{row} of
+$z$. When $3 \mid b$, the reduction $\Z_b \to \Z_3$, $y \mapsto y \bmod 3$, is well defined,
+and for $\varepsilon \in \{1, -1\}$ we write $\varepsilon y$ for $\varepsilon \cdot (y \bmod 3)
+\in \Z_3$; likewise for $z \in \Z_c$ when $3 \mid c$.
+
+\begin{definition}[steps and turns]\label{def:turns}
+Let $f$ be a proper $3$-colouring of $C_b \T C_c$. Its \emph{horizontal} and \emph{vertical
+steps} are
+\[
+\alpha(y,z) = f(y+1, z) - f(y,z), \qquad \beta(y,z) = f(y, z+1) - f(y,z) \qquad (\text{in }
+\Z_3).
+\]
+By \ref{F1}, $\alpha$ and $\beta$ never take the value $0$, so they take values in
+$\{1, -1\}$. A vertex $(y,z)$ is a \emph{horizontal turn} if $\alpha(y-1,z) \ne \alpha(y,z)$,
+and a \emph{vertical turn} if $\beta(y, z-1) \ne \beta(y, z)$.
+\end{definition}
+
+\begin{lemma}\label{lem:turn-colours}
+Let $f$ be a proper $3$-colouring and $(y,z)$ a vertex. Then $(y,z)$ is a horizontal turn if
+and only if $f(y-1,z) = f(y+1,z)$. In that case $f(y-1,z) = f(y+1,z) = f(y,z) + \delta$ with
+$\delta = \alpha(y,z) \in \{1,-1\}$.
+\end{lemma}
+
+\begin{proof}
+By definition of $\alpha$, $f(y-1,z) = f(y,z) - \alpha(y-1,z)$ and
+$f(y+1,z) = f(y,z) + \alpha(y,z)$. These are equal if and only if
+$\alpha(y,z) = -\alpha(y-1,z)$, which, for values in $\{1,-1\}$, holds if and only if
+$\alpha(y,z) \ne \alpha(y-1,z)$. In that case both equal $f(y,z) + \alpha(y,z)$.
+\end{proof}
+
+\begin{lemma}[sufficiency]\label{lem:fall-sufficient}
+\begin{enumerate}[label=(\roman*)]
+  \item If $3 \mid b$, $\varepsilon \in \{1,-1\}$ and $g$ is a proper $3$-colouring of $C_c$,
+        then $f(y,z) = \varepsilon y + g(z)$ is a fall $3$-colouring of $C_b \T C_c$.
+  \item If $3 \mid c$, $\varepsilon \in \{1,-1\}$ and $h$ is a proper $3$-colouring of $C_b$,
+        then $f(y,z) = h(y) + \varepsilon z$ is a fall $3$-colouring of $C_b \T C_c$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) The map is well defined because $3 \mid b$. For every vertex, $\alpha(y,z) =
+\varepsilon(y+1) - \varepsilon y = \varepsilon \ne 0$ and $\beta(y,z) = g(z+1) - g(z) \ne 0$
+because $g$ is proper; so $f$ is proper. For \ref{F2}, the vertex $(y,z)$ of colour $k$ has
+horizontal neighbours $(y+1, z)$ and $(y-1, z)$ of colours $k + \varepsilon$ and
+$k - \varepsilon$, which are the two colours different from $k$. (ii) is the same argument
+with the roles of the coordinates exchanged.
+\end{proof}
+
+\begin{lemma}[a turn spreads along its column]\label{lem:turn-column}
+Let $f$ be a fall $3$-colouring of $C_b \T C_c$ and let $(y, z)$ be a horizontal turn. Then
+every vertex of the column of $y$ is a horizontal turn, and $\beta(y, \cdot)$ is constant on
+$\Z_c$.
+\end{lemma}
+
+\begin{proof}
+Put $k_0 = f(y,z)$ and let $\delta$ be as in \Cref{lem:turn-colours}, so both horizontal
+neighbours of $(y,z)$ have colour $k_0 + \delta$. The three colours $k_0$, $k_0 + \delta$,
+$k_0 - \delta$ are distinct (as $\delta \ne 0$ and $2\delta \ne 0$ in $\Z_3$), so they are all
+of $\Z_3$. By \ref{F2}, $(y,z)$ has a neighbour of colour $k_0 - \delta$; it is not a
+horizontal neighbour, so there is $\eta \in \{1, -1\}$ with $f(y, z + \eta) = k_0 - \delta$.
+
+For $j \ge 1$ let $D_j$ be the statement
+\[
+f(y, z + j\eta) = k_0 - j\delta, \qquad f(y, z + (j-1)\eta) = k_0 - (j-1)\delta, \qquad
+f(y \pm 1, z + j\eta) = k_0 - (j-1)\delta .
+\]
+We prove $D_j$ for all $j \ge 1$ by induction.
+
+\emph{$D_1$.} The first two equalities are $f(y, z+\eta) = k_0 - \delta$ and $f(y,z) = k_0$.
+For the third, the vertex $(y \pm 1, z + \eta)$ is adjacent to $(y \pm 1, z)$, of colour
+$k_0 + \delta$, and to $(y, z + \eta)$, of colour $k_0 - \delta$. By \ref{F1} its colour is
+the remaining colour $k_0$.
+
+\emph{$D_j \Rightarrow D_{j+1}$.} Let $w = (y, z + j\eta)$ and $k_j = k_0 - j\delta = f(w)$.
+By $D_j$, both horizontal neighbours of $w$ have colour $k_0 - (j-1)\delta = k_j + \delta$,
+and its vertical neighbour $(y, z + (j-1)\eta)$ has colour $k_j + \delta$ as well. By
+\ref{F2}, $w$ has a neighbour of colour $k_j - \delta \ne k_j + \delta$. Its only remaining
+neighbour is $(y, z + (j+1)\eta)$, which is different from $(y, z + (j-1)\eta)$ because
+$2\eta \not\equiv 0 \pmod c$ (as $c \ge 3$). Hence
+$f(y, z + (j+1)\eta) = k_j - \delta = k_0 - (j+1)\delta$. Next, $(y \pm 1, z + (j+1)\eta)$ is
+adjacent to $(y \pm 1, z + j\eta)$, of colour $k_j + \delta$, and to
+$(y, z + (j+1)\eta)$, of colour $k_j - \delta$; by \ref{F1} its colour is $k_j =
+k_0 - j\delta$. Together with $f(y, z + j\eta) = k_0 - j\delta$ this is $D_{j+1}$.
+
+\emph{Conclusion.} For every $j \ge 0$ we have shown $f(y, z + j\eta) = k_0 - j\delta$ and
+$f(y \pm 1, z + j\eta) = f(y, z + j\eta) + \delta$ (for $j = 0$ this is the hypothesis). By
+\Cref{lem:turn-colours}, every vertex $(y, z + j\eta)$ is a horizontal turn. As $j$ runs over
+$0, 1, \dots, c-1$, $z + j\eta$ runs over all of $\Z_c$. For the vertical steps:
+\begin{itemize}
+  \item if $\eta = 1$: $\beta(y, z + j) = f(y, z+j+1) - f(y, z+j) = -\delta$ for all $j \ge 0$;
+  \item if $\eta = -1$: $\beta(y, z - j - 1) = f(y, z - j) - f(y, z - j - 1)
+        = (k_0 - j\delta) - (k_0 - (j+1)\delta) = \delta$ for all $j \ge 0$.
+\end{itemize}
+In both cases $\beta(y, \cdot)$ is constant on $\Z_c$.
+\end{proof}
+
+\begin{lemma}[no turns]\label{lem:no-turns}
+Let $f$ be a proper $3$-colouring of $C_b \T C_c$ with no horizontal turn. Then $3 \mid b$, and
+there are $\varepsilon \in \{1, -1\}$ and a proper $3$-colouring $g$ of $C_c$ with
+$f(y,z) = \varepsilon y + g(z)$ for all $(y,z)$.
+\end{lemma}
+
+\begin{proof}
+\emph{Constant step along each row.} Fix $z$. Since no vertex is a horizontal turn,
+$\alpha(y - 1, z) = \alpha(y, z)$ for every $y \in \Z_b$, hence $\alpha(y, z) = \alpha(0, z)$
+for all $y$; call this value $\varepsilon_z \in \{1, -1\}$.
+
+\emph{$3 \mid b$.} Identify $\Z_b$ with $\{0, 1, \dots, b-1\}$. By induction on $t$,
+$f(t, z) = f(0, z) + t\varepsilon_z$ for $0 \le t \le b - 1$, and one more step gives
+$f(0, z) = f(b-1, z) + \varepsilon_z = f(0, z) + b\varepsilon_z$. So $b\varepsilon_z = 0$ in
+$\Z_3$; multiplying by $\varepsilon_z$ (note $\varepsilon_z^2 = 1$) gives $b \equiv 0
+\pmod 3$.
+
+\emph{The steps agree across rows.} Suppose $\varepsilon_{z+1} \ne \varepsilon_z$ for some
+$z$. Then $\lambda = \varepsilon_{z+1} - \varepsilon_z \in \{2, -2\} = \{-1, 1\}$ in $\Z_3$.
+Put $\kappa = f(0, z+1) - f(0, z)$. For $t = 0, 1, 2$ (vertices, since $b \ge 3$),
+\[
+f(t, z+1) - f(t, z) = \bigl(f(0,z+1) + t\varepsilon_{z+1}\bigr) - \bigl(f(0,z) +
+t\varepsilon_z\bigr) = \kappa + t\lambda .
+\]
+The three values $\kappa$, $\kappa + \lambda$, $\kappa + 2\lambda$ are pairwise distinct
+(their differences are $\lambda$, $2\lambda$ and $\lambda$, all nonzero), so they are all of
+$\Z_3$, and one of them is $0$. Then $f(t, z+1) = f(t, z)$ for some $t$, contradicting
+\ref{F1} on the vertical edge between $(t,z)$ and $(t, z+1)$. Hence all $\varepsilon_z$ are
+equal; call the common value $\varepsilon$.
+
+\emph{The form of $f$.} Put $g(z) = f(0, z)$. For $y \in \Z_b$ with representative
+$t \in \{0, \dots, b-1\}$ we have $f(y, z) = g(z) + t\varepsilon = \varepsilon y + g(z)$, where
+$\varepsilon y$ is well defined since $3 \mid b$. Finally $g(z+1) - g(z) = \beta(0, z) \ne 0$,
+so $g$ is a proper colouring of $C_c$.
+\end{proof}
+
+\emph{Symmetry.} The map $(y,z) \mapsto (z,y)$ is an isomorphism from $C_b \T C_c$ to
+$C_c \T C_b$ that exchanges horizontal and vertical edges, rows and columns, and
+horizontal and vertical turns, and $f$ is a fall $3$-colouring of $C_b \T C_c$ if and only if
+$f$ composed with the inverse map is one of $C_c \T C_b$. Applying
+\Cref{lem:turn-column,lem:no-turns} to $C_c \T C_b$ and translating back gives:
+
+\begin{lemma}[vertical versions]\label{lem:vertical}
+Let $f$ be a fall $3$-colouring of $C_b \T C_c$.
+\begin{enumerate}[label=(\alph*)]
+  \item If some vertex of the row of $z$ is a vertical turn, then every vertex of that row is
+        a vertical turn and $\alpha(\cdot, z)$ is constant on $\Z_b$.
+  \item If $f$ has no vertical turn, then $3 \mid c$, and there are $\varepsilon \in \{1,-1\}$
+        and a proper $3$-colouring $h$ of $C_b$ with $f(y,z) = h(y) + \varepsilon z$.
+\end{enumerate}
+\end{lemma}
+
+\begin{theorem}[classification of fall $3$-colourings of tori]\label{thm:fall-classification}
+Let $b, c \ge 3$. A map $f : \Z_b \times \Z_c \to \Z_3$ is a fall $3$-colouring of
+$C_b \T C_c$ if and only if one of the following holds:
+\begin{enumerate}[label=(\roman*)]
+  \item $3 \mid b$ and $f(y,z) = \varepsilon y + g(z)$ for some $\varepsilon \in \{1,-1\}$ and
+        some proper $3$-colouring $g$ of $C_c$;
+  \item $3 \mid c$ and $f(y,z) = h(y) + \varepsilon z$ for some $\varepsilon \in \{1,-1\}$ and
+        some proper $3$-colouring $h$ of $C_b$.
+\end{enumerate}
+In particular $C_b \T C_c$ has a fall $3$-colouring if and only if $3 \mid b$ or $3 \mid c$.
+\end{theorem}
+
+\begin{proof}
+($\Leftarrow$) \Cref{lem:fall-sufficient}.
+
+($\Rightarrow$) Let $f$ be a fall $3$-colouring.
+
+\emph{Case A: $f$ has no horizontal turn.} Then (i) holds by \Cref{lem:no-turns}.
+
+\emph{Case B: some vertex $(y_0, z_0)$ is a horizontal turn.} By \Cref{lem:turn-column},
+$\beta(y_0, \cdot)$ is constant, so $\beta(y_0, z - 1) = \beta(y_0, z)$ for every $z$, and no
+vertex of the column of $y_0$ is a vertical turn. Suppose some vertex $(y_1, z_1)$ were a
+vertical turn. By \Cref{lem:vertical}(a), every vertex of the row of $z_1$ would be a vertical
+turn, including $(y_0, z_1)$, which lies in the column of $y_0$. This is a contradiction, so
+$f$ has no vertical turn, and (ii) holds by \Cref{lem:vertical}(b).
+
+For the last statement: if $3 \mid b$, take $\varepsilon = 1$ and any proper colouring $g$ of
+$C_c$ (cycles are $3$-colourable, for example by \Cref{lem:cycle-colourings}, since
+$\chi(c) \ge 2^3 - 2 > 0$), and use (i); if $3 \mid c$ use (ii). Conversely, a fall
+$3$-colouring satisfies (i) or (ii), each of which requires $3 \mid b$ or $3 \mid c$.
+\end{proof}
+
+\begin{corollary}[counting fall $3$-colourings]\label{cor:fall-count}
+Let $b, c \ge 3$. The number of fall $3$-colourings of $C_b \T C_c$ is
+\[
+\Phi(b,c) = 2\chi(c)\,\Iv{3 \mid b} + 2\chi(b)\,\Iv{3 \mid c}
+- 12\,\Iv{3 \mid b \text{ and } 3 \mid c}, \qquad \chi(k) = 2^k + 2(-1)^k .
+\]
+\end{corollary}
+
+\begin{proof}
+Let $\mathcal{A}$ and $\mathcal{B}$ be the sets of maps of the forms (i) and (ii) of
+\Cref{thm:fall-classification}; we take $\mathcal{A} = \emptyset$ if $3 \nmid b$ and
+$\mathcal{B} = \emptyset$ if $3 \nmid c$. By the theorem, the number of fall $3$-colourings is
+$|\mathcal{A} \cup \mathcal{B}| = |\mathcal{A}| + |\mathcal{B}| - |\mathcal{A} \cap
+\mathcal{B}|$.
+
+\emph{$|\mathcal{A}|$.} Let $3 \mid b$. The pair $(\varepsilon, g)$ is recovered from
+$f(y,z) = \varepsilon y + g(z)$ by $\varepsilon = f(1, 0) - f(0,0)$ and $g(z) = f(0, z)$, so
+distinct pairs give distinct maps. There are $2$ choices of $\varepsilon$ and $\chi(c)$ choices
+of $g$ (\Cref{lem:cycle-colourings}), so $|\mathcal{A}| = 2\chi(c)$.
+
+\emph{$|\mathcal{B}|$.} Symmetrically, $|\mathcal{B}| = 2\chi(b)$ when $3 \mid c$.
+
+\emph{$|\mathcal{A} \cap \mathcal{B}|$.} This is empty unless $3 \mid b$ and $3 \mid c$, so
+assume both. If $f \in \mathcal{A} \cap \mathcal{B}$, then from (i) the horizontal step of $f$
+is the constant $\varepsilon$, and from (ii) the vertical step is a constant $\varepsilon'$;
+hence $f(y,z) = f(0,0) + \varepsilon y + \varepsilon' z$. Conversely every map of this form
+lies in $\mathcal{A}$ (with $g(z) = f(0,0) + \varepsilon' z$, a proper colouring of $C_c$
+because its steps are $\varepsilon' \ne 0$ and it is well defined as $3 \mid c$) and in
+$\mathcal{B}$ (symmetrically). The triple $(f(0,0), \varepsilon, \varepsilon')$ is recovered
+from $f$, so there are $3 \cdot 2 \cdot 2 = 12$ such maps.
+
+Adding up gives $\Phi(b,c)$.
+\end{proof}
+
+\subsection{The three-dimensional result}
+
+\begin{corollary}\label{cor:3d}
+Let $b, c \ge 3$. The $2$-d kernels of $C_3 \T C_b \T C_c$ are exactly the sets
+$\{(f(y,z), y, z) : (y,z) \in \Z_b \times \Z_c\}$ with $f$ a fall $3$-colouring of
+$C_b \T C_c$, and
+\[
+\sigma(C_3 \T C_b \T C_c) = \Phi(b,c) = 2\chi(c)\,\Iv{3 \mid b} + 2\chi(b)\,\Iv{3 \mid c}
+- 12\,\Iv{3 \mid b \text{ and } 3 \mid c} .
+\]
+In particular $C_3 \T C_b \T C_c$ has a $2$-d kernel if and only if $3 \mid b$ or $3 \mid c$.
+\end{corollary}
+
+\begin{proof}
+By \Cref{def:products}, $C_3 \T C_b \T C_c = C_3 \T G$ with $G = C_b \T C_c$. Every vertex of
+$G$ has exactly $4 \le 5$ neighbours. \Cref{lem:triangle} identifies the $2$-d kernels with
+the sets $S_f$ for fall $3$-colourings $f$ of $G$, and \Cref{cor:fall-count} counts them.
+Since $\chi(k) \ge 2^3 - 2 = 6 > 0$ for $k \ge 3$, the count is positive if and only if
+$3 \mid b$ or $3 \mid c$: if exactly one holds it is $2\chi(\cdot) > 0$, and if both hold it
+is $2\chi(c) + 2\chi(b) - 12 \ge 12 + 12 - 12 > 0$.
+\end{proof}
+
+\begin{example}\label{ex:3d}
+Using $\chi(3) = 6$, $\chi(4) = 18$, $\chi(6) = 66$ and $\chi(7) = 126$:
+\begin{itemize}
+  \item $\sigma(C_3 \T C_3 \T C_3) = 2 \cdot 6 + 2 \cdot 6 - 12 = 12$;
+  \item $\sigma(C_3 \T C_3 \T C_4) = 2\chi(4) = 36$;
+  \item $\sigma(C_3 \T C_6 \T C_6) = 2 \cdot 66 + 2 \cdot 66 - 12 = 252$;
+  \item $\sigma(C_3 \T C_7 \T C_7) = 0$ and $\sigma(C_3 \T C_4 \T C_4) = 0$.
+\end{itemize}
+\end{example}
+
+\begin{remark}
+In two dimensions, $C_m \T C_n$ has a $2$-d kernel exactly when the two lengths share a
+factor (\Cref{cor:torus}). \Cref{ex:3d} shows that no condition on pairwise common factors
+can decide existence in three dimensions: in $C_3 \T C_7 \T C_7$ and $C_3 \T C_4 \T C_4$ the
+last two lengths share a factor, yet there is no $2$-d kernel.
+\end{remark}
+
+% =====================================================================
+\section{The published statements for tori}\label{sec:literature}
+% =====================================================================
+
+In \cite{BW2016} the symbol $C_n \times C_m$ denotes the Cartesian product (its definition is
+given in the introduction of \cite{BW2016}). \Cref{cor:torus} contradicts
+\cite[Theorem~2.5 and Corollary~2.6]{BW2016} as follows.
+\begin{itemize}
+  \item \emph{Existence.} $C_3 \T C_6$, $C_3 \T C_9$, $C_6 \T C_9$ and $C_5 \T C_{10}$ have
+        $2$-d kernels, since their greatest common divisors are $3$, $3$, $3$ and $5$. In each
+        of them the two lengths are neither both even nor equal, so \cite[Theorem~2.5]{BW2016}
+        asserts that no $2$-d kernel exists. \Cref{ex:c6c3} exhibits one explicitly.
+  \item \emph{Number, both even.} $\sigma(C_6 \T C_6) = 2\Per(6) - 2 = 8$ and
+        $\sigma(C_8 \T C_8) = 2\Per(8) - 2 = 18$, not $2$. For $m, n$ even the value $2$ is
+        correct exactly when $\Per(d) = 2$, that is, when $d \in \{2, 4\}$.
+  \item \emph{Number, odd squares.} $\sigma(C_n \T C_n) = 2\Per(n)$ for odd $n$. This equals
+        $2n$ for $n = 3, 5, 7$, but $\sigma(C_9 \T C_9) = 2 \cdot 12 = 24 \ne 18$ and
+        $\sigma(C_{11} \T C_{11}) = 2 \cdot 22 = 44 \ne 22$.
+\end{itemize}
+Two steps of the proof of \cite[Theorem~2.5]{BW2016} are not justified. For $m$ even and $n$
+odd, it assumes that the set chosen in each copy of $C_m$ is a $2$-d kernel of $C_m$; by
+\Cref{lem:line} (and its quotient form) it only has to be a maximal independent set of $C_m$.
+For $m \ne n$ both odd, it assumes that the set chosen in each copy of $C_m$ has exactly
+$\lfloor m/2 \rfloor$ elements, whereas \Cref{lem:sizes} allows every size from
+$\lceil m/3 \rceil$ to $\lfloor m/2 \rfloor$.
+
+% =====================================================================
+\section{Computational verification}\label{sec:verification}
+% =====================================================================
+
+The proofs above do not depend on computation. As an independent check, the following
+scripts in the repository, under \texttt{odd-torus/ws-W3/}, compare the formulas with exhaustive
+enumeration.
+\begin{itemize}
+  \item \texttt{sat\_check.py}: SAT existence for $3 \le m \le 14$ and $3 \le n \le 40$
+        (456 tori) agrees with $\gcd(m,n) > 1$; SAT enumeration of all $2$-d kernels for
+        $m \le 12$ and $n \le 16$ agrees with \Cref{cor:torus}(c), and every kernel found is
+        diagonal; a SAT-free brute force agrees for all $mn \le 64$.
+  \item \texttt{coordinator\_check.py}: an independent SAT encoding enumerating all $2$-d
+        kernels for $3 \le m \le 10$ and $m \le n \le 12$; no disagreement with
+        \Cref{cor:torus}(c).
+  \item \texttt{transfer.py}: the column transfer digraph for $3 \le m \le 20$; the set of
+        $n$ with a $2$-d kernel is exactly $\{n \ge 3 : \gcd(m,n) > 1\}$.
+  \item \texttt{min\_size.py} and \texttt{gamma2\_sat.py}: minimum sizes for $m, n \le 12$
+        agree with \Cref{cor:torus}(d).
+  \item \texttt{grid\_quotient\_check.py}: SAT enumeration for the tensor products
+        $C_m \times C_n$ with $3 \le m \le n$ and $mn \le 64$ (49 graphs), and for all
+        circulants satisfying the hypotheses of \Cref{cor:circulant} with $N \le 30$
+        (798 graphs); no disagreement with \Cref{cor:tensor,cor:circulant}.
+  \item \texttt{threed\_check.py}: SAT enumeration of all $2$-d kernels of
+        $C_3 \T C_b \T C_c$ for $3 \le b \le c \le 9$ (28 graphs); the counts agree with
+        \Cref{cor:3d}, and every kernel meets every triangle fibre in exactly one vertex.
+  \item \texttt{fall3.py} and \texttt{fall3\_rigidity.py}: fall $3$-colourability of
+        $C_b \T C_c$ for $b, c \le 24$ agrees with \Cref{thm:fall-classification}, and in 13
+        tori every fall $3$-colouring has a constant step along one axis, with the counts of
+        \Cref{cor:fall-count}.
+\end{itemize}
+
+% =====================================================================
+\begin{thebibliography}{99}
+
+\bibitem{BW2016}
+P.~Bednarz and I.~W{\l}och,
+On $(2\text{-}d)$-kernels in the cartesian product of graphs,
+\emph{Ann.\ Univ.\ Mariae Curie-Sk{\l}odowska Sect.\ A} \textbf{70}(2) (2016), pages 1 to 8.
+\href{https://doi.org/10.17951/a.2016.70.2.1}{doi:10.17951/a.2016.70.2.1}.
+
+\bibitem{Bednarz2021}
+P.~Bednarz,
+On $(2\text{-}d)$-kernels in the tensor product of graphs,
+\emph{Symmetry} \textbf{13} (2021), article 230.
+\href{https://doi.org/10.3390/sym13020230}{doi:10.3390/sym13020230}.
+
+\bibitem{BMP2026}
+P.~Bednarz, A.~Michalski and N.~Paja,
+On the existence of independent $(1,k)$-dominating sets for $k \in \{1,2\}$ in two products
+of graphs,
+\emph{Opuscula Math.} \textbf{46}(2) (2026), pages 139 to 152.
+
+\bibitem{DKT2005}
+F.~M.~Dong, K.~M.~Koh and K.~L.~Teo,
+\emph{Chromatic Polynomials and Chromaticity of Graphs}, World Scientific, 2005.
+
+\bibitem{Dunbar2000}
+J.~E.~Dunbar, S.~M.~Hedetniemi, S.~T.~Hedetniemi, D.~P.~Jacobs, J.~Knisely, R.~C.~Laskar and
+D.~F.~Rall,
+Fall colorings of graphs,
+\emph{J.\ Combin.\ Math.\ Combin.\ Comput.} \textbf{33} (2000), pages 257 to 273.
+
+\bibitem{Furedi1987}
+Z.~F\"uredi,
+The number of maximal independent sets in connected graphs,
+\emph{J.\ Graph Theory} \textbf{11} (1987), pages 463 to 470.
+
+\bibitem{HIK2011}
+R.~Hammack, W.~Imrich and S.~Klav\v{z}ar,
+\emph{Handbook of Product Graphs}, 2nd ed., CRC Press, 2011.
+
+\bibitem{HJ2013}
+R.~A.~Horn and C.~R.~Johnson,
+\emph{Matrix Analysis}, 2nd ed., Cambridge University Press, 2013.
+
+\bibitem{KM2019}
+H.~Kaul and C.~Mitillos,
+On graph fall-coloring: existence and constructions,
+\emph{Graphs Combin.} \textbf{35}(6) (2019), pages 1633 to 1646.
+\href{https://doi.org/10.1007/s00373-019-02082-7}{doi:10.1007/s00373-019-02082-7}.
+
+\bibitem{NZM}
+I.~Niven, H.~S.~Zuckerman and H.~L.~Montgomery,
+\emph{An Introduction to the Theory of Numbers}, 5th ed., Wiley, 1991.
+
+\bibitem{Wloch2012}
+A.~W{\l}och,
+On $2$-dominating kernels in graphs,
+\emph{Australas.\ J.\ Combin.} \textbf{53} (2012), pages 273 to 284.
+
+\end{thebibliography}
+
+\end{document}

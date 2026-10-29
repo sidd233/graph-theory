@@ -1,0 +1,360 @@
+doi: 10.17951/a.2016.70.2.1
+                                    ANNALES
+    UNIVERSITATIS MARIAE CURIE-SKŁODOWSKA
+               LUBLIN – POLONIA
+  VOL. LXX, NO. 2, 2016                SECTIO A                                        1–8
+
+
+
+
+                   PAWEŁ BEDNARZ and IWONA WŁOCH
+
+
+                       On (2 − d)-kernels
+               in the cartesian product of graphs
+
+
+      Abstract. In this paper we study the problem of the existence of (2 − d)-
+      kernels in the cartesian product of graphs. We give sufficient conditions for
+      the existence of (2 − d)-kernels in the cartesian product and also we consider
+      the number of (2 − d)-kernels.
+
+
+
+
+1. Introduction. In general we use the standard terminology and notation
+of graph theory, see [3]. Graphs G = (V (G), E(G)) considered in this paper
+are undirected, connected and simple. By Pn , n ≥ 2 and Cn , n ≥ 3 we
+mean a path and a cycle on n vertices, respectively. By dG (x, y) we denote
+the distance between vertices x and y in G being the length of the shortest
+path from x to y. Consequently dG (X, Y ) = min{dG (u, v) : u ∈ X, v ∈ Y }
+means the distance between sets X and Y . A simple graph G = G(V1 , V2 ) is
+called bipartite if its vertex set can be partitioned into two disjoint subsets
+V1 , V2 such that every edge has the form xy, where x ∈ V1 and y ∈ V2 .
+   Let G1 = (V1 , E1 ) and G2 = (V2 , E2 ) be two graphs. The cartesian
+product of two graphs G1 and G2 is the graph G1 × G2 such that V (G1 ×
+G2 ) = V1 × V2 and E(G1 × G2 ) = {(xi , yp )(xj , yq ) : (xi = xj and yp yq ∈
+E(G2 )) or (yp = yq and xi xj ∈ E(G1 ))}.
+   By the cartesian product of n graphs G1 , . . . , Gn we mean the cartesian
+product of Gn and G1 × G2 × . . . × Gn−1 denoted by G1 × G2 × . . . × Gn .
+If n = 2, then we obtain the definition of cartesian product of two graphs.
+   2010 Mathematics Subject Classification. 05C20, 05C69.
+   Key words and phrases. Independence, domination, cartesian product, (2 − d)-kernel.
+2                          P. Bednarz and I. Włoch
+
+
+Theorem 1.1 ([12]). A graph G1 × G2 is bipartite if and only if G1 and G2
+are bipartite.
+   We say that a subset D ⊆ V (G) is dominating, if every vertex of G is
+either in D or it is adjacent to at least one vertex of D. A subset S ⊆ V (G)
+is independent if no two vertices of S are adjacent in G. A subset J being
+dominating and independent is a kernel of G.
+   H. Galeana-Sánchez and C. Hernández-Cruz played an important role in
+researching kernels in digraphs. During the last decades they studied not
+only kernels in digraphs but some of its generalizations, mainly kernels by
+monochromatic paths and (k, l)-kernels. Most of the existing results about
+kernels and their generalizations in digraphs were related to operations in
+digraphs and how the kernels are preserved. For results concerning kernels
+which were obtained quite recently see [4, 6, 7, 5, 8, 9, 10, 11].
+   In [17] A. Włoch introduced and studied the concept of a 2-dominating
+kernel (for convenience we will write shortly (2 − d)-kernel). A set J is a
+(2 − d)-kernel of a graph G if it is independent and 2-dominating, i.e. J
+is independent and each vertex from V (G) \ J has at least two neighbours
+in J.
+   Not every graph possesses a (2 − d)-kernel, for example a graph P4 is a
+graph without (2 − d)-kernel. In [1] it was proved that the problem of the
+existence of (2 − d)-kernel is N P-complete for a general graph.
+   Some results related to the existence of (2 − d)-kernels in graphs can be
+found in [1], [2] and [17]. Moreover, in [1] the number of all (2 − d)-kernels
+(denoted by σ(2−d) (G)) in graphs was studied. In this paper we consider the
+problem of the existence of (2−d)-kernels in the cartesian product of graphs
+and also we consider the number of (2 − d)-kernels in this graph product.
+   The topic of kernels in graphs product was studied for example in [14,
+13, 15, 16, 17, 18, 19].
+2. Main results. In this section we give some necessary and sufficient
+conditions for the existence of (2 − d)-kernels in the cartesian product of
+graphs.
+Theorem 2.1. If G and H are connected bipartite graphs, then G × H has
+two disjoint (2 − d)-kernels.
+Proof. Let G = G(V1 , V2 ) and H = H(V3 , V4 ) be bipartite. Then the set
+V (G × H) is the union of pairwise disjoint sets V1 × V3 , V1 × V4 , V2 × V3
+and V2 × V4 . We shall show that sets J = (V1 × V3 ) ∪ (V2 × V4 ) and
+J ∗ = (V2 × V3 ) ∪ (V1 × V4 ) are (2 − d)-kernels of the graph G × H. Firstly
+we shall show that J is a (2 − d)-kernel. To prove that J is independent let
+us assume that (xi , yj ), (xp , yq ) ∈ J and consider the following cases:
+    1.1 (xi , yj ), (xp , yq ) ∈ V1 × V3 .
+        If i = p, then by the definition of H and the cartesian product
+             On (2 − d)-kernels in the cartesian product of graphs              3
+
+
+        G × H we have that yj , yq ∈ V3 , so yj yq ∈   / E(H) and consequently
+        (xi , yj )(xp , yq ) ∈/ E(G × H).
+        If j = q, then we prove analogously with respect to the graph G.
+        Let i 6= p and j 6= q. Then the definition of G × H immediately
+        gives that (xi , yj )(xp , yq ) ∈
+                                        / E(G × H).
+   1.2 (xi , yj ), (xp , yq ) ∈ V2 × V4 .
+        Then we prove in the same way as in 1.1.
+   1.3 (xi , yj ) ∈ V1 × V3 and (xp , yq ) ∈ V2 × V4 .
+        Since G and H are bipartite, so xi xp ∈       / E(G) and yj yq ∈   / E(H).
+        Then by the definition of G × H we have that (xi , yj )(xp , yq ) ∈      /
+        E(G × H).
+Consequently J is independent. Now we shall prove that J is 2-dominating.
+Assume that (xi , yj ) ∈     / J. It suffices to show that there are two vertices
+from the set J which dominate the vertex (xi , yj ). We consider the following
+possibilities:
+   2.1 (xi , yj ) ∈ V1 × V4 .
+        Then xi ∈ V1 and yj ∈ V4 . Because H is connected and bipartite so
+        there is a vertex, say yq ∈ V3 such that yj yq ∈ E(H). Consequently
+        by the definition of G × H we have that there is (xi , yq ) ∈ V1 × V3 ⊂
+        V (G × H). This means that (xi , yq ) ∈ J and (xi , yj )(xi , yq ) ∈ E(G ×
+        H). Analogously with respect to graph G we can show that there
+        exists a vertex (xp , yj ) ∈ V2 × V3 ⊂ V (G × H). So (xp , yj ) ∈ J and
+        (xi , yj )(xp , yj ) ∈ E(G × H). Thus every vertex from the set V1 × V4
+        is at least 2-dominated by the set J.
+   2.2 (xi , yj ) ∈ V2 × V3 ,
+        Then we prove by using the same method as in 2.1.
+Finally, the set J is a (2 − d)-kernel of G × H. In the same way we can
+prove that J ∗ is a (2 − d)-kernel of G × H and it is obvious that J ∩ J ∗ = ∅,
+which ends the proof.                                                            
+  Using Theorems 1.1 and 2.1, we can prove the result for the cartesian
+product of n graphs.
+Theorem 2.2. Let n ≥ 2 be an integer. If Gi is bipartite, for i = 1, . . . , n,
+then G1 × G2 × . . . × Gn has two disjoint (2 − d)-kernels.
+  From the above follow results for special bipartite graphs.
+Corollary 2.3. Let n, m ≥ 2 be integers. A graph Pn × Pm has exactly
+two disjoint (2 − d)-kernels J1 , J2 and J1 ∪ J2 = V (Pn × Pm ). Moreover,
+                                                   m·n               m·n
+|J1 | = |J2 | = m·n
+                 2 if m · n is even and |J1 | = b 2 c and |J2 | = d 2 e,
+otherwise.
+Corollary 2.4. Let n, m ≥ 2 be integers. A graph C2n × Pm has exactly
+two disjoint (2 − d)-kernels J1 , J2 and J1 ∪ J2 = V (C2n × Pm ). Moreover,
+|J1 | = |J2 | = m · n.
+4                           P. Bednarz and I. Włoch
+
+
+Theorem 2.5. Let n, m ≥ 3 be integers. A graph Cn × Cm has a (2 − d)-
+kernel if and only if n and m are even or n = m.
+Proof. Let n, m be as in the statement of the theorem. If n and m are
+even, then Cn and Cm are bipartite and Cn × Cm has a (2 − d)-kernel by
+Theorem 2.1. Assume that n = m and n is odd. We will prove that Cn × Cn
+has a (2−d)-kernel J. Let V (Cn ) = {x1 , . . . , xn }, n ≥ 3 with the numbering
+of vertices in the natural fashion. We can illustrate the construction of the
+set J in Cn × Cn using the matrix A = [aij ]n×n defined as follows
+                          
+                             1 if the vertex (xi , xj ) ∈ J,
+                    aij =
+                             0 otherwise.
+Then aij = 1 if and only if
+                                                                     
+                                  n−3                               n−1
+  i − j ∈ −n + 2p; p = 1, . . . ,      ∪ n − 2q − 1; q = 1, . . . ,
+                                   2                                 2
+and aij = 0 otherwise. For the explanation if n = 3, then
+                                           
+                                   1 0 0
+                            A =  0 1 0 .
+                                   0 0 1
+Let n ≥ 5 be odd. Then the matrix A has the form
+
+                     1      0    0    1    0    ...    1    00   1
+                                                               
+                    0      1    0    0    1    ...    0    11  0
+                    1      0    1    0    0    ...    1    00  1
+                                                               
+                    0      1    0    1    0    ...    0    11  0
+                                                               
+                    1      0    1    0    1    ...    1    00  1
+                                                               
+                 A=
+                    ..     ..   ..   ..   ..   ..     ..   ..  .
+                                                             .. ..
+                    .       .    .    .    .      .    .    ..  .
+                    0      1    0    1    0    ...    1 0 0 1 
+                                                               
+                    1      0    1    0    1    ...    0 1 0 0 
+                                                               
+                    0      1    0    1    0    ...    1 0 1 0 
+                          0 0    1    0    1    ...    0 1 0 1
+
+   Conversely suppose on the contrary that Cn × Cm has a (2 − d)-kernel,
+say J where m 6= n and n is odd.
+   Let m be even and n be odd. Then the graph Cm has two disjoint (2−d)-
+                          (p)                                       (p)
+kernels J1 and J2 . Let Ji , i = 1, 2 be a (2 − d)-kernel in Cm , where
+  (p)                                                                     (1)
+Cm ⊂ Cm × Cn is a p-copy of Cm , p = 1, . . . , m. It is clearthat J = J1 ∪
+    (2)   (3)       (n)                                               (1)   (n)
+J2 ∪ J1 ∪ . . . ∪ J1 , because n is odd, but then dCm ×Cn J1 , J1  = 1,
+a contradiction with the independence of J.
+   Let now m 6= n and m, n be odd. Since m 6= n, so without loss of the
+generality let m > n. Suppose that Cm × Cn has a (2 − d)-kernel J. By
+              On (2 − d)-kernels in the cartesian product of graphs                  5
+
+                                                                                   (i)
+definition of Cm × Cn and (2 − d)-kernel it is obvious that in each copy Cm ,
+i = 1, . . . , n of Cm ×Cn we have to choose a maximal independent set Ji such
+that |Ji | = b m  2 c, for all i = 1, . . . , n and Ji is a subset of (2 − d)-kernel J.
+Using given earlier construction of (2−d)-kernel J in Cm ×Cn which preserve
+                                                   (n)
+2-domination we     Sn observe that in copy Cm for every maximal independent
+set Jn the set i=1 Ji is not independent, which is a contradiction with the
+assumption.                                                                          
+
+Corollary 2.6. Let m, n ≥ 3 be integers. If m, n are even, then σ(2−d) (Cn ×
+Cm ) = 2. If n is odd, then σ(2−d) (Cn × Cn ) = 2n.
+
+  Corollary 2.6 follows by the proof of Theorem 2.5.
+
+Theorem 2.7. Let m, n ≥ 1 be integers. A graph Kn × Km has a (2 − d)-
+kernel if and only if n = m.
+
+Proof. Let V (Kn ) = {x1 , . . . , xn }, n ≥ 1 and V (Km ) = {y1 , . . . , ym }, m ≥
+1. If m = n, then it is easy to observe that the set J = {(xi , yi ), i = 1, . . . , n}
+is (2 − d)-kernel of the graph Kn × Kn .
+   Suppose on the contrary that a graph Kn × Km has a (2 − d)-kernel J ∗
+and n > m. Clearly in each copy of a complete graph Kn and Km we can
+choose at most one vertex to the set J ∗ . Without loss of the generality let
+                                       (2)
+(x1 , y1 ) ∈ J ∗ . Then in the copy Km we choose an arbitrary vertex (x2 , yi )
+                                                                 (3)
+where i 6= 1 and (x2 , yi ) ∈ J ∗ . Analogously in the copy Km we choose a
+                                                                                   (i)
+vertex (x3 , yj ) ∈ J ∗ for j 6= 1 and j 6= i. Consequently in the copy Kn+1
+for every vertex (xn+1 , yp ), p = 1, . . . , m there is a vertex (xr , yp ) where
+1 ≤ r ≤ m. Then J ∗ ∪ {(xn+1 , yp ), 1 ≤ p ≤ n} is not independent, which is
+a contradiction with the assumption that J ∗ is a (2 − d)-kernel.
+   Thus the theorem is proved.                                                        
+
+Corollary 2.8. Let n ≥ 2 be integer. Then σ(2−d) (Kn × Kn ) = n!. More-
+over, all (2 − d)-kernels of Kn × Kn have the same cardinality n.
+
+Proof. Let J ⊂ V (Kn × Kn ) be a (2 − d)-kernel. Then it is clear that in the
+        (1)
+copy Kn we can choose the vertex belonging to J on n ways. Moreover,
+             (p)
+in the copy Kn , 2 ≤ p ≤ n we can choose the vertex belonging to J on
+(n−p+1) ways. This gives that σ(2−d) (Kn ×Kn ) = n(n−1)·. . .·1 = n!. 
+
+   Let X ⊂ V (G). A graph G is X-(2 − d)-kernel critical if G \ X has a
+(2 − d)-kernel.
+   Let X, Y ⊂ V (G) be two disjoint subsets of G. A graph G is (X, Y )-
+(2 − d)-kernel critical if Y is a (2 − d)-kernel of G \ X.
+   If a graph G is (X, Y )-(2 − d)-kernel critical and (Y, X)-(2 − d)-kernel
+critical, then we will write that G is an {X, Y }-(2 − d)-kernel critical.
+6                             P. Bednarz and I. Włoch
+
+
+Theorem 2.9. Let G = G(J1 , J2 ) be a bipartite graph such that Ji , i = 1, 2
+are (2−d)-kernels of G. Let H be a graph with V1 , V2 ⊂ V (H) such that H is
+{V1 , V2 }-(2 − d)-kernel critical. Then G × H has at least two (2 − d)-kernels.
+
+Proof. Let G = G(J1 , J2 ) and H be as in the statement of the theorem. If
+V1 ∪ V2 = V (H), then graphs G and H are bipartite and by Theorem 2.1,
+a graph G × H has two (2 − d)-kernels. Suppose that V1 ∪ V2 6= V (H). Let
+R = V (H) \ (V1 ∪ V2 ). Then the set V (G × H) is the union of pairwise
+disjoint sets J1 × V1 , J1 × V2 , J1 × R, J2 × V1 , J2 × V2 and J2 × R. We will
+prove that set J = (J1 × V1 ) ∪ (J2 × V2 ) is (2 − d)-kernel of the graph G × H.
+Firstly we show that J is an independent set.
+   Let (xi , yj ), (xp , yq ) ∈ J and consider the following cases:
+    1.1 (xi , yj ), (xp , yq ) ∈ J1 × V1 .
+        If j = q, then by the definition of G and the cartesian product
+        G × H we have that xi , xp ∈ J1 , so xi , xp ∈  / E(G) and consequently
+        (xi , yj )(xp , yq ) ∈/ E(G × H).
+        Let i = p. Since a graph H is {V1 , V2 }-(2−d)-kernel critical, then V1
+        is (2 − d)-kernel of H \ V2 and this means that V1 is an independent
+        set of a graph H. So for all yj , yq ∈ V1 we have that yj yq ∈  / E(H)
+        and finally (xi , yj )(xp , yq ) ∈ / E(G × H).
+        Let i 6= p and j 6= q. Then the definition of G × H immediately
+        gives that (xi , yj )(xp , yq ) ∈/ E(G × H).
+    1.2 (xi , yj ), (xp , yq ) ∈ J2 × V2 .
+        Then we prove in the same way as in 1.1.
+    1.3 (xi , yj ) ∈ J1 × V1 and (xp , yq ) ∈ J2 × V2 .
+        Since G is bipartite and H is {V1 , V2 }-(2−d)-kernel critical so xi xp ∈
+                                                                                /
+        E(G) and yj yq ∈       / E(H). Then by the definition of G × H we have
+        that (xi , yj )(xp , yq ) ∈/ E(G × H).
+Consequently J is independent. Let (xi , yj ) ∈
+                                              / J. We prove that J is 2-
+dominating. Consider the following cases:
+    2.1. (xi , yj ) ∈ J2 × V1 ,
+         Then xi ∈ J2 and yj ∈ V1 . Because J1 is (2 − d)-kernel of a graph G
+         then there exist at least two vertices, say xs , xr such that xs xi , xr xi ∈
+         E(G). By the definition of cartesian product we have that every
+         vertex from J2 × V1 is at least 2-dominated by the set J1 × V1 .
+    2.2. (xi , yj ) ∈ J1 × V2 ,
+         We can prove this using the same method as in 2.1.
+    2.3. (xi , yj ) ∈ J1 × R or (xi , yj ) ∈ J2 × R,
+         Then xi ∈ V (G) and yj ∈ R. Because the graph H is {V1 , V2 }-
+         (2 − d)-kernel critical then V1 is (2 − d)-kernel of H \ V2 and there
+         exist at least two vertices, say yw , yt such that yw yj , yt yj ∈ E(H).
+         Moreover every vertex from the set V1 ×R is at least 2-dominated by
+               On (2 − d)-kernels in the cartesian product of graphs                     7
+
+
+        the set J1 × V1 . Analogously, considering set V2 , we can show that
+        every vertex from J2 × R is at least 2-dominated by the set J2 × V2 .
+All this together gives that J is a (2 − d)-kernel of G × H. In the same way
+we can prove that J ∗ = J1 × V2 ∪ J2 × V1 is a (2 − d)-kernel of G × H, which
+ends the proof.                                                            
+3. Conclusion and further study. The problem of finding the charac-
+terization of the cartesian product G × H with a (2 − d)-kernel is still open.
+However, some sufficient conditions can be found if we add a restriction that
+a graph G is fixed.
+
+                                     References
+ [1] Bednarz, P., Hernández-Cruz, C., Włoch, I., On the existence and the number of
+     (2 − d)-kernels in graphs, Ars Combin. 121 (2015), 341–351.
+ [2] Bednarz, P., Włoch, I., An algorithm determining (2−d)-kernels in trees, Util. Math.,
+     in print.
+ [3] Diestel, R., Graph Theory, Springer-Verlag, Heidelberg, New York, 2005.
+ [4] Galeana-Sánchez, H., Gómez, R., (k, l)-kernels, (k, l)-semikernels, k-Grundy func-
+     tions and duality for state splittings, Discuss. Math. Graph Theory 27 (2007), 359–
+     371.
+ [5] Galeana-Sánchez, H., Hernández-Cruz, C., On the existence of k-kernels in digraphs
+     and in weighted digraphs, AKCE Int. J. Graphs Comb. 7 (2) (2010), 201–215.
+ [6] Galeana-Sánchez, H., Hernández-Cruz, C., k-kernels in generalizations of transitive
+     digraphs, Discuss. Math. Graph Theory 31 (2) (2011), 293–312.
+ [7] Galeana-Sánchez, H., Hernández-Cruz, C., Cyclically k-partite digraphs and k-
+     kernels, Discuss. Math. Graph Theory 31 (1) (2011), 63–78.
+ [8] Galeana-Sánchez, H., Hernández-Cruz, C., On the existence of (k, l)-kernels in infi-
+     nite digraphs: A survey, Discuss. Math. Graph Theory 34 (3) (2014), 431–466.
+ [9] Galeana-Sánchez, H., Pastrana-Ramı́rez, L., Extending digraphs to digraphs with
+     (without) k-kernel, Int. J. Contemp. Math. Sci. 3 (5) (2008), 229–243.
+[10] Galeana-Sánchez, H., Pastrana-Ramı́rez, L., k-kernels in the orientation of the path
+     graph, Int. J. Contemp. Math. Sci. 5 (5) (2010), 231–242.
+[11] Galeana-Sánchez, H., Pastrana-Ramı́rez, L., A construction that preserves the num-
+     ber of k-kernels, Int. J. Contemp. Math. Sci. 6 (10) (2011), 491–502.
+[12] Imrich, W., Klavžar, S., Rall, D. F., Topics in Graph Theory: Graphs and Their
+     Cartesian Product, A. K. Peters Ltd., Wellesley Massachusetts, 2008.
+[13] Kucharska, M., Kwaśnik, M., On (k, l)-kernels of special superdigraphs of Pm and
+     Cm , Discuss. Math. Graph Theory 21 (1) (2001), 95–109.
+[14] Kwaśnik, M., (k, l)-kernels in graphs and in their products, Ph.D. Dissertation,
+     Wrocław, 1980.
+[15] Szumny, W., Włoch, A., Włoch, I., On (k, l)-kernels in D-join of digraphs, Discuss.
+     Math. Graph Theory 27 (2007), 457–470.
+[16] Szumny, W., Włoch, A., Włoch, I., On the existence and on the number of (k, l)-
+     kernels in the lexicographic product of graphs, Discrete Math. 308 (20) (2008), 4616–
+     4624.
+[17] Włoch, A., On 2-dominating kernels in graphs, Australas. J. Combin. 53 (2012),
+     273–284.
+[18] Włoch, A., Włoch, I., On (k, l)-kernels in generalized products, Discrete Math. 164
+     (1997), 295–301.
+8                              P. Bednarz and I. Włoch
+
+
+[19] Włoch, A., Włoch, I., On (k, l)-kernels in the corona of digraphs, Int. J. Pure Appl.
+     Math. 53 (4) (2009), 571–582.
+
+ Paweł Bednarz                          Iwona Włoch
+ The Faculty of Mathematics             The Faculty of Mathematics
+ and Applied Physics                    and Applied Physics
+ Rzeszów University of Technology       Rzeszów University of Technology
+ al. Powstańców Warszawy 8              al. Powstańców Warszawy 8
+ 35-959 Rzeszów                         35-959 Rzeszów
+ Poland                                 Poland
+ e-mail: pbednarz@prz.edu.pl            iwloch@prz.edu.pl
+
+ Received August 9, 2016
+

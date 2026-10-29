@@ -1,0 +1,153 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{observation}{Observation}
+\theoremstyle{remark}\newtheorem*{remark}{Remark}
+\setlength{\parindent}{0pt}\setlength{\parskip}{0.5em}
+
+\title{Odd toroidal grids: verification, the kernel method, and routes to $m\ge 5$}
+\author{Working notes for Sid and Amrutanshu}
+\date{October 26, 2026}
+
+\begin{document}
+\maketitle
+\vspace{-2em}
+
+Throughout $G=C_m\,\square\,C_n$ with $m,n$ odd. Open problem: is $G$ 3-choosable?
+(Cai--Wang--Zhu conjecture; Li--Shao--Petrov--Gordeev 2023 show $AT(G)=4$, so the
+Nullstellensatz alone cannot prove it.) Amrutanshu's notes claim the case $m=3$.
+
+\section*{1. Novelty check}
+No paper since 2023 settling 3-choosability of any odd$\times$odd toroidal grid turned
+up. The cited ``Li--Shao--Ren, some special toroidal grids'' could not be found online;
+since LSPG say their paper \emph{generalizes} it and still call the odd$\times$odd list
+chromatic number undetermined, it very likely does not settle $C_3\square C_n$. Still:
+email the authors or check MathSciNet before submitting.
+
+\section*{2. Independent check of the edge-deletion theorem}
+I computed $c_w=[x_w\prod_{v\ne w}x_v^2]\,P_{G-e}$ directly from the Laso\'n /
+Karasev--Petrov coefficient formula (cube roots of unity at every vertex), by a
+column transfer over \emph{all} $3^m$ column assignments, not the paper's 6-state
+reduction. For $m=3$, $n\in\{3,5,7,9\}$, every value of $|c_w|$ matches Theorem~1
+exactly, for both column and row edges and every $w$, including $c_w=0$ when $w$
+is on the cycle of $e$ (Remark 6.2).
+
+\textbf{Beyond $m=3$} (Remark 6.3's claim), minimum of $|c_w|$ over all $w$ off
+the cycle of $e$:
+
+\begin{center}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+graph & column edge & row edge\\
+\midrule
+$C_5\square C_5$ & 804 & 804\\
+$C_5\square C_7$ & 30060 & 30060\\
+$C_5\square C_9$ & 993855 & 993855\\
+$C_5\square C_{11}$ & 31835550 & 31835550\\
+$C_7\square C_5$ & 30060 & 30060\\
+$C_7\square C_7$ (5 positions of $w$ sampled) & 11432505 & 11432505\\
+\bottomrule
+\end{tabular}
+\end{center}
+All nonzero. So for these graphs too, any 3-list assignment with an edge whose ends
+have disjoint lists is colourable.
+
+\textbf{Why the hand proof does not extend directly.} The undamaged transfer matrix
+has nonzero spectrum $\{\pm i\sqrt3\}$ for $m=3$ (hence $T^3=-3T$), but six pairs
+$\pm i\lambda_k$ for $m=5$ and 25 pairs for $m=7$. The $\pm$ pairing is what forces
+$c=0$ for $G$ itself at odd $n$; it persists for all $m$. A closed form for $m=5$
+by hand is unrealistic; a computer-assisted proof for fixed $m$ is realistic (Section 4).
+
+\section*{3. The kernel method (Galvin's tool)}
+Bondy--Boppana--Siegel: if $G$ has a kernel-perfect orientation with
+$\Delta^+\le 2$, then $G$ is 3-choosable. This method is independent of the
+Alon--Tarsi obstruction, so it is a natural candidate. Since $G$ is 4-regular with
+$2mn$ edges, $\Delta^+\le2$ forces $d^+(v)=d^-(v)=2$ everywhere (Eulerian orientation).
+
+\begin{observation}
+Every orientation of $G$ with $\Delta^+\le 2$ contains an odd directed cycle, so
+Richardson's theorem never applies.
+\end{observation}
+\begin{proof}
+Each weak component of an Eulerian digraph is strongly connected. If no directed
+cycle were odd, the parity argument of our Theorem B (distance parity from a root
+is well defined, every arc flips it) would make the underlying graph bipartite, but
+$G$ contains the odd cycle $C_m$.
+\end{proof}
+So any kernel-perfect orientation must contain odd directed cycles, none of them
+induced. Exhaustive search over all orientations with $\Delta^+\le2$
+(an induced odd directed cycle has no kernel, so it rules out kernel-perfectness):
+
+\begin{center}
+\begin{tabular}{@{}lrrl@{}}
+\toprule
+graph & orientations & no induced odd dicycle & kernel-perfect\\
+\midrule
+$C_3\square C_3$ & 148 & 12 & all 12 (Galvin)\\
+$C_3\square C_5$ & 2116 & 0 & none\\
+$C_3\square C_7$ & 33028 & 0 & none\\
+$C_3\square C_9$ & 525316 & 12 & all 12 (checked all $2^{27}$ subsets)\\
+$C_3\square C_{11}$ & first 400000 & 0 & none so far (partial)\\
+$C_5\square C_5$ & 143224 & 0 & none\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The 12 surviving orientations of $C_3\square C_9$ are exactly the lifts of the 12
+kernel-perfect orientations of $C_3\square C_3$ under the covering
+$(r,c)\mapsto(r,c\bmod 3)$. In those, every row and column of $C_3\square C_3$ is a
+transitive triangle. Lifts to $C_3\square C_{15}$ and $C_3\square C_{21}$ also have no
+induced odd directed cycle (full kernel-perfectness not checked). Lifting in both
+coordinates fails: all 12 lifts to $C_9\square C_9$ contain an induced odd directed
+cycle (lengths 15 to 33).
+
+\begin{conjecture}
+For odd $3\le m\le n$, $C_m\square C_n$ has a kernel-perfect orientation with
+$\Delta^+\le2$ if and only if $m=3$ and $3\mid n$.
+\end{conjecture}
+
+\begin{remark}
+Consequence: the kernel method cannot reach the open case $m\ge5$ (it already fails on
+$C_5\square C_5$). Together with $AT(G)=4$, this says both standard tools fail, which
+is a good motivating section for a paper built on Amrutanshu's structural method.
+\end{remark}
+
+\section*{4. Evaluation: what to build on for $m\ge 5$}
+\begin{enumerate}[leftmargin=1.5em]
+\item \textbf{Alon--Tarsi on $G$:} dead ($AT=4$).
+\item \textbf{Kernel method:} dead at $C_5\square C_5$ (exhaustive).
+\item \textbf{Amrutanshu's structural route} (edge-deletion AT + strip lemma + prism
+lemma + propagation Lemma 3.5 of [P]): the only live route. Status of each piece for $m=5$:
+\begin{itemize}[nosep]
+\item Edge deletion: holds numerically (table in \S2). Proof idea: for fixed $m$,
+$c_w$ is a trace of transfer-matrix products; for large $n$ the top pair $\pm i\lambda_1$
+dominates, so $c_w\neq0$ for $n\ge n_0(m)$ if the leading amplitude is nonzero, and
+$n<n_0$ is a finite computer check. That is a complete computer-assisted proof for
+$m=5$.
+\item Strip lemma: $AT(C_{\text{odd}}\square P_k)=3$ (Kaul--Mudrock) suggests the
+end-multiset coefficients stay nonzero; testable now with the same code once the
+definitions in [P] are available.
+\item Prism lemma: the triangle Hall argument has an odd-cycle analogue (an odd
+cycle with 2-lists is colourable unless all lists are the same 2-set), but
+$C_m\square K_2$ for $m\ge5$ needs a new case analysis.
+\item Lemma 3.5 of [P]: unknown to me; this is the piece to read first.
+\end{itemize}
+\end{enumerate}
+
+\section*{5. Suggested division of work}
+\begin{enumerate}[leftmargin=1.5em]
+\item Sid: prove the kernel-method conjecture (both directions), using the parity
+observation above and the lift structure. Self-contained, uses the 2-kernel toolkit,
+becomes a section of the joint paper.
+\item Sid: computer-assisted proof of the edge-deletion theorem for $m=5$ via the
+dominant-eigenvalue argument.
+\item Both: read [P] Lemma 3.5 and the strip lemma, then test each for $m=5$
+numerically before attempting proofs.
+\end{enumerate}
+
+\end{document}

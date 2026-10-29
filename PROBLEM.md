@@ -1,6 +1,22 @@
 # The problem
 
-**Goal: improve the bound on the list colouring problem, using 2-d kernels.**
+**Goal (set 2026-10-07): solve an open problem in graph theory.** The working direction, from
+the supervisor, is the **List Edge Colouring Conjecture** (LECC) and the problems next to it.
+The candidate problems are in `open-problems/in-scope.md`, and the target will be chosen with
+the supervisor at the meeting on 9 October 2026 (`meetings/2026-10-09/`). Broader options are
+in `open-problems/broader.md`.
+
+**2-d kernels are a tool, not the goal.** The earlier framing below ("improve the bound using
+2-d kernels") made a tool into a goal. Sid corrected this on 2026-10-07. Sections 1 to 5 are
+kept as the record of that line of work. Its results and obstructions stand, but its framing of
+the line graph conjecture as "off target" no longer applies. The line graph conjecture is the
+LECC, and it is now the working direction. Notes `06` to `12` of `list-colouring/`, previously
+marked off target, are now on target: the star lemma (note `09`), the triangle theorem
+(note `11`) and the even-complete-graph theorem (note `12`) are tools for it.
+
+---
+
+# Previous framing (until 2026-10-07): improving the bound with 2-d kernels
 
 **Source:** M. Aigner and G. M. Ziegler, *Proofs from THE BOOK*, chapter 33,
 "The Dinitz problem", pages 221 to 226. That chapter is a chapter about list colouring, and

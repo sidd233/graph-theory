@@ -651,3 +651,115 @@ unreachable by this family. The Reed-shaped target `ceil((Delta + 1 + omega)/2)`
 note `14` reduces it to one bounded question: can the remainder be paid at `omega/2` instead of
 `omega` by reusing colours the induction already spent. Flagged rather than written into the
 goal, because changing the stated aim of the project is not a change to make unilaterally.
+
+## 2026-10-07 - the goal changes: solve an open problem, starting from the LECC
+
+**What changed.** The supervisor asked to move beyond Dinitz to "a rectangle or a general map".
+Sid then stated that the 2-d kernel was never the goal, only a tool, and that the aim is to
+solve an open problem, with the prof pushing the List Edge Colouring Conjecture. `PROBLEM.md`
+and `CLAUDE.md` are updated. The previous framing is kept in `PROBLEM.md` as history.
+
+**Why the rectangle was not the next step.** `L(K_{m,n})` is an induced subgraph of `S_n` and
+contains `n`-cliques, so `chi_ell = max(m, n)` follows from Galvin in one line. Janssen (1993)
+had the `(n-1) x n` case even earlier, and Borodin–Kostochka–Woodall cover arbitrary shapes. The
+genuinely new step is a non-bipartite underlying graph, and that is the LECC.
+
+**The find of the day.** Schauz (arXiv:1705.00484, 2017) tried to prove the LECC for every graph
+on at most 10 vertices using the signed count of 1-factorizations. It fails on "zero-sum" graphs:
+3 on 8 vertices and 51 on 10. He says they should yield to other methods, and he did not finish
+them. That is a finite, named, open target. The method that failed is Alon–Tarsi, and the kernel
+method is an independent route that this repository already has tools for, together with two
+theorems on where it cannot work (notes `11` and `12`). Recorded as A1 in
+`open-problems/in-scope.md`.
+
+**Smallest open complete graph.** With Jafari (arXiv:2608.22895, August 2026) adding `K_{p-1}`
+and `K_{2p}` to Schauz's `K_{p+1}`, the smallest even order not covered is `n = 50`
+(`open-problems/uncovered_complete.py`). Brute force is hopeless there, so A6 is a
+number-theory problem.
+
+**Not yet done.** No experiments run, per the rule to discuss direction first. Next is the
+Schauz census on 8 vertices and the kernel test on its 3 zero-sum graphs, for the 9 October
+meeting.
+
+## 2026-10-07 (night) - A1 first pass, and a theorem nobody planned
+
+**Census first, because it is cheap and decisive.** Before trying to beat Schauz on his open
+cases, we checked that we see the same open cases. The signed count `S(G)` was re-derived from
+scratch (`lecc-small/01-at-sign.md`) rather than copied from his sign convention, so a match is
+independent confirmation. It matched exactly: 3 zero-sum graphs on 8 vertices and 51 on 10, with
+the same split by degree.
+
+**The move that changed the speed.** The old kernel search tested `2^|E|` subsets and could not
+finish `C_5 × K_2`. Reading the star lemma as preference lists turns kernels of line graphs into
+stable roommates matchings. Kernel-perfectness then becomes "no odd ring". It turned out to be a
+restatement of Borodin–Kostochka–Woodall 1998, which we should have known. Still, it made the
+search run in seconds.
+
+**The result nobody planned.** All 52 open graphs failed the kernel test. Rather than move on, we
+ran the test on every regular graph up to 10 vertices: it succeeded exactly on the bipartite
+ones. With that pattern on the table the proof was short:
+
+- tightness gives an antisymmetric weight on darts;
+- its sign orients `G` in an Eulerian way, apart from a middle-rank perfect matching;
+- every odd directed cycle is an odd ring;
+- strong connectivity then forces bipartiteness.
+
+The lesson: when a negative result repeats on every case, test the general class before
+recording individual failures. The pattern was the result.
+
+**Consequence.** For A1 both standard tools are now provably useless, the uniform Alon–Tarsi
+coefficient by Schauz's census and kernels by the theorem. So Schauz's remark that these graphs
+"should" yield to other methods means a genuinely third method. That is a question for the prof
+on Friday.
+
+## 2026-10-07 (late) - what counts for Friday, and holding off on the write-up
+
+Sid downloaded Schauz's 2018 journal version. Its §4.1 is identical to the arXiv text, so the 52
+graphs are still open and nobody has tried kernels on them. The novelty risk from Phase 0 is
+closed.
+
+Asked what is substantial, the honest ranking was:
+
+- **Main result: theorem R5.** It is a proved statement, stronger than McDonald's `K_n` result,
+  and it subsumes notes `11` and `12`.
+- **Its limits:** it is negative, it may be folklore, and no human has checked it yet.
+- **Supporting:** the census reproduction and the exact list of 52 open graphs.
+- **Context only:** the open-problem lists and the rectangle.
+
+Sid's call: no handout. The explanatory PDF waits until the results are judged enough, and we try
+for more first. The obvious "more" is a *positive* result: a proof of the LECC for at least one
+graph where both standard methods provably fail.
+
+## 2026-10-07 (late) - a positive result: the cubic open graphs are 3-edge-choosable
+
+**The 2-hour check, and why it was framed that way.** A plain search over list assignments, a
+2QBF done by CEGAR, has no predictable running time. So it was given a fixed limit with three
+exits agreed in advance: finished, converging, or stuck. The plain version was clearly stuck:
+L(K_{3,3}) took about 19,600 rounds, and L(X) passed 87,000 with no end in sight.
+
+**What made it work.** Three facts that each cut the space, each with a one-line proof:
+
+- **Alon–Tarsi on `H - v`.** It works for every `v`, so a bad assignment must be critical, and
+  every colour must be shared with a neighbour.
+- **Symmetry breaking.**
+- **Reducible colour classes.** If one colour class can be coloured partly and Alon–Tarsi
+  finishes the rest, then that class alone guarantees colourability.
+
+The last is the key one. It turns Alon–Tarsi, which fails on the whole graph, into thousands of
+local facts that do succeed. With it, L(X) took 17 rounds and half a second.
+
+**Distrust of a fast "yes".** A fast UNSAT is exactly what an over-pruning bug produces. Three
+independent checks were run:
+
+- brute force over all list assignments on small graphs;
+- the pruned search against the plain one;
+- every Alon–Tarsi fact re-derived from Eulerian subgraph counts.
+
+All passed. The run without symmetry breaking was inconclusive (timeout), and that is said
+plainly rather than counted.
+
+**Result.** All 5 open cubic zero-sum graphs are 3-edge-choosable. Pending: re-checks on 4 of
+them, and a DRAT certificate.
+
+**Degree 4 and up** stall for an engineering reason (6.4 million up-front clauses), with a clear
+fix: generate the clauses lazily.
